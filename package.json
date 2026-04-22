@@ -1,0 +1,25 @@
+{
+  "name": "election-yatra",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Election Yatra — Janta ka Election Saathi. An India-first civic education assistant powered by Gemini and Google Cloud.",
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "pnpm -r --parallel --filter=\"./apps/*\" dev",
+    "dev:web": "pnpm --filter web dev",
+    "dev:api": "pnpm --filter functions dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "type-check": "pnpm -r type-check",
+    "clean": "pnpm -r exec rm -rf dist .next node_modules"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.5"
+  }
+}
