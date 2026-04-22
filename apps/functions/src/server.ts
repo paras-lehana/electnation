@@ -12,6 +12,7 @@ import { logger } from './middleware/logger.js';
 import { createRateLimiter } from './middleware/rateLimit.js';
 import { healthRouter } from './routes/health.js';
 import { chatRouter } from './routes/chat.js';
+import { mapRouter } from './routes/map.js';
 
 export const buildApp = (config = loadConfig()): Express => {
   const app = express();
@@ -35,6 +36,7 @@ export const buildApp = (config = loadConfig()): Express => {
 
   app.use('/api', healthRouter(config));
   app.use('/api', chatRouter(config));
+  app.use('/api', mapRouter());
 
   app.get('/', (_req, res) => {
     res.json({

@@ -10,6 +10,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@vis.gl/react-google-maps": "^1.8.3",
     "@yatra/core": "workspace:*",
     "clsx": "^2.1.1",
     "framer-motion": "^11.2.10",

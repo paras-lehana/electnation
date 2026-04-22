@@ -18,7 +18,7 @@
 - [x] ✅ `packages/core` shared types/schemas/google
 - [ ] ⏳ ESLint flat config with import-order + a11y plugins
 - [ ] ⏳ GitHub Actions: lint + type-check + test + build
-- [ ] ⏳ Dockerfile for Cloud Run (api + web)
+- [x] ✅ Dockerfile for Cloud Run (api + web)
 
 ## Phase 1 — Design system & landing *(Day 1–2)*
 
@@ -95,12 +95,13 @@
 - [ ] ⏳ `/onboarding` — 4-step wizard (age / first-time / language / location) with progress bar
 - [ ] ⏳ `/yatra` — 6-station stepper page with drawer-based Saathi chat
 - [ ] ⏳ `/yatra/[slug]` — per-station deep dive with ECI citations
-- [ ] ⏳ `/clinic` — Forward Clinic input + result card + verification steps
+- [x] ✅ `/clinic` — Forward Clinic input + result card + verification steps
 - [ ] ⏳ `/clinic/history` — personal scan history (Firestore)
-- [ ] ⏳ `/map` — Maps JS API + nearest facility pins + route preview
+- [x] ✅ `/map` — Maps JS API + nearest facility pins + route preview
 - [ ] ⏳ `/map/booth` — Street View preview of user's booth
-- [ ] ⏳ `/play` — quiz engine shell
-- [ ] ⏳ `/play/scenario/[id]` — scenario mini-game routes
+- [ ] ⏳ Ensure Maps API Keys (Maps JavaScript API, Places API, Geocoding API, Distance Matrix API) are configured in `.env` and loaded securely in Next.js/Express.
+- [x] ✅ `/play` — quiz engine shell
+- [x] ✅ `/play/scenario/[id]` — scenario mini-game routes
 - [ ] ⏳ `/leaderboard` — privacy-preserving city leaderboard
 - [ ] ⏳ `/migrant-corner` — address update, postal ballot explainer, travel plan
 - [ ] ⏳ `/pwd` — accessibility-first guidance (braille EPIC, AMF)
@@ -115,9 +116,9 @@
 - [ ] ⏳ XP ledger: weighted points per action (quiz, reminder, forward, step)
 - [ ] ⏳ Badges (12+): Inked Finger, Samvidhan Shishya, Afwah Buster, Migrant Matrudev, Booth Buddy, Chakra Champion, Rangoli Raja, Daak Doot (postal ballot), Gyan Guru (100 quiz correct), Sabha Saarthi, Tyohar Tallika, Bhasha Bandhu
 - [ ] ⏳ Streak system with "festival freeze" logic
-- [ ] ⏳ Scenario game #1 — "Chai tapri dilemma" (choose-your-own-adventure, dialogue tree)
-- [ ] ⏳ Scenario game #2 — "WhatsApp forward rush" (60-sec classify 10 forwards, Canvas timer)
-- [ ] ⏳ Scenario game #3 — "Booth ka raasta" (migrant maze, arrow-key navigation, tile grid)
+- [x] ✅ Scenario game #1 — "Chai tapri dilemma" (choose-your-own-adventure, dialogue tree)
+- [x] ✅ Scenario game #2 — "WhatsApp forward rush" (60-sec classify 10 forwards, Canvas timer)
+- [x] ✅ Scenario game #3 — "Booth ka raasta" (migrant maze, arrow-key navigation, tile grid)
 - [ ] ⏳ Share card generator (SVG → PNG) + WhatsApp deep link
 - [ ] ⏳ Weekly leaderboard reset (Cloud Scheduler cron)
 - [ ] ⏳ Celebration animations (confetti + muted diya glow, respects prefers-reduced-motion)
