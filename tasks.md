@@ -92,19 +92,19 @@
 
 ## Phase 5 — Frontend flows *(Day 5–8)*
 
-- [ ] ⏳ `/onboarding` — 4-step wizard (age / first-time / language / location) with progress bar
-- [ ] ⏳ `/yatra` — 6-station stepper page with drawer-based Saathi chat
+- [x] ✅ `/onboarding` — 4-step wizard (age / first-time / language / location) with progress bar
+- [x] ✅ `/yatra` — 6-station stepper page with drawer-based Saathi chat
 - [ ] ⏳ `/yatra/[slug]` — per-station deep dive with ECI citations
 - [x] ✅ `/clinic` — Forward Clinic input + result card + verification steps
 - [ ] ⏳ `/clinic/history` — personal scan history (Firestore)
 - [x] ✅ `/map` — Maps JS API + nearest facility pins + route preview
 - [ ] ⏳ `/map/booth` — Street View preview of user's booth
-- [ ] ⏳ Ensure Maps API Keys (Maps JavaScript API, Places API, Geocoding API, Distance Matrix API) are configured in `.env` and loaded securely in Next.js/Express.
+- [x] ✅ Ensure Maps API Keys (Maps JavaScript API, Places API, Geocoding API, Distance Matrix API) are configured in `.env` and loaded securely in Next.js/Express.
 - [x] ✅ `/play` — quiz engine shell
 - [x] ✅ `/play/scenario/[id]` — scenario mini-game routes
 - [ ] ⏳ `/leaderboard` — privacy-preserving city leaderboard
-- [ ] ⏳ `/migrant-corner` — address update, postal ballot explainer, travel plan
-- [ ] ⏳ `/pwd` — accessibility-first guidance (braille EPIC, AMF)
+- [x] ✅ `/migrant-corner` — address update, postal ballot explainer, travel plan
+- [x] ✅ `/pwd` — accessibility-first guidance (braille EPIC, AMF)
 - [ ] ⏳ `/about` — team, mission, neutrality statement
 - [ ] ⏳ Global chat dock with streaming SSE consumer
 - [ ] ⏳ Persona context provider (React Context + localStorage + Firestore sync)
