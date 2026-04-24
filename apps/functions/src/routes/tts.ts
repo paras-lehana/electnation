@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { synthesizeSpeech } from '@yatra/core/google';
 import { logger } from '../middleware/logger.js';
 
-export const ttsRouter = Router();
+export const ttsRouter: Router = Router();
 
 ttsRouter.post('/', async (req, res) => {
   try {

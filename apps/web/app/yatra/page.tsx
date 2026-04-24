@@ -91,8 +91,9 @@ export default function YatraPage() {
   };
 
   const advanceStation = () => {
-    if (currentStationIndex >= INITIAL_STATIONS.length) return;
-    const currentId = INITIAL_STATIONS[currentStationIndex].id;
+    const currentStation = INITIAL_STATIONS[currentStationIndex];
+    if (!currentStation) return;
+    const currentId = currentStation.id;
     if (currentId === 'verification' && stationInput.length < 5) {
       setStationError('Please enter a valid EPIC number (min 5 chars).');
       return;

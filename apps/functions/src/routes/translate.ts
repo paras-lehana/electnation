@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { translateText, detectLanguage } from '@yatra/core/google';
 import { logger } from '../middleware/logger.js';
 
-export const translateRouter = Router();
+export const translateRouter: Router = Router();
 
 translateRouter.post('/', async (req, res) => {
   try {
