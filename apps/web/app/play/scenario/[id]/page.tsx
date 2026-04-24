@@ -10,22 +10,57 @@ export default function ScenarioPage() {
   const router = useRouter();
   const [step, setStep] = useState(0);
 
-  // In a real app, load this from Firestore/JSON based on id
-  const scenario = {
-    title: id === 'chai-tapri' ? 'Chai Tapri Dilemma' : 
-           id === 'whatsapp-rush' ? 'WhatsApp Forward Rush' : 'Booth ka Raasta',
-    content: [
-      { text: "You're at the local tea stall. A representative of a local candidate approaches and offers to pay for everyone's tea and snacks if they promise to vote for their party.", image: '☕' },
-      { text: "He hands you a Rs 500 note along with a party pamphlet, winking. 'Rakh lo bhai, vote din yaad rakhna'.", image: '💸' }
-    ],
-    choices: [
-      { text: "Take the money and say yes. (Everyone is doing it).", isCorrect: false, feedback: "Accepting cash for votes is a criminal offense under Section 171B of IPC. It leads to corrupt leaders who will steal much more from your community's development funds." },
-      { text: "Politely refuse and walk away.", isCorrect: true, feedback: "Good! But you can do better. You should ideally report this." },
-      { text: "Refuse, and secretly report the incident via the ECI cVIGIL app.", isCorrect: true, feedback: "Perfect! The cVIGIL app allows citizens to anonymously report Model Code of Conduct violations like vote buying within minutes. The flying squad acts on it within 100 minutes." }
-    ]
+  interface Scenario {
+    title: string;
+    content: { text: string; image: string }[];
+    choices: { text: string; isCorrect: boolean; feedback: string }[];
+  }
+
+  // Lookup for different scenarios
+  const scenarios: Record<string, Scenario> = {
+    'chai-tapri': {
+      title: 'Chai Tapri Dilemma',
+      content: [
+        { text: "You're at the local tea stall. A representative of a local candidate approaches and offers to pay for everyone's tea and snacks if they promise to vote for their party.", image: '☕' },
+        { text: "He hands you a Rs 500 note along with a party pamphlet, winking. 'Rakh lo bhai, vote din yaad rakhna'.", image: '💸' }
+      ],
+      choices: [
+        { text: "Take the money and say yes. (Everyone is doing it).", isCorrect: false, feedback: "Accepting cash for votes is a criminal offense under Section 171B of IPC. It leads to corrupt leaders." },
+        { text: "Politely refuse and walk away.", isCorrect: true, feedback: "Good! But you can do better. You should ideally report this." },
+        { text: "Refuse, and secretly report the incident via the ECI cVIGIL app.", isCorrect: true, feedback: "Perfect! The cVIGIL app allows citizens to anonymously report Model Code of Conduct violations." }
+      ]
+    },
+    'whatsapp-rush': {
+      title: 'WhatsApp Forward Rush',
+      content: [
+        { text: "Your family group chat is buzzing. Your uncle forwards a message: 'URGENT: EVMs in our ward have been pre-programmed to vote for Party X. Do not go to vote, it is rigged!'", image: '📱' },
+        { text: "The message has 'Forwarded many times' label. It also contains a blurry photo of an EVM machine.", image: '🔍' }
+      ],
+      choices: [
+        { text: "Forward it to your friends to warn them.", isCorrect: false, feedback: "Never forward unverified rumors! EVMs are standalone machines and cannot be pre-programmed or hacked remotely. You are spreading misinformation." },
+        { text: "Ignore the message completely.", isCorrect: true, feedback: "Ignoring is safe, but as a responsible citizen, you should actively stop misinformation." },
+        { text: "Reply with the ECI Myth vs Reality link and ask him not to share rumors.", isCorrect: true, feedback: "Excellent! Countering fake news with official ECI facts (mythvsreality.eci.gov.in) helps maintain election integrity." }
+      ]
+    },
+    'booth-raasta': {
+      title: 'Booth ka Raasta',
+      content: [
+        { text: "You have moved to a new city for work. It's election day in your home constituency. You didn't register for postal ballot earlier.", image: '🗺️' },
+        { text: "Your friend says you can just go to any polling booth in your current city and show your Aadhar card to vote.", image: '🏢' }
+      ],
+      choices: [
+        { text: "Go to the nearest polling booth in the current city with Aadhar.", isCorrect: false, feedback: "Wrong! You can ONLY vote where your name is registered in the Electoral Roll. Aadhar alone does not allow you to vote anywhere." },
+        { text: "Book a train ticket to go back home to vote.", isCorrect: true, feedback: "This works, provided you reach your assigned booth in time. However, to save trouble, you should have filled Form 8 to transfer your constituency." },
+        { text: "Fill Form 8 online via Voter Helpline App to transfer your vote to your current city for the NEXT election.", isCorrect: true, feedback: "Smart choice for the future! By filling Form 8 (Shifting of Residence), you can vote in your new city in upcoming elections." }
+      ]
+    }
   };
 
+  const scenario = typeof id === 'string' && scenarios[id] ? scenarios[id] : scenarios['chai-tapri'];
+
   const [selectedChoice, setSelectedChoice] = useState<number | null>(null);
+
+  if (!scenario) return null;
 
   if (step === 0) {
     return (
