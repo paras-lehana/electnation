@@ -206,7 +206,7 @@ export default function YatraPage() {
                             {station.id === 'registration' && (
                               <Button 
                                 onClick={() => setStationInput('checked')}
-                                variant="outline"
+                                variant="ghost"
                                 className="w-full border-saffron-300 text-saffron-800 hover:bg-saffron-50"
                               >
                                 {stationInput === 'checked' ? '✅ Portal Verified' : '🌐 Visit ECI Portal'}
@@ -230,8 +230,8 @@ export default function YatraPage() {
                               <div className="w-full space-y-2">
                                 <p className="text-[10px] text-ink-500 italic">"Vote early to get free snacks at the booth!"</p>
                                 <div className="flex gap-2">
-                                    <Button size="sm" onClick={() => setStationInput('real')} className="flex-1 bg-green-50 text-green-700 border-green-200 hover:bg-green-100">Real</Button>
-                                    <Button size="sm" onClick={() => setStationInput('fake')} className="flex-1 bg-red-50 text-red-700 border-red-200 hover:bg-red-100">Fake</Button>
+                                    <Button onClick={() => setStationInput('real')} className="flex-1 bg-green-50 text-green-700 border-green-200 hover:bg-green-100">Real</Button>
+                                    <Button onClick={() => setStationInput('fake')} className="flex-1 bg-red-50 text-red-700 border-red-200 hover:bg-red-100">Fake</Button>
                                 </div>
                                 {stationError && <p className="text-red-500 text-[10px]">{stationError}</p>}
                               </div>
@@ -240,7 +240,7 @@ export default function YatraPage() {
                             {station.id === 'planning' && (
                               <Button 
                                 onClick={() => setStationInput('found')}
-                                variant="outline"
+                                variant="ghost"
                                 className="w-full border-leaf-300 text-leaf-800 hover:bg-leaf-50"
                               >
                                 {stationInput === 'found' ? '✅ Booth Found' : '📍 Open Map'}
