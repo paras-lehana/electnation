@@ -111,8 +111,8 @@ export default function OnboardingPage() {
 
         <Card className="bg-white shadow-2xl p-8">
           <span className="text-sm font-bold text-saffron-600 uppercase tracking-widest mb-2 block">Step {currentStep + 1} of 4</span>
-          <h1 className="font-display text-3xl font-bold text-ink-900 mb-2">{STEPS[currentStep].title}</h1>
-          <p className="text-ink-700 mb-8">{STEPS[currentStep].description}</p>
+          <h1 className="font-display text-3xl font-bold text-ink-900 mb-2">{STEPS[currentStep]?.title}</h1>
+          <p className="text-ink-700 mb-8">{STEPS[currentStep]?.description}</p>
           
           {renderStep()}
 

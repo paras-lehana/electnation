@@ -24,6 +24,7 @@ COPY . .
 RUN pnpm install --frozen-lockfile
 
 # Build the project
+RUN pnpm --filter @yatra/core build
 RUN pnpm --filter functions build
 
 # Production image
