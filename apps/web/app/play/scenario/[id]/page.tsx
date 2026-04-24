@@ -31,9 +31,9 @@ export default function ScenarioPage() {
     return (
       <main className="min-h-screen bg-indigo-chakra flex items-center justify-center p-4">
         <Card className="max-w-2xl w-full bg-white text-center p-12 shadow-2xl">
-          <div className="text-6xl mb-6">{scenario.content[0].image}</div>
+          <div className="text-6xl mb-6">{scenario.content[0]?.image}</div>
           <h1 className="font-display text-4xl font-bold text-ink-900 mb-6">{scenario.title}</h1>
-          <p className="text-xl text-ink-700 mb-8 leading-relaxed">{scenario.content[0].text}</p>
+          <p className="text-xl text-ink-700 mb-8 leading-relaxed">{scenario.content[0]?.text}</p>
           <Button className="w-full text-lg py-6 bg-saffron-600 hover:bg-saffron-700" onClick={() => setStep(1)}>
             Continue →
           </Button>
@@ -47,8 +47,8 @@ export default function ScenarioPage() {
       <main className="min-h-screen bg-indigo-chakra flex items-center justify-center p-4">
         <Card className="max-w-2xl w-full bg-white p-8 md:p-12 shadow-2xl">
           <div className="text-center mb-8">
-            <div className="text-5xl mb-4">{scenario.content[1].image}</div>
-            <p className="text-xl text-ink-800 leading-relaxed font-medium">{scenario.content[1].text}</p>
+            <div className="text-5xl mb-4">{scenario.content[1]?.image}</div>
+            <p className="text-xl text-ink-800 leading-relaxed font-medium">{scenario.content[1]?.text}</p>
           </div>
 
           <div className="space-y-4">
@@ -69,18 +69,18 @@ export default function ScenarioPage() {
             ))}
           </div>
 
-          {selectedChoice !== null && (
-            <div className={`mt-8 p-6 rounded-xl animate-in slide-in-from-bottom-4 ${scenario.choices[selectedChoice].isCorrect ? 'bg-green-100 text-green-900' : 'bg-red-100 text-red-900'}`}>
+          {selectedChoice !== null && scenario.choices[selectedChoice] && (
+            <div className={`mt-8 p-6 rounded-xl animate-in slide-in-from-bottom-4 ${scenario.choices[selectedChoice]?.isCorrect ? 'bg-green-100 text-green-900' : 'bg-red-100 text-red-900'}`}>
               <h3 className="font-bold text-xl mb-2">
-                {scenario.choices[selectedChoice].isCorrect ? '🎯 Correct!' : '❌ Think Again!'}
+                {scenario.choices[selectedChoice]?.isCorrect ? '🎯 Correct!' : '❌ Think Again!'}
               </h3>
-              <p>{scenario.choices[selectedChoice].feedback}</p>
+              <p>{scenario.choices[selectedChoice]?.feedback}</p>
               
               <div className="mt-6 flex gap-4">
                 <Button variant="ghost" className="flex-1 bg-white" onClick={() => router.push('/play')}>
                   Back to Hub
                 </Button>
-                {scenario.choices[selectedChoice].isCorrect && (
+                {scenario.choices[selectedChoice]?.isCorrect && (
                   <Button className="flex-1 bg-indigo-chakra text-white" onClick={() => router.push('/play')}>
                     Claim +50 XP
                   </Button>
