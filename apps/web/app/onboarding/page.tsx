@@ -38,13 +38,15 @@ export default function OnboardingPage() {
         return (
           <div className="space-y-4">
             <Button 
-              className={`w-full py-6 text-lg ${formData.age === 'yes' ? 'bg-leaf-600' : 'bg-white text-ink-900 border-2 border-khadi-200'}`}
+              variant="ghost"
+              className={`w-full py-6 text-lg ${formData.age === 'yes' ? '!bg-leaf-600 !text-white !border-leaf-600' : 'bg-white text-ink-900 border-2 border-khadi-200 hover:bg-khadi-50'}`}
               onClick={() => setFormData({...formData, age: 'yes'})}
             >
               ✅ Yes, I am 18+
             </Button>
             <Button 
-              className={`w-full py-6 text-lg ${formData.age === 'no' ? 'bg-red-600' : 'bg-white text-ink-900 border-2 border-khadi-200'}`}
+              variant="ghost"
+              className={`w-full py-6 text-lg ${formData.age === 'no' ? '!bg-red-600 !text-white !border-red-600' : 'bg-white text-ink-900 border-2 border-khadi-200 hover:bg-khadi-50'}`}
               onClick={() => setFormData({...formData, age: 'no'})}
             >
               ❌ No, I am younger
@@ -55,13 +57,15 @@ export default function OnboardingPage() {
         return (
             <div className="space-y-4">
               <Button 
-                className={`w-full py-6 text-lg ${formData.firstTime === 'yes' ? 'bg-indigo-chakra' : 'bg-white text-ink-900 border-2 border-khadi-200'}`}
+                variant="ghost"
+                className={`w-full py-6 text-lg ${formData.firstTime === 'yes' ? '!bg-indigo-chakra !text-white !border-indigo-chakra' : 'bg-white text-ink-900 border-2 border-khadi-200 hover:bg-khadi-50'}`}
                 onClick={() => setFormData({...formData, firstTime: 'yes'})}
               >
                 🎉 Yes, my first time!
               </Button>
               <Button 
-                className={`w-full py-6 text-lg ${formData.firstTime === 'no' ? 'bg-indigo-chakra' : 'bg-white text-ink-900 border-2 border-khadi-200'}`}
+                variant="ghost"
+                className={`w-full py-6 text-lg ${formData.firstTime === 'no' ? '!bg-indigo-chakra !text-white !border-indigo-chakra' : 'bg-white text-ink-900 border-2 border-khadi-200 hover:bg-khadi-50'}`}
                 onClick={() => setFormData({...formData, firstTime: 'no'})}
               >
                 🗳️ No, I have voted before
@@ -74,7 +78,8 @@ export default function OnboardingPage() {
             {['English', 'Hindi', 'Bengali', 'Tamil', 'Telugu', 'Marathi'].map(lang => (
                 <Button 
                   key={lang}
-                  className={`py-4 ${formData.language === lang.toLowerCase() ? 'bg-saffron-600' : 'bg-white text-ink-900 border-2 border-khadi-200'}`}
+                  variant="ghost"
+                  className={`py-4 ${formData.language === lang.toLowerCase() ? '!bg-saffron-600 !text-white !border-saffron-600' : 'bg-white text-ink-900 border-2 border-khadi-200 hover:bg-khadi-50'}`}
                   onClick={() => setFormData({...formData, language: lang.toLowerCase()})}
                 >
                   {lang}

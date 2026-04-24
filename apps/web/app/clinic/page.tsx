@@ -22,42 +22,28 @@ export default function ClinicPage() {
     setIsAnalyzing(true);
     
     try {
-      // In a full implementation, this calls /api/forward/analysis
-      // For now we simulate the API response
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      const text = inputText.toLowerCase();
-      let mockResult: {
-        category: string;
-        riskLevel: 'HIGH' | 'MEDIUM' | 'LOW';
-        explanation: string;
-        recommendedAction: string;
-      } = {
-        category: 'Unverified Rumor',
-        riskLevel: 'MEDIUM',
-        explanation: 'We could not find official ECI data confirming this message. Be cautious before forwarding.',
-        recommendedAction: 'Check the official Voter Helpline app or eci.gov.in.'
-      };
+      const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://electnation-api-767171449038.us-central1.run.app';
+      const response = await fetch(`${apiUrl}/api/forward/analysis`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: inputText }),
+      });
 
-      if (text.includes('evm') || text.includes('hack')) {
-        mockResult = {
-          category: 'Likely False / Misinformation',
-          riskLevel: 'HIGH' as const,
-          explanation: 'EVMs (Electronic Voting Machines) used by ECI are standalone machines not connected to any network, making them unhackable remotely. They have VVPAT paper trails for verification.',
-          recommendedAction: 'Do NOT forward. Read the EVM manual on eci.gov.in for facts.'
-        };
-      } else if (text.includes('holiday') || text.includes('date')) {
-        mockResult = {
-          category: 'Misleading Context',
-          riskLevel: 'MEDIUM' as const,
-          explanation: 'Election dates and holidays vary strictly by constituency and state phases. This message might be spreading outdated or wrong dates.',
-          recommendedAction: 'Verify your exact polling date using the ECI Voter Portal with your EPIC number.'
-        };
+      if (!response.ok) {
+        throw new Error('Failed to fetch analysis');
       }
 
-      setResult(mockResult);
+      const resultData = await response.json();
+      setResult(resultData);
     } catch (err) {
       console.error(err);
+      // Fallback in case of error
+      setResult({
+        category: 'Analysis Error',
+        riskLevel: 'MEDIUM',
+        explanation: 'We encountered an error while analyzing this message. Please try again later or consult official ECI channels.',
+        recommendedAction: 'Visit eci.gov.in for official information.'
+      });
     } finally {
       setIsAnalyzing(false);
     }

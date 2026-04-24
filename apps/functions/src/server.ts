@@ -14,6 +14,8 @@ import { healthRouter } from './routes/health.js';
 import { chatRouter } from './routes/chat.js';
 import { mapRouter } from './routes/map.js';
 import { forwardRouter } from './routes/forward.js';
+import { ttsRouter } from './routes/tts.js';
+import { translateRouter } from './routes/translate.js';
 
 export const buildApp = (config = loadConfig()): Express => {
   const app = express();
@@ -39,6 +41,8 @@ export const buildApp = (config = loadConfig()): Express => {
   app.use('/api', chatRouter(config));
   app.use('/api', mapRouter());
   app.use('/api/forward', forwardRouter);
+  app.use('/api/tts', ttsRouter);
+  app.use('/api/translate', translateRouter);
 
   app.get('/', (_req, res) => {
     res.json({

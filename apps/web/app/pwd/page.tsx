@@ -1,15 +1,53 @@
 'use client';
 
+import { useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 
 export default function PwdPage() {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleListen = async () => {
+    setIsLoading(true);
+    try {
+      const text = "Accessibility and PwD Support. The Election Commission of India is committed to making voting accessible for all. Explore the facilities available for Persons with Disabilities and Senior Citizens. Transport Assistance. At-Booth Facilities. Braille and Audio. Voting from Home via Form 12D.";
+      const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://electnation-api-767171449038.us-central1.run.app';
+      const response = await fetch(`${apiUrl}/api/tts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, languageCode: 'en-IN' }),
+      });
+      if (!response.ok) throw new Error('TTS failed');
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audio.onended = () => setIsPlaying(false);
+      audio.play();
+      setIsPlaying(true);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <main className="min-h-screen bg-khadi-100 pb-20">
       <div className="bg-white py-16 border-b border-khadi-200 shadow-sm">
         <div className="container-yatra">
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="flex-1">
+              <div className="flex items-center gap-4 mb-4">
+                <Button 
+                  onClick={handleListen} 
+                  disabled={isLoading || isPlaying}
+                  className="bg-indigo-chakra text-white rounded-full py-2 px-4 shadow-md"
+                  aria-label="Listen to page content"
+                >
+                  {isLoading ? '⏳ Loading Audio...' : isPlaying ? '🔊 Playing...' : '🎧 Listen to Page'}
+                </Button>
+              </div>
               <h1 className="font-display text-4xl font-bold text-ink-900 md:text-5xl">
                 Accessibility <span className="text-indigo-chakra">& PwD</span> Support
               </h1>

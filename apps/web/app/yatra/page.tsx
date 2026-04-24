@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { motion } from 'framer-motion';
@@ -14,12 +15,49 @@ const STATIONS = [
 ];
 
 export default function YatraPage() {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleListen = async () => {
+    setIsLoading(true);
+    try {
+      const text = "Your Election Yatra. 6 stations to becoming a responsible voter. Station 1: Registration. Ensure you are in the voter list. Station 2: Verification. Check your EPIC and details. Station 3: Education. Learn about candidates and issues. Station 4: Planning. Find your booth and timing. Station 5: The Vote. Step-by-step guide to the booth. Station 6: Celebration. Share your inked finger and badge.";
+      const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://electnation-api-767171449038.us-central1.run.app';
+      const response = await fetch(`${apiUrl}/api/tts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, languageCode: 'en-IN' }),
+      });
+      if (!response.ok) throw new Error('TTS failed');
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audio.onended = () => setIsPlaying(false);
+      audio.play();
+      setIsPlaying(true);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <main className="min-h-screen bg-khadi-50 pb-20">
       <div className="bg-white py-12 shadow-sm border-b border-khadi-100">
         <div className="container-yatra">
           <div className="flex items-center justify-between">
             <div>
+              <div className="flex items-center gap-4 mb-4">
+                <Button 
+                  onClick={handleListen} 
+                  disabled={isLoading || isPlaying}
+                  className="bg-indigo-chakra text-white rounded-full py-2 px-4 shadow-md"
+                  aria-label="Listen to page content"
+                >
+                  {isLoading ? '⏳ Loading Audio...' : isPlaying ? '🔊 Playing...' : '🎧 Listen to Page'}
+                </Button>
+              </div>
               <h1 className="font-display text-4xl font-bold text-ink-900">Your <span className="text-indigo-chakra">Election Yatra</span></h1>
               <p className="mt-2 text-ink-700">6 stations to becoming a responsible voter.</p>
             </div>
