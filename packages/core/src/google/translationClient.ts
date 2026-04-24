@@ -1,10 +1,10 @@
-import { Translate } from '@google-cloud/translate/build/src/v2';
+import { v2 } from '@google-cloud/translate';
 
-let translate: Translate | null = null;
+let translate: v2.Translate | null = null;
 
 export const getTranslationClient = () => {
   if (!translate) {
-    translate = new Translate({
+    translate = new v2.Translate({
       key: process.env.GOOGLE_API_KEY || process.env.GOOGLE_MAPS_API_KEY,
     });
   }

@@ -49,15 +49,15 @@
 - [x] ✅ `firebaseAdmin.ts` (lazy init handle)
 - [ ] ⏳ `geolocationClient.ts` (IP-fallback + `navigator.geolocation` wrapper)
 - [ ] ⏳ `calendarClient.ts` — OAuth 2.0 + `events.insert`
-- [ ] ⏳ `youtubeClient.ts` — curated SVEEP playlist
-- [ ] ⏳ `translationClient.ts` — Cloud Translation v3 (10 Indian locales)
-- [ ] ⏳ `ttsClient.ts` — Cloud Text-to-Speech (Neural2/Chirp)
-- [ ] ⏳ `sttClient.ts` — Cloud Speech-to-Text (streaming)
+- [x] ✅ `youtubeClient.ts` — curated SVEEP playlist
+- [x] ✅ `translationClient.ts` — Cloud Translation v2/v3
+- [x] ✅ `ttsClient.ts` — Cloud Text-to-Speech (Neural2/Chirp)
+- [x] ✅ `sttClient.ts` — Cloud Speech-to-Text (streaming)
 - [ ] ⏳ `recaptchaClient.ts` — Enterprise assessment
 - [ ] ⏳ `secretManager.ts` — lazy fetch with env fallback
 - [ ] ⏳ `analyticsClient.ts` — GA4 Measurement Protocol
-- [ ] ⏳ `PlacesClient` — Text Search, Nearby Search, Place Details
-- [ ] ⏳ `DirectionsClient` — driving/walking/transit routes
+- [ ] ⏳ `PlacesClient` — Text Search, Nearby Search, Place Details (Google Maps API integration)
+- [ ] ⏳ `DirectionsClient` — driving/walking/transit routes (Google Maps API integration)
 - [ ] ⏳ Streaming adapter using `@google-cloud/vertexai` SDK (production swap)
 - [ ] ⏳ Mock implementations for each client (tests)
 
@@ -100,6 +100,7 @@
 - [x] ✅ `/map` — Maps JS API + nearest facility pins + route preview
 - [ ] ⏳ `/map/booth` — Street View preview of user's booth
 - [x] ✅ Ensure Maps API Keys (Maps JavaScript API, Places API, Geocoding API, Distance Matrix API) are configured in `.env` and loaded securely in Next.js/Express.
+- [ ] ⏳ Interactive Map Enhancements: Add animations, dynamic route drawing, and custom Indian-themed map pins.
 - [x] ✅ `/play` — quiz engine shell
 - [x] ✅ `/play/scenario/[id]` — scenario mini-game routes
 - [ ] ⏳ `/leaderboard` — privacy-preserving city leaderboard

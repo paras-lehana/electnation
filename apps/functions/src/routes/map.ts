@@ -39,7 +39,7 @@ export const mapRouter = (): Router => {
       const result = await client.distanceMatrix(origins, destinations);
       
       if (!result.ok) {
-        res.status(500).json({ error: { message: result.error.message } });
+        res.status(500).json({ error: { message: result.error.safeMessage?.en || 'Map API Error' } });
         return;
       }
 

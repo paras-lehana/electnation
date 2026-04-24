@@ -24,6 +24,6 @@ export const transcribeAudio = async (audioContent: string | Buffer, languageCod
     },
   });
   return response.results
-    ?.map(result => result.alternatives?.[0].transcript)
+    ?.map(result => result.alternatives?.[0]?.transcript)
     .join('\n');
 };

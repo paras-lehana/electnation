@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { motion } from 'framer-motion';
 
 export default function ClinicPage() {
   const [inputText, setInputText] = useState('');
@@ -26,9 +27,14 @@ export default function ClinicPage() {
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       const text = inputText.toLowerCase();
-      let mockResult = {
+      let mockResult: {
+        category: string;
+        riskLevel: 'HIGH' | 'MEDIUM' | 'LOW';
+        explanation: string;
+        recommendedAction: string;
+      } = {
         category: 'Unverified Rumor',
-        riskLevel: 'MEDIUM' as const,
+        riskLevel: 'MEDIUM',
         explanation: 'We could not find official ECI data confirming this message. Be cautious before forwarding.',
         recommendedAction: 'Check the official Voter Helpline app or eci.gov.in.'
       };
@@ -67,71 +73,99 @@ export default function ClinicPage() {
   };
 
   return (
-    <main className="min-h-screen bg-tricolor-soft pb-20">
-      <div className="bg-white py-12 shadow-sm">
-        <div className="container-yatra text-center">
-          <h1 className="font-display text-4xl font-bold text-ink-900 md:text-5xl">
-            WhatsApp <span className="text-saffron-500">Forward Clinic</span>
-          </h1>
-          <p className="mt-4 mx-auto max-w-2xl text-lg text-ink-700">
+    <main className="min-h-screen bg-tricolor-soft pb-20 overflow-hidden">
+      <div className="bg-white/90 backdrop-blur-sm border-b border-gray-100 py-12 shadow-sm relative z-10">
+        <div className="container-yatra text-center relative">
+          <motion.h1 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="font-display text-4xl font-bold text-ink-900 md:text-5xl"
+          >
+            WhatsApp <span className="text-saffron-500 bg-saffron-50 px-2 rounded-md">Forward Clinic</span>
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="mt-4 mx-auto max-w-2xl text-lg text-ink-700"
+          >
             Paste a suspicious message, rumor, or forward here. Chunav Saathi will help you verify its authenticity against ECI guidelines.
-          </p>
+          </motion.p>
         </div>
       </div>
 
       <div className="container-yatra mt-12 max-w-3xl">
-        <Card className="bg-white shadow-xl border-t-4 border-t-saffron-500">
-          <form onSubmit={handleAnalyze}>
-            <label htmlFor="forward-text" className="block text-sm font-semibold text-ink-900 mb-2">
-              Paste the message here:
-            </label>
-            <textarea
-              id="forward-text"
-              rows={5}
-              className="w-full rounded-xl border border-khadi-300 bg-khadi-50 p-4 text-ink-900 focus:border-saffron-500 focus:ring-saffron-500 transition-colors"
-              placeholder="e.g. 'Breaking: EVMs can be hacked using bluetooth...'"
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-            />
-            
-            <div className="mt-6 flex justify-end">
-              <Button 
-                type="submit" 
-                disabled={isAnalyzing || !inputText.trim()}
-                className="bg-saffron-600 hover:bg-saffron-700 w-full sm:w-auto"
-              >
-                {isAnalyzing ? 'Analyzing Fact-Check...' : 'Verify this Forward'}
-              </Button>
-            </div>
-          </form>
-        </Card>
+        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+          <Card className="bg-white shadow-xl hover:shadow-2xl transition-shadow border-t-4 border-t-saffron-500 relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-4 opacity-5 text-6xl pointer-events-none">🩺</div>
+            <form onSubmit={handleAnalyze} className="relative z-10">
+              <label htmlFor="forward-text" className="block text-sm font-semibold text-ink-900 mb-2">
+                Paste the message here:
+              </label>
+              <textarea
+                id="forward-text"
+                rows={5}
+                className="w-full rounded-xl border-2 border-khadi-200 bg-khadi-50 p-4 text-ink-900 focus:border-saffron-500 focus:ring-saffron-500 focus:bg-white transition-all shadow-inner resize-none"
+                placeholder="e.g. 'Breaking: EVMs can be hacked using bluetooth...'"
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+              />
+              
+              <div className="mt-6 flex justify-end">
+                <Button 
+                  type="submit" 
+                  disabled={isAnalyzing || !inputText.trim()}
+                  className="bg-saffron-600 hover:bg-saffron-700 shadow-md shadow-saffron-500/30 w-full sm:w-auto"
+                >
+                  {isAnalyzing ? (
+                    <span className="flex items-center gap-2">
+                      <span className="animate-spin text-xl">⏳</span> Analyzing Fact-Check...
+                    </span>
+                  ) : 'Verify this Forward'}
+                </Button>
+              </div>
+            </form>
+          </Card>
+        </motion.div>
 
         {result && (
-          <div className="mt-8 animate-in slide-in-from-bottom-4 fade-in duration-500">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            className="mt-8"
+          >
             <h2 className="font-display text-2xl font-bold text-ink-900 mb-4 flex items-center gap-2">
-              <span>🩺</span> Diagnosis Result
+              <span className="text-3xl drop-shadow-sm">✅</span> Diagnosis Result
             </h2>
-            <Card className={`border-2 ${getRiskColor(result.riskLevel)}`}>
-              <div className="flex items-start justify-between gap-4">
+            <Card className={`border-l-8 shadow-lg relative overflow-hidden ${getRiskColor(result.riskLevel)}`}>
+              <div className="flex items-start justify-between gap-4 relative z-10">
                 <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="font-bold text-lg">{result.category}</span>
-                    <span className={`text-xs px-2 py-0.5 rounded-full border ${getRiskColor(result.riskLevel)}`}>
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="font-bold text-xl">{result.category}</span>
+                    <span className={`text-xs font-bold px-3 py-1 rounded-full border shadow-sm ${getRiskColor(result.riskLevel)}`}>
                       {result.riskLevel} RISK
                     </span>
                   </div>
-                  <p className="mt-2 text-ink-800 leading-relaxed">
+                  <p className="mt-2 text-ink-800 leading-relaxed text-lg">
                     {result.explanation}
                   </p>
                   
-                  <div className="mt-4 p-3 bg-white/60 rounded-lg border border-black/5">
-                    <p className="text-sm font-semibold text-ink-900">💡 Action to take:</p>
-                    <p className="text-sm text-ink-800 mt-1">{result.recommendedAction}</p>
-                  </div>
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="mt-6 p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-black/10 shadow-sm"
+                  >
+                    <p className="text-sm font-bold text-ink-900 flex items-center gap-2">
+                      <span className="text-lg">💡</span> Action to take:
+                    </p>
+                    <p className="text-md text-ink-800 mt-2 font-medium">{result.recommendedAction}</p>
+                  </motion.div>
                 </div>
               </div>
             </Card>
-          </div>
+          </motion.div>
         )}
       </div>
     </main>

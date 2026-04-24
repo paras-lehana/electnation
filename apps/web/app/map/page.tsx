@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { APIProvider, Map, AdvancedMarker, Pin } from '@vis.gl/react-google-maps';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { motion } from 'framer-motion';
 
 // Dummy locations for fallback
 const LOCATIONS = {
@@ -62,56 +63,84 @@ export default function MapPage() {
   };
 
   return (
-    <main className="min-h-screen bg-tricolor-soft pb-20">
-      <div className="bg-white py-12 shadow-sm">
-        <div className="container-yatra">
-          <h1 className="font-display text-4xl font-bold text-ink-900 md:text-5xl">
-            Map your <span className="text-leaf-500">Booth</span>
-          </h1>
-          <p className="mt-4 max-w-2xl text-lg text-ink-700">
+    <main className="min-h-screen bg-tricolor-soft pb-20 overflow-hidden">
+      <div className="bg-white/80 backdrop-blur-md border-b border-gray-100 py-12 shadow-sm relative z-10">
+        <div className="container-yatra relative">
+          <motion.h1 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="font-display text-4xl font-bold text-ink-900 md:text-5xl"
+          >
+            Map your <span className="text-leaf-500 bg-leaf-50 px-2 rounded-md">Booth</span>
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="mt-4 max-w-2xl text-lg text-ink-700"
+          >
             Find your polling station, ERO office, and plan your route. Migrants get a dedicated
             corner for postal ballots and address updates.
-          </p>
+          </motion.p>
         </div>
       </div>
 
       <div className="container-yatra mt-8 grid gap-8 md:grid-cols-[1fr_350px]">
         {/* Map Container */}
-        {renderMapArea()}
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+          className="relative group"
+        >
+          <div className="absolute -inset-1 bg-gradient-to-r from-leaf-400 to-indigo-400 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+          {renderMapArea()}
+        </motion.div>
 
         {/* Info Sidebar */}
         <div className="space-y-6">
-          <Card withPaisley className="bg-white border-leaf-100 border-2">
-            <h3 className="font-display text-xl font-bold text-leaf-700 flex items-center gap-2">
-              <span className="text-2xl">🗳️</span> Your Polling Booth
-            </h3>
-            <p className="mt-2 text-sm text-ink-700 font-medium">Government Senior Secondary School, Room 4</p>
-            <p className="text-xs text-ink-500">1.2 km away • Approx. 15 min walk</p>
-            <div className="mt-4 flex gap-2">
-              <Button className="w-full bg-leaf-600 hover:bg-leaf-700">Get Directions</Button>
-            </div>
-          </Card>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+            <Card withPaisley className="bg-white border-leaf-100 border-2 hover:shadow-lg transition-shadow">
+              <h3 className="font-display text-xl font-bold text-leaf-700 flex items-center gap-2">
+                <span className="text-2xl drop-shadow-sm">🗳️</span> Your Polling Booth
+              </h3>
+              <p className="mt-2 text-sm text-ink-800 font-medium bg-leaf-50 p-2 rounded-md border border-leaf-100">Government Senior Secondary School, Room 4</p>
+              <p className="text-xs text-ink-500 mt-2">1.2 km away • Approx. 15 min walk</p>
+              <div className="mt-4 flex gap-2">
+                <Button className="w-full bg-leaf-600 hover:bg-leaf-700 shadow-md shadow-leaf-500/20">Get Directions</Button>
+              </div>
+            </Card>
+          </motion.div>
 
-          <Card className="bg-saffron-50 border-saffron-200 border-2">
-            <h3 className="font-display text-xl font-bold text-saffron-800 flex items-center gap-2">
-              <span className="text-2xl">🏛️</span> ERO Office
-            </h3>
-            <p className="mt-2 text-sm text-saffron-900 font-medium">District Election Office, Sector 2</p>
-            <p className="text-xs text-saffron-700">2.5 km away • For corrections & updates</p>
-            <Button variant="outline" className="mt-4 w-full border-saffron-300 text-saffron-800 hover:bg-saffron-100">
-              Book Appointment
-            </Button>
-          </Card>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
+            <Card className="bg-gradient-to-br from-saffron-50 to-white border-saffron-200 border-2 hover:shadow-lg transition-shadow">
+              <h3 className="font-display text-xl font-bold text-saffron-800 flex items-center gap-2">
+                <span className="text-2xl drop-shadow-sm">🏛️</span> ERO Office
+              </h3>
+              <p className="mt-2 text-sm text-saffron-900 font-medium">District Election Office, Sector 2</p>
+              <p className="text-xs text-saffron-700 mt-1">2.5 km away • For corrections & updates</p>
+              <Button variant="ghost" className="mt-4 w-full border-saffron-300 text-saffron-800 hover:bg-saffron-100 bg-white">
+                Book Appointment
+              </Button>
+            </Card>
+          </motion.div>
 
-          <Card className="bg-indigo-chakra text-white text-center">
-            <h3 className="font-display text-lg font-bold">Migrant Voter?</h3>
-            <p className="mt-2 text-sm text-indigo-100">
-              If you are living away from your home state, find out how you can still participate.
-            </p>
-            <Button className="mt-4 bg-white text-indigo-chakra hover:bg-gray-100 w-full">
-              Explore Options
-            </Button>
-          </Card>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
+            <Card className="bg-[#312e81] border-2 border-indigo-400 text-white text-center shadow-xl relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-tr from-[#312e81] to-[#4f46e5] opacity-80 z-0"></div>
+              <div className="relative z-10">
+                <h3 className="font-display text-xl font-bold text-white tracking-wide flex items-center justify-center gap-2">
+                  <span>🚆</span> Migrant Voter?
+                </h3>
+                <p className="mt-3 text-sm text-indigo-100 font-medium">
+                  If you are living away from your home state, find out how you can still participate.
+                </p>
+                <Button className="mt-5 bg-white text-[#312e81] hover:bg-indigo-50 font-bold w-full shadow-lg">
+                  Explore Options
+                </Button>
+              </div>
+            </Card>
+          </motion.div>
         </div>
       </div>
     </main>

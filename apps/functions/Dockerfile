@@ -20,8 +20,8 @@ RUN pnpm install --frozen-lockfile
 FROM base AS builder
 WORKDIR /app
 RUN corepack enable pnpm
-COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+RUN pnpm install --frozen-lockfile
 
 # Build the project
 RUN pnpm --filter functions build

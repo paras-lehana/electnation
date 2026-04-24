@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getGeminiClient } from '@election-yatra/core';
+import { GoogleGeminiClient } from '@yatra/core';
 
 const router = Router();
 
@@ -11,7 +11,7 @@ router.post('/analysis', async (req, res) => {
   }
 
   try {
-    const gemini = getGeminiClient();
+    const gemini = new GoogleGeminiClient({ apiKey: process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || '' });
     const prompt = `Analyze the following election-related message for misinformation or rumors:
     "${text}"
     
@@ -34,4 +34,4 @@ router.post('/analysis', async (req, res) => {
   }
 });
 
-export const forwardRouter = router;
+export const forwardRouter: Router = router;
