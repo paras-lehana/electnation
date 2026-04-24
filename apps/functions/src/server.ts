@@ -24,11 +24,7 @@ export const buildApp = (config = loadConfig()): Express => {
   app.use(helmet({ contentSecurityPolicy: false }));
   app.use(
     cors({
-      origin: (origin, cb) => {
-        if (!origin) return cb(null, true);
-        if (config.allowedOrigins.includes(origin)) return cb(null, true);
-        return cb(new Error('origin not allowed'));
-      },
+      origin: config.allowedOrigins.includes('*') ? true : config.allowedOrigins,
       credentials: true,
     }),
   );
