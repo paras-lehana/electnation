@@ -53,4 +53,4 @@ EXPOSE 8080
 
 ENV PORT 8080
 
-CMD ["node", "apps/functions/dist/index.js"]
+CMD ["node", "apps/functions/dist/server.js"]
