@@ -44,6 +44,12 @@ export const buildApp = (config = loadConfig()): Express => {
   app.use('/api/tts', ttsRouter);
   app.use('/api/translate', translateRouter);
 
+  app.get('/api/config/public', (_req, res) => {
+    res.json({
+      mapsApiKey: config.maps.apiKey,
+    });
+  });
+
   app.get('/', (_req, res) => {
     res.json({
       service: 'election-yatra-api',

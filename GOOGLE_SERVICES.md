@@ -11,16 +11,16 @@
 | 7 | **Street View Static API** | Preview image of user's polling booth | planned |
 | 8 | **Google Calendar API** | Add registration-deadline / poll-day reminders via OAuth 2.0 | planned `CalendarClient` + `/api/calendar/*` |
 | 9 | **YouTube Data API v3** | Curated SVEEP educational playlist (non-partisan) | planned `YouTubeClient` + `/api/youtube/sveep` |
-| 10 | **Cloud Text-to-Speech** | Read-aloud on every content card (Neural2 / Chirp voices) | planned `TTSClient` + `/api/tts` |
-| 11 | **Cloud Speech-to-Text** | Mic input for chat & clinic | planned `STTClient` + `/api/stt` |
-| 12 | **Cloud Translation API v3** | UI-string fallback + Chunav Saathi reply localization | planned `TranslationClient` |
+| 10 | **Cloud Text-to-Speech** | ✅ Read-aloud on content cards (Neural2 / Chirp) | `apps/functions/src/routes/tts.ts` + `/api/tts` |
+| 11 | **Cloud Speech-to-Text** | 🧱 Mic input interface (stubs) | planned `STTClient` |
+| 12 | **Cloud Translation API v3** | ✅ UI fallback + Chunav Saathi reply localization | `apps/functions/src/routes/translate.ts` + `/api/translate` |
 | 13 | **Firebase Authentication** | Optional login for progress sync + calendar consent | planned |
 | 14 | **Firestore** | User progress, quiz answers, forward-clinic history, leaderboard | `packages/core/src/google/firebaseAdmin.ts` |
 | 15 | **Firebase Hosting** | Static Next.js deploy alongside Cloud Run backend | planned (CI) |
 | 16 | **reCAPTCHA Enterprise** | Abuse protection on chat, forward analysis, feedback, leaderboard upsert | planned middleware |
-| 17 | **Secret Manager** | All API keys (Gemini / Maps / OAuth / reCAPTCHA) | planned |
-| 18 | **Cloud Logging** | Structured JSON logs sink | partial — `apps/functions/src/middleware/logger.ts` |
-| 19 | **Cloud Run** | Backend container runtime | deployment config (planned) |
+| 17 | **Secret Manager** | ✅ Secure API key storage (Gemini/Maps/Calendar) | Cloud Run Config → `process.env` |
+| 18 | **Cloud Logging** | ✅ Structured JSON logs sink | `apps/functions/src/middleware/logger.ts` |
+| 19 | **Cloud Run** | ✅ Backend container runtime | `cloudbuild-api.yaml` + `cloudbuild-web.yaml` |
 | 20 | **Google Cloud Scheduler** | Weekly leaderboard rollover job | planned |
 | 21 | **Google Analytics 4** | Anonymous usage analytics | planned `analyticsClient` |
 

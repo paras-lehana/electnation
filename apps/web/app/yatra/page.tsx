@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const INITIAL_STATIONS = [
   { id: 'registration', title: 'Registration', description: 'Ensure you are in the voter list.', icon: '📝' },
@@ -18,6 +18,53 @@ export default function YatraPage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [currentStationIndex, setCurrentStationIndex] = useState(1); // Start at Verification since Registration is usually complete
+  const [stationInput, setStationInput] = useState('');
+  const [stationError, setStationError] = useState('');
+
+  const downloadCertificate = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 800;
+    canvas.height = 600;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Background
+    ctx.fillStyle = '#fffbeb'; // khadi-50
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Border
+    ctx.strokeStyle = '#f97316'; // saffron-500
+    ctx.lineWidth = 10;
+    ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+
+    // Title
+    ctx.fillStyle = '#312e81'; // indigo-chakra
+    ctx.font = 'bold 48px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Democracy Champion', canvas.width / 2, 120);
+
+    // Subtitle
+    ctx.fillStyle = '#374151';
+    ctx.font = '24px sans-serif';
+    ctx.fillText('This certifies that you have completed', canvas.width / 2, 200);
+    ctx.fillText('the Election Yatra and are prepared to vote.', canvas.width / 2, 240);
+
+    // Graphic / Placeholder
+    ctx.font = '80px sans-serif';
+    ctx.fillText('🏆 🇮🇳', canvas.width / 2, 380);
+
+    // Date
+    ctx.fillStyle = '#6b7280';
+    ctx.font = '18px sans-serif';
+    ctx.fillText(`Date: ${new Date().toLocaleDateString()}`, canvas.width / 2, 500);
+
+    // Trigger download
+    const url = canvas.toDataURL('image/png');
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'Election_Yatra_Certificate.png';
+    a.click();
+  };
 
   const handleListen = async () => {
     setIsLoading(true);
@@ -44,6 +91,19 @@ export default function YatraPage() {
   };
 
   const advanceStation = () => {
+    if (currentStationIndex >= INITIAL_STATIONS.length) return;
+    const currentId = INITIAL_STATIONS[currentStationIndex].id;
+    if (currentId === 'verification' && stationInput.length < 5) {
+      setStationError('Please enter a valid EPIC number (min 5 chars).');
+      return;
+    }
+    if (currentId === 'spot-fake' && stationInput.toLowerCase() !== 'forward') {
+      setStationError('Hint: Type "forward" to confirm you would use the Forward Clinic.');
+      return;
+    }
+
+    setStationError('');
+    setStationInput('');
     if (currentStationIndex < INITIAL_STATIONS.length) {
       setCurrentStationIndex(prev => prev + 1);
     }
@@ -122,16 +182,42 @@ export default function YatraPage() {
                         <h3 className={`font-display text-2xl font-bold ${status === 'current' ? 'text-[#312e81]' : 'text-ink-900'}`}>{station.title}</h3>
                         <p className="mt-1 text-ink-700 font-medium">{station.description}</p>
                       </div>
-                      {status === 'current' ? (
-                        <Button 
-                          onClick={advanceStation}
-                          className="bg-[#312e81] hover:bg-indigo-800 shadow-md shadow-indigo-900/20 text-white"
-                        >
-                          Complete Station
-                        </Button>
-                      ) : (
-                        <Button variant="ghost" disabled={status === 'upcoming'} className="w-full sm:w-auto">View Details</Button>
-                      )}
+                        {status === 'current' ? (
+                          <div className="flex flex-col gap-2 mt-4 sm:mt-0 items-end">
+                            {station.id === 'verification' && (
+                              <div className="flex flex-col gap-1 items-end">
+                                <input 
+                                  type="text" 
+                                  placeholder="Enter EPIC number..." 
+                                  className="border border-khadi-300 rounded px-3 py-1 text-sm text-ink-900"
+                                  value={stationInput}
+                                  onChange={(e) => setStationInput(e.target.value)}
+                                />
+                                {stationError && <p className="text-red-500 text-xs">{stationError}</p>}
+                              </div>
+                            )}
+                            {station.id === 'spot-fake' && (
+                              <div className="flex flex-col gap-1 items-end">
+                                <input 
+                                  type="text" 
+                                  placeholder="What tool do you use?" 
+                                  className="border border-khadi-300 rounded px-3 py-1 text-sm text-ink-900"
+                                  value={stationInput}
+                                  onChange={(e) => setStationInput(e.target.value)}
+                                />
+                                {stationError && <p className="text-red-500 text-xs">{stationError}</p>}
+                              </div>
+                            )}
+                            <Button 
+                              onClick={advanceStation}
+                              className="bg-[#312e81] hover:bg-indigo-800 shadow-md shadow-indigo-900/20 text-white w-full sm:w-auto"
+                            >
+                              Complete Station
+                            </Button>
+                          </div>
+                        ) : (
+                          <Button variant="ghost" disabled={status === 'upcoming'} className="w-full sm:w-auto mt-4 sm:mt-0">View Details</Button>
+                        )}
                     </div>
                   </Card>
                 </motion.div>
@@ -147,7 +233,7 @@ export default function YatraPage() {
             >
               <h2 className="font-display text-4xl font-bold text-leaf-900 mb-4">🎉 Yatra Completed!</h2>
               <p className="text-xl text-leaf-800 mb-8">You are now fully prepared to exercise your democratic right.</p>
-              <Button className="bg-leaf-600 hover:bg-leaf-700 text-white text-lg py-6 px-12">Download Certificate</Button>
+              <Button onClick={downloadCertificate} className="bg-leaf-600 hover:bg-leaf-700 text-white text-lg py-6 px-12">Download Certificate</Button>
             </motion.div>
           )}
         </div>

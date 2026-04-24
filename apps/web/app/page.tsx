@@ -1,6 +1,4 @@
 import Link from 'next/link';
-import { NavBar } from '@/components/layout/NavBar';
-import { Footer } from '@/components/layout/Footer';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Stepper } from '@/components/ui/Stepper';
@@ -19,7 +17,6 @@ const yatraSteps = [
 export default function HomePage() {
   return (
     <>
-      <NavBar />
       <main id="main">
         {/* HERO */}
         <section className="relative overflow-hidden bg-tricolor-soft">
@@ -160,7 +157,6 @@ export default function HomePage() {
           </Card>
         </section>
       </main>
-      <Footer />
     </>
   );
 }

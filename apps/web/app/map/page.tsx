@@ -17,8 +17,20 @@ export default function MapPage() {
   const [apiKey, setApiKey] = useState('');
   
   useEffect(() => {
-    // In a real app, this should be exposed to the client securely
-    setApiKey(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '');
+    // Try to get from build-time env first
+    const buildTimeKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+    if (buildTimeKey) {
+      setApiKey(buildTimeKey);
+      return;
+    }
+    // Fallback to runtime config from backend
+    const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://electnation-api-767171449038.us-central1.run.app';
+    fetch(`${apiUrl}/api/config/public`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.mapsApiKey) setApiKey(data.mapsApiKey);
+      })
+      .catch(err => console.error('Failed to fetch map config', err));
   }, []);
 
   const renderMapArea = () => {
@@ -107,7 +119,9 @@ export default function MapPage() {
               <p className="mt-2 text-sm text-ink-800 font-medium bg-leaf-50 p-2 rounded-md border border-leaf-100">Government Senior Secondary School, Room 4</p>
               <p className="text-xs text-ink-500 mt-2">1.2 km away • Approx. 15 min walk</p>
               <div className="mt-4 flex gap-2">
-                <Button className="w-full bg-leaf-600 hover:bg-leaf-700 shadow-md shadow-leaf-500/20">Get Directions</Button>
+                <a href={`https://www.google.com/maps/dir/?api=1&destination=${LOCATIONS.booth.lat},${LOCATIONS.booth.lng}`} target="_blank" rel="noreferrer" className="w-full">
+                  <Button className="w-full bg-leaf-600 hover:bg-leaf-700 shadow-md shadow-leaf-500/20">Get Directions</Button>
+                </a>
               </div>
             </Card>
           </motion.div>
@@ -119,9 +133,11 @@ export default function MapPage() {
               </h3>
               <p className="mt-2 text-sm text-saffron-900 font-medium">District Election Office, Sector 2</p>
               <p className="text-xs text-saffron-700 mt-1">2.5 km away • For corrections & updates</p>
-              <Button variant="ghost" className="mt-4 w-full border-saffron-300 text-saffron-800 hover:bg-saffron-100 bg-white">
-                Book Appointment
-              </Button>
+              <a href="https://voters.eci.gov.in" target="_blank" rel="noreferrer" className="w-full block mt-4">
+                <Button variant="ghost" className="w-full border-saffron-300 text-saffron-800 hover:bg-saffron-100 bg-white">
+                  Book Appointment
+                </Button>
+              </a>
             </Card>
           </motion.div>
 
@@ -135,9 +151,11 @@ export default function MapPage() {
                 <p className="mt-3 text-sm text-indigo-100 font-medium">
                   If you are living away from your home state, find out how you can still participate.
                 </p>
-                <Button className="mt-5 bg-white text-[#312e81] hover:bg-indigo-50 font-bold w-full shadow-lg">
-                  Explore Options
-                </Button>
+                <a href="https://voters.eci.gov.in/migrant-voters" target="_blank" rel="noreferrer" className="w-full block mt-5">
+                  <Button className="bg-white text-[#312e81] hover:bg-indigo-50 font-bold w-full shadow-lg">
+                    Explore Options
+                  </Button>
+                </a>
               </div>
             </Card>
           </motion.div>
