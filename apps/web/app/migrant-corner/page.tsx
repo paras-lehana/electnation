@@ -65,8 +65,8 @@ export default function MigrantCornerPage() {
               </p>
             </div>
             <div className="flex gap-4">
-              <Button size="lg" className="bg-white text-indigo-900 hover:bg-gray-100">Find Trains/Buses</Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-indigo-800">Add to Calendar</Button>
+              <Button className="bg-white text-indigo-900 hover:bg-gray-100">Find Trains/Buses</Button>
+              <Button variant="ghost" className="border-white text-white hover:bg-indigo-800">Add to Calendar</Button>
             </div>
           </div>
         </Card>

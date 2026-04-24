@@ -29,21 +29,21 @@ export default function PwdPage() {
           <span className="text-4xl mb-4 block">🚗</span>
           <h3 className="font-display text-xl font-bold text-ink-900 mb-2">Transport Assistance</h3>
           <p className="text-sm text-ink-700 mb-6">Free pick-up and drop facility is provided at many locations. Book your transport in advance via the Saksham ECI App.</p>
-          <Button variant="outline" className="w-full">Saksham App Info</Button>
+          <Button variant="ghost" className="w-full">Saksham App Info</Button>
         </Card>
 
         <Card className="bg-white border-2 border-khadi-200">
           <span className="text-4xl mb-4 block">🦽</span>
           <h3 className="font-display text-xl font-bold text-ink-900 mb-2">At-Booth Facilities</h3>
           <p className="text-sm text-ink-700 mb-6">Ramps, wheelchairs, priority queues, and volunteers are available at every polling station (AMF - Assured Minimum Facilities).</p>
-          <Button variant="outline" className="w-full">View Facility List</Button>
+          <Button variant="ghost" className="w-full">View Facility List</Button>
         </Card>
 
         <Card className="bg-white border-2 border-khadi-200">
           <span className="text-4xl mb-4 block">📑</span>
           <h3 className="font-display text-xl font-bold text-ink-900 mb-2">Braille & Audio</h3>
           <p className="text-sm text-ink-700 mb-6">EPIC cards in Braille and audio assistance at EVMs are available. Request these features for your EPIC profile.</p>
-          <Button variant="outline" className="w-full">Request Braille EPIC</Button>
+          <Button variant="ghost" className="w-full">Request Braille EPIC</Button>
         </Card>
 
         <Card className="md:col-span-3 bg-leaf-50 border-2 border-leaf-200 p-8">
@@ -54,7 +54,7 @@ export default function PwdPage() {
               <p className="text-leaf-800">For voters aged 85+ or PwD (with 40% benchmark disability), ECI provides the option to vote from the comfort of your home using postal ballots.</p>
               <div className="mt-4 flex gap-4">
                 <Button className="bg-leaf-600">Download Form 12D</Button>
-                <Button variant="outline" className="border-leaf-300 text-leaf-800">Watch Video Tutorial</Button>
+                <Button variant="ghost" className="border-leaf-300 text-leaf-800">Watch Video Tutorial</Button>
               </div>
             </div>
           </div>

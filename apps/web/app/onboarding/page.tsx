@@ -118,7 +118,7 @@ export default function OnboardingPage() {
 
           <div className="mt-12 flex justify-between gap-4">
             <Button 
-              variant="outline" 
+              variant="ghost" 
               disabled={currentStep === 0}
               onClick={() => setCurrentStep(currentStep - 1)}
             >

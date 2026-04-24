@@ -34,7 +34,7 @@ export default function ScenarioPage() {
           <div className="text-6xl mb-6">{scenario.content[0].image}</div>
           <h1 className="font-display text-4xl font-bold text-ink-900 mb-6">{scenario.title}</h1>
           <p className="text-xl text-ink-700 mb-8 leading-relaxed">{scenario.content[0].text}</p>
-          <Button size="lg" className="w-full text-lg py-6 bg-saffron-600 hover:bg-saffron-700" onClick={() => setStep(1)}>
+          <Button className="w-full text-lg py-6 bg-saffron-600 hover:bg-saffron-700" onClick={() => setStep(1)}>
             Continue →
           </Button>
         </Card>
@@ -77,7 +77,7 @@ export default function ScenarioPage() {
               <p>{scenario.choices[selectedChoice].feedback}</p>
               
               <div className="mt-6 flex gap-4">
-                <Button variant="outline" className="flex-1 bg-white" onClick={() => router.push('/play')}>
+                <Button variant="ghost" className="flex-1 bg-white" onClick={() => router.push('/play')}>
                   Back to Hub
                 </Button>
                 {scenario.choices[selectedChoice].isCorrect && (

@@ -22,10 +22,18 @@ router.post('/analysis', async (req, res) => {
     - recommendedAction: string (what the user should do)
     `;
 
-    const result = await gemini.generateText(prompt);
-    // Parse the JSON from Gemini response (assuming it follows the prompt)
-    // In a production app, we'd use a more robust parser or structured output.
-    const analysis = JSON.parse(result.replace(/```json|```/g, '').trim());
+    const geminiResult = await gemini.generate({
+      model: 'gemini-1.5-flash',
+      systemInstruction: 'You are an expert fact-checker for Indian elections. Return ONLY valid JSON.',
+      messages: [{ role: 'user', text: prompt }]
+    });
+
+    if (!geminiResult.ok) {
+      throw geminiResult.error;
+    }
+    
+    // Parse the JSON from Gemini response
+    const analysis = JSON.parse(geminiResult.value.replace(/```json|```/g, '').trim());
     
     res.json(analysis);
   } catch (error) {
