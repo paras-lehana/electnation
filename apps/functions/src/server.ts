@@ -24,7 +24,14 @@ export const buildApp = (config = loadConfig()): Express => {
   app.use(helmet({ contentSecurityPolicy: false }));
   app.use(
     cors({
-      origin: config.allowedOrigins.includes('*') ? true : config.allowedOrigins,
+      origin: (origin, callback) => {
+        // If wildcard is present, allow all
+        if (config.allowedOrigins.includes('*')) {
+          callback(null, true);
+        } else {
+          callback(null, config.allowedOrigins.includes(origin || '') || !origin);
+        }
+      },
       credentials: true,
     }),
   );
