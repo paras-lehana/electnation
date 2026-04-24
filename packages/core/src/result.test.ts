@@ -37,7 +37,7 @@ describe('Result Utilities', () => {
 
   it('mapResult should pass through Err values unchanged', () => {
     const res = err('error');
-    const mapped = mapResult(res, (x) => x * 2);
+    const mapped = mapResult(res, (x: number) => x * 2);
     expect(mapped.ok).toBe(false);
     if (!mapped.ok) expect(mapped.error).toBe('error');
   });
