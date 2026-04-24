@@ -57,36 +57,39 @@ export function ChatWidget() {
       const decoder = new TextDecoder();
 
       if (reader) {
-        let done = false;
-        while (!done) {
-          const { value, done: doneReading } = await reader.read();
-          done = doneReading;
-          if (value) {
-            const chunk = decoder.decode(value, { stream: true });
-            const events = chunk.split('\n\n');
-            for (const event of events) {
-              if (event.startsWith('data: ')) {
-                const dataStr = event.slice(6);
-                if (dataStr === '[DONE]') {
-                  done = true;
-                  break;
-                }
-                try {
-                  const data = JSON.parse(dataStr);
-                  if (data.delta) {
-                    setMessages((prev) => {
-                      const newMessages = [...prev];
-                      const lastMsg = newMessages[newMessages.length - 1];
-                      if (lastMsg && lastMsg.role === 'model') {
-                        lastMsg.text += data.delta;
-                      }
-                      return newMessages;
-                    });
+        let buffer = '';
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+          
+          for (const line of lines) {
+            const trimmedLine = line.trim();
+            if (!trimmedLine || !trimmedLine.startsWith('data: ')) continue;
+            
+            const dataStr = trimmedLine.slice(6);
+            if (dataStr === '[DONE]') continue;
+            
+            try {
+              const data = JSON.parse(dataStr);
+              if (data.delta) {
+                setMessages((prev) => {
+                  const newMessages = [...prev];
+                  const lastMsg = newMessages[newMessages.length - 1];
+                  if (lastMsg && lastMsg.role === 'model') {
+                    lastMsg.text += data.delta;
                   }
-                } catch (err) {
-                  console.error('Error parsing SSE data', err);
-                }
+                  return newMessages;
+                });
               }
+              if (data.error) {
+                throw new Error(data.message || 'AI Error');
+              }
+            } catch (err) {
+              console.error('Error parsing SSE data', err);
             }
           }
         }

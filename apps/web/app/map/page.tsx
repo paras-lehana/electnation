@@ -37,9 +37,16 @@ export default function MapPage() {
     if (!apiKey) {
       return (
         <Card className="flex h-[600px] flex-col items-center justify-center border-2 border-dashed border-indigo-chakra/20 bg-saffron-50 p-8 text-center shadow-inner">
-          <span className="text-4xl mb-4">🗺️</span>
-          <h3 className="font-display text-xl font-bold text-ink-900">Map is offline</h3>
-          <p className="mt-2 text-sm text-ink-700">Please set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY to enable interactive map features.</p>
+          <span className="text-4xl mb-4 animate-pulse">📡</span>
+          <h3 className="font-display text-xl font-bold text-ink-900">Connecting to Election Services...</h3>
+          <p className="mt-2 text-sm text-ink-700 max-w-md">We are fetching secure map tiles for your constituency. This usually takes a second.</p>
+          <Button 
+            variant="ghost" 
+            className="mt-6 border-saffron-300 text-saffron-700"
+            onClick={() => window.location.reload()}
+          >
+            Retry Connection
+          </Button>
         </Card>
       );
     }

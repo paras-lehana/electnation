@@ -6,12 +6,12 @@ import { Button } from '@/components/ui/Button';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const INITIAL_STATIONS = [
-  { id: 'registration', title: 'Registration', description: 'Ensure you are in the voter list.', icon: '📝' },
-  { id: 'verification', title: 'Verification', description: 'Check your EPIC and details.', icon: '🔍' },
-  { id: 'education', title: 'Education', description: 'Learn about candidates and issues.', icon: '📚' },
-  { id: 'planning', title: 'Planning', description: 'Find your booth and timing.', icon: '📅' },
-  { id: 'voting', title: 'The Vote', description: 'Step-by-step guide to the booth.', icon: '🗳️' },
-  { id: 'celebration', title: 'Celebration', description: 'Share your inked finger and badge.', icon: '🇮🇳' }
+  { id: 'registration', title: 'Registration', description: 'Ensure you are in the voter list.', icon: '📝', mission: 'Click "Check Portal" to verify your status.' },
+  { id: 'verification', title: 'Verification', description: 'Check your EPIC and details.', icon: '🔍', mission: 'Enter your 10-digit EPIC number.' },
+  { id: 'education', title: 'Education', description: 'Learn about candidates and issues.', icon: '📚', mission: 'Analyze a sample message for fake news.' },
+  { id: 'planning', title: 'Planning', description: 'Find your booth and timing.', icon: '📅', mission: 'Check your polling booth distance.' },
+  { id: 'voting', title: 'The Vote', description: 'Step-by-step guide to the booth.', icon: '🗳️', mission: 'Complete the voting day checklist.' },
+  { id: 'celebration', title: 'Celebration', description: 'Share your inked finger and badge.', icon: '🇮🇳', mission: 'Download your Democracy Champion card!' }
 ];
 
 export default function YatraPage() {
@@ -94,12 +94,25 @@ export default function YatraPage() {
     const currentStation = INITIAL_STATIONS[currentStationIndex];
     if (!currentStation) return;
     const currentId = currentStation.id;
-    if (currentId === 'verification' && stationInput.length < 5) {
-      setStationError('Please enter a valid EPIC number (min 5 chars).');
+
+    if (currentId === 'registration' && stationInput !== 'checked') {
+      setStationError('Please click the "Check Portal" button first.');
       return;
     }
-    if (currentId === 'spot-fake' && stationInput.toLowerCase() !== 'forward') {
-      setStationError('Hint: Type "forward" to confirm you would use the Forward Clinic.');
+    if (currentId === 'verification' && stationInput.length < 10) {
+      setStationError('Please enter a valid 10-digit EPIC number.');
+      return;
+    }
+    if (currentId === 'education' && stationInput.toLowerCase() !== 'fake') {
+      setStationError('Correct diagnosis: This message about "EVM Bluetooth" is FAKE.');
+      return;
+    }
+    if (currentId === 'planning' && stationInput !== 'found') {
+      setStationError('Please use the map to find your booth first.');
+      return;
+    }
+    if (currentId === 'voting' && stationInput !== 'ready') {
+      setStationError('Please check off all items in the list.');
       return;
     }
 
@@ -184,34 +197,73 @@ export default function YatraPage() {
                         <p className="mt-1 text-ink-700 font-medium">{station.description}</p>
                       </div>
                         {status === 'current' ? (
-                          <div className="flex flex-col gap-2 mt-4 sm:mt-0 items-end">
+                          <div className="flex flex-col gap-4 mt-4 sm:mt-0 items-end w-full sm:w-[300px]">
+                            <div className="w-full bg-khadi-100 p-3 rounded-lg border border-khadi-200">
+                                <p className="text-xs font-bold text-ink-600 uppercase mb-2">Current Mission</p>
+                                <p className="text-sm text-ink-900 font-medium">{station.mission}</p>
+                            </div>
+
+                            {station.id === 'registration' && (
+                              <Button 
+                                onClick={() => setStationInput('checked')}
+                                variant="outline"
+                                className="w-full border-saffron-300 text-saffron-800 hover:bg-saffron-50"
+                              >
+                                {stationInput === 'checked' ? '✅ Portal Verified' : '🌐 Visit ECI Portal'}
+                              </Button>
+                            )}
+
                             {station.id === 'verification' && (
-                              <div className="flex flex-col gap-1 items-end">
+                              <div className="w-full">
                                 <input 
                                   type="text" 
-                                  placeholder="Enter EPIC number..." 
-                                  className="border border-khadi-300 rounded px-3 py-1 text-sm text-ink-900"
+                                  placeholder="Enter EPIC number (e.g. ABC1234567)" 
+                                  className="w-full border border-khadi-300 rounded-lg px-3 py-2 text-sm text-ink-900 focus:border-indigo-500 focus:outline-none"
                                   value={stationInput}
-                                  onChange={(e) => setStationInput(e.target.value)}
+                                  onChange={(e) => setStationInput(e.target.value.toUpperCase())}
                                 />
-                                {stationError && <p className="text-red-500 text-xs">{stationError}</p>}
+                                {stationError && <p className="text-red-500 text-xs mt-1">{stationError}</p>}
                               </div>
                             )}
-                            {station.id === 'spot-fake' && (
-                              <div className="flex flex-col gap-1 items-end">
-                                <input 
-                                  type="text" 
-                                  placeholder="What tool do you use?" 
-                                  className="border border-khadi-300 rounded px-3 py-1 text-sm text-ink-900"
-                                  value={stationInput}
-                                  onChange={(e) => setStationInput(e.target.value)}
-                                />
-                                {stationError && <p className="text-red-500 text-xs">{stationError}</p>}
+
+                            {station.id === 'education' && (
+                              <div className="w-full space-y-2">
+                                <p className="text-[10px] text-ink-500 italic">"Vote early to get free snacks at the booth!"</p>
+                                <div className="flex gap-2">
+                                    <Button size="sm" onClick={() => setStationInput('real')} className="flex-1 bg-green-50 text-green-700 border-green-200 hover:bg-green-100">Real</Button>
+                                    <Button size="sm" onClick={() => setStationInput('fake')} className="flex-1 bg-red-50 text-red-700 border-red-200 hover:bg-red-100">Fake</Button>
+                                </div>
+                                {stationError && <p className="text-red-500 text-[10px]">{stationError}</p>}
                               </div>
                             )}
+
+                            {station.id === 'planning' && (
+                              <Button 
+                                onClick={() => setStationInput('found')}
+                                variant="outline"
+                                className="w-full border-leaf-300 text-leaf-800 hover:bg-leaf-50"
+                              >
+                                {stationInput === 'found' ? '✅ Booth Found' : '📍 Open Map'}
+                              </Button>
+                            )}
+
+                            {station.id === 'voting' && (
+                              <div className="w-full space-y-1">
+                                {['Carry EPIC/ID', 'Check Booth No.', 'Avoid Party Colors'].map(item => (
+                                    <label key={item} className="flex items-center gap-2 text-xs text-ink-700 cursor-pointer">
+                                        <input type="checkbox" onChange={(e) => {
+                                            if (e.target.checked) setStationInput('ready');
+                                        }} />
+                                        {item}
+                                    </label>
+                                ))}
+                                {stationError && <p className="text-red-500 text-[10px]">{stationError}</p>}
+                              </div>
+                            )}
+
                             <Button 
                               onClick={advanceStation}
-                              className="bg-[#312e81] hover:bg-indigo-800 shadow-md shadow-indigo-900/20 text-white w-full sm:w-auto"
+                              className="bg-[#312e81] hover:bg-indigo-800 shadow-md shadow-indigo-900/20 text-white w-full"
                             >
                               Complete Station
                             </Button>
