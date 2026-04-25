@@ -49,8 +49,8 @@ export const loadConfig = (): AppConfig => ({
 
   gemini: {
     apiKey: require_('GEMINI_API_KEY'),
-    chatModel: process.env.VERTEX_MODEL_CHAT ?? 'gemini-2.5-flash',
-    analysisModel: process.env.VERTEX_MODEL_ANALYSIS ?? 'gemini-2.5-pro',
+    chatModel: process.env.VERTEX_MODEL_CHAT ?? 'gemini-flash-latest',
+    analysisModel: process.env.VERTEX_MODEL_ANALYSIS ?? 'gemini-pro-latest',
   },
 
   maps: {
