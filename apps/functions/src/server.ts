@@ -48,9 +48,15 @@ export const buildApp = (config = loadConfig()): Express => {
   app.use('/api/translate', translateRouter);
 
   app.get('/api/config/public', (_req, res) => {
-    res.json({
-      mapsApiKey: config.maps.apiKey,
-    });
+    try {
+      logger.info('config.public_requested', { hasMapsKey: !!config.maps.apiKey });
+      res.json({
+        mapsApiKey: config.maps.apiKey || '',
+      });
+    } catch (err) {
+      logger.error('config.public_failed', { err: String(err) });
+      res.status(500).json({ error: 'Internal server error fetching config' });
+    }
   });
 
   app.get('/', (_req, res) => {
