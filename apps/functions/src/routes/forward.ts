@@ -36,15 +36,24 @@ router.post('/analysis', async (req, res) => {
     
     // Parse the JSON from Gemini response — find first { and last }
     const rawValue = geminiResult.value;
+    console.log('Gemini raw response for analysis:', rawValue);
+    
     const startIdx = rawValue.indexOf('{');
     const endIdx = rawValue.lastIndexOf('}');
     
     if (startIdx === -1 || endIdx === -1) {
+      console.error('No JSON found in Gemini response');
       throw new Error('Gemini did not return valid JSON');
     }
     
     const jsonStr = rawValue.slice(startIdx, endIdx + 1);
-    const analysis = JSON.parse(jsonStr);
+    let analysis;
+    try {
+      analysis = JSON.parse(jsonStr);
+    } catch (parseErr) {
+      console.error('JSON Parse error:', parseErr, 'on string:', jsonStr);
+      throw parseErr;
+    }
     
     res.json(analysis);
   } catch (error) {
