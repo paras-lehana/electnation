@@ -24,14 +24,24 @@ router.post('/analysis', async (req, res) => {
     - recommendedAction: string (what the user should do)
     `;
 
-    const geminiResult = await gemini.generate({
-      model: 'gemini-flash-latest',
-      systemInstruction: 'You are an expert fact-checker for Indian elections. Return ONLY valid JSON.',
-      messages: [{ role: 'user', text: prompt }]
-    });
-
-    if (!geminiResult.ok) {
-      throw geminiResult.error;
+    let geminiResult;
+    let retries = 3;
+    while (retries > 0) {
+      geminiResult = await gemini.generate({
+        model: 'gemini-flash-latest',
+        systemInstruction: 'You are an expert fact-checker for Indian elections. Return ONLY valid JSON.',
+        messages: [{ role: 'user', text: prompt }]
+      });
+      if (geminiResult.ok) break;
+      retries--;
+      if (retries > 0) {
+        console.log(`Retrying Gemini analysis... (${retries} left)`);
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+    }
+    
+    if (!geminiResult || !geminiResult.ok) {
+      throw geminiResult?.error || new Error('Failed after retries');
     }
     
     // Parse the JSON from Gemini response — find first { and last }
