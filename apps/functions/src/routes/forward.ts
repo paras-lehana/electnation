@@ -68,7 +68,10 @@ router.post('/analysis', async (req, res) => {
     res.json(analysis);
   } catch (error) {
     console.error('Analysis error:', error);
-    res.status(500).json({ error: 'Failed to analyze message' });
+    res.status(500).json({ 
+      error: 'Failed to analyze message', 
+      details: error instanceof Error ? error.message : String(error) 
+    });
   }
 });
 
