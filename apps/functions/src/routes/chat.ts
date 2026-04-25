@@ -41,6 +41,7 @@ export const chatRouter = (config: AppConfig): Router => {
   const r = Router();
 
   r.post('/chat', async (req, res) => {
+    logger.info('chat.request_received', { model: config.gemini.chatModel, hasKey: !!config.gemini.apiKey });
     const parsed = ChatRequestSchema.safeParse(req.body);
     if (!parsed.success) {
       res.status(400).json({

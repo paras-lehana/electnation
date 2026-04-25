@@ -11,7 +11,9 @@ router.post('/analysis', async (req, res) => {
   }
 
   try {
-    const gemini = new GoogleGeminiClient({ apiKey: process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || '' });
+    const key = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || '';
+    console.log('Forward analysis using model: gemini-2.5-flash, key exists:', !!key);
+    const gemini = new GoogleGeminiClient({ apiKey: key });
     const prompt = `Analyze the following election-related message for misinformation or rumors:
     "${text}"
     
