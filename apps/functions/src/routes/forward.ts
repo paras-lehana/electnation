@@ -23,7 +23,7 @@ router.post('/analysis', async (req, res) => {
     `;
 
     const geminiResult = await gemini.generate({
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.5-flash',
       systemInstruction: 'You are an expert fact-checker for Indian elections. Return ONLY valid JSON.',
       messages: [{ role: 'user', text: prompt }]
     });
