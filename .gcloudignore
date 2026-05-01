@@ -18,6 +18,10 @@ dist/
 coverage/
 **/coverage/
 
+# Local CLI artifacts not needed inside Cloud Build images
+gh.zip
+bin/gh.exe
+
 # Ignored research/session material
 docs/
 

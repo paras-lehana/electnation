@@ -55,7 +55,8 @@ Always deploy to `electnation-api` and `electnation-web`; do not create new serv
 Deployment can take several minutes because Cloud Build uploads source, rebuilds the monorepo
 Docker image, pushes it to Container Registry, creates a new Cloud Run revision, and shifts traffic.
 Keep `.gcloudignore` small and correct so `node_modules`, `.next`, `dist`, ignored `docs/`, and
-`.env*` files do not slow uploads or leak local material.
+`.env*` files do not slow uploads or leak local material. This repo also excludes `gh.zip`
+and `bin/gh.exe` from Cloud Build because they add roughly 60 MB and are not needed in images.
 
 Build images with Cloud Build:
 
