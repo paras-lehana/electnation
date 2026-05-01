@@ -15,7 +15,7 @@ export default function ClinicPage() {
     verificationSteps: Array<{ en: string; hi?: string }>;
     eciSources: string[];
     recommendedAction: string;
-    mode: 'gemini' | 'demo' | 'fallback';
+    mode: 'llm-service' | 'demo' | 'fallback';
     recaptcha?: { bypassed: boolean };
   }>(null);
   const [errorMessage, setErrorMessage] = useState('');

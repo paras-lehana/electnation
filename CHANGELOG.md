@@ -18,12 +18,22 @@ All notable changes to Election Yatra.
 
 ### Fixed
 - AI and `/clinic` no longer depend on a direct `GEMINI_API_KEY` being present in Cloud Run.
+- Explicit `RECAPTCHA_BYPASS=true` can now unblock the Forward Clinic demo flow in production deployments.
+- Cloud Run API CORS now allows the deployed web origin to call Forward Clinic from the browser.
+- Forward Clinic normalizes useful AI JSON with common shape drift instead of falling back for minor key/name differences.
 
 ### Security
 - Added explicit documentation that `LLM_SERVICE_API_KEY` and `LLM_SERVICE_INTERNAL_KEY` must stay in Cloud Run env/Secret Manager or ignored `.env.local` only.
 
 ### Verified
-- Pending final local and live deployment validation for this change.
+- `pnpm --filter @yatra/functions type-check` passed.
+- `pnpm --filter @yatra/web type-check` passed.
+- `pnpm --filter @yatra/functions test` passed (8 tests).
+- Cloud Build completed for API (`sha256:64f9595ee46ad603ead709456bef3e4064752f3648ec4e3ec0949389f58736c9`) and web (`sha256:859c13f655efbde54c4840206a056966c781b47ff3cab9d519cb2b6fcef6a09f`).
+- Live API chat streamed SSE tokens.
+- Live Forward Clinic returned `mode: llm-service`, `riskLevel: 5`, and `recaptcha.bypassed: true`.
+- Live browser Forward Clinic returned `Mode: llm-service` with official ECI links on desktop and 390px mobile viewport.
+- Live web routes `/`, `/clinic`, `/easy-mode`, `/sanrakshan`, and `/play/scenario/vote-sanrakshan` returned 200 from `electnation-web-00020-vxx`.
 
 ## [0.3.0] — 2026-05-02
 

@@ -127,7 +127,9 @@ export const loadConfig = (): AppConfig => ({
     siteKey: require_('RECAPTCHA_SITE_KEY', process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY),
     apiKey: require_('RECAPTCHA_API_KEY', process.env.GOOGLE_API_KEY),
     minScore: Number(process.env.RECAPTCHA_MIN_SCORE ?? 0.5),
-    bypass: process.env.RECAPTCHA_BYPASS !== 'false' && process.env.NODE_ENV !== 'production',
+    bypass:
+      process.env.RECAPTCHA_BYPASS === 'true' ||
+      (process.env.RECAPTCHA_BYPASS !== 'false' && process.env.NODE_ENV !== 'production'),
   },
 
   youtube: {

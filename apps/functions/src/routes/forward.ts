@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { Router } from 'express';
 import {
+  ForwardCategorySchema,
   ForwardAnalysisRequestSchema,
   ForwardAnalysisSchema,
   GoogleRecaptchaEnterpriseClient,
@@ -12,6 +13,21 @@ import { LlmServiceClient } from '../services/llmServiceClient.js';
 type AnalysisMode = 'llm-service' | 'demo' | 'fallback';
 
 const OFFICIAL_SOURCES = ['https://eci.gov.in', 'https://voters.eci.gov.in'];
+const CATEGORY_ALIASES: Record<string, string> = {
+  'fake news': 'fake-news',
+  fakenews: 'fake-news',
+  misinformation: 'fake-news',
+  false: 'fake-news',
+  rumor: 'unverified-rumor',
+  rumour: 'unverified-rumor',
+  unverified: 'unverified-rumor',
+  misleading: 'misleading-context',
+  'misleading context': 'misleading-context',
+  exaggerated: 'exaggerated-true',
+  true: 'benign',
+  safe: 'benign',
+  hate: 'hate-speech',
+};
 
 const extractJson = (value: string): unknown => {
   const cleaned = value.trim().replace(/^```(?:json)?/i, '').replace(/```$/i, '').trim();
@@ -19,6 +35,101 @@ const extractJson = (value: string): unknown => {
   const end = cleaned.lastIndexOf('}');
   if (start === -1 || end === -1 || end <= start) throw new Error('No JSON object found');
   return JSON.parse(cleaned.slice(start, end + 1));
+};
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+const textValue = (value: unknown): string | undefined => {
+  if (typeof value !== 'string') return undefined;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+};
+
+const valueFor = (record: Record<string, unknown>, keys: string[]): unknown => {
+  for (const key of keys) {
+    if (record[key] !== undefined) return record[key];
+  }
+  return undefined;
+};
+
+const normalizeCategory = (value: unknown, fallback: string): string => {
+  const raw = textValue(value);
+  if (!raw) return fallback;
+
+  const normalized = raw.toLowerCase().replace(/_/g, '-').trim();
+  const direct = ForwardCategorySchema.safeParse(normalized);
+  if (direct.success) return direct.data;
+
+  const alias = CATEGORY_ALIASES[normalized.replace(/-/g, ' ') ] ?? CATEGORY_ALIASES[normalized];
+  const aliased = ForwardCategorySchema.safeParse(alias);
+  return aliased.success ? aliased.data : fallback;
+};
+
+const normalizeRiskLevel = (value: unknown, fallback: number): number => {
+  const numeric = typeof value === 'number' ? value : Number(textValue(value));
+  if (!Number.isFinite(numeric)) return fallback;
+  return Math.min(5, Math.max(1, Math.round(numeric)));
+};
+
+const normalizeLocalizedString = (value: unknown, fallback: Record<string, string>) => {
+  const rawText = textValue(value);
+  if (rawText) return { en: rawText };
+
+  if (!isRecord(value)) return fallback;
+
+  const localized: Record<string, string> = {};
+  for (const [key, entryValue] of Object.entries(value)) {
+    const entryText = textValue(entryValue);
+    if (entryText) localized[key] = entryText;
+  }
+
+  const english = localized.en ?? localized.english ?? localized.text ?? localized.summary;
+  return english ? { ...localized, en: english } : fallback;
+};
+
+const normalizeVerificationSteps = (value: unknown, fallback: Array<Record<string, string>>) => {
+  if (!Array.isArray(value)) return fallback;
+
+  const steps = value
+    .map((step) => normalizeLocalizedString(step, { en: '' }))
+    .filter((step): step is Record<string, string> & { en: string } => Boolean(step.en))
+    .slice(0, 10);
+
+  return steps.length > 0 ? steps : fallback;
+};
+
+const normalizeSources = (value: unknown): string[] => {
+  const candidates = Array.isArray(value) ? value : [];
+  const sources = candidates
+    .map((source) => textValue(source))
+    .filter((source): source is string => Boolean(source))
+    .filter((source) => URL.canParse(source))
+    .slice(0, 10);
+
+  return sources.length > 0 ? sources : OFFICIAL_SOURCES;
+};
+
+export const normalizeForwardAnalysisJson = (modelJson: unknown, text: string, locale = 'en') => {
+  if (!isRecord(modelJson)) throw new Error('Model JSON must be an object');
+
+  const fallback = localAnalysis(text, locale);
+  return ForwardAnalysisSchema.parse({
+    ...fallback,
+    category: normalizeCategory(valueFor(modelJson, ['category', 'classification', 'label']), fallback.category),
+    riskLevel: normalizeRiskLevel(valueFor(modelJson, ['riskLevel', 'risk_level', 'risk', 'score']), fallback.riskLevel),
+    explanation: normalizeLocalizedString(
+      valueFor(modelJson, ['explanation', 'reason', 'analysis', 'rationale']),
+      fallback.explanation,
+    ),
+    verificationSteps: normalizeVerificationSteps(
+      valueFor(modelJson, ['verificationSteps', 'verification_steps', 'steps', 'actions']),
+      fallback.verificationSteps,
+    ),
+    eciSources: normalizeSources(
+      valueFor(modelJson, ['eciSources', 'eci_sources', 'officialSources', 'official_sources', 'sources']),
+    ),
+  });
 };
 
 const localAnalysis = (text: string, locale = 'en') => {
@@ -163,23 +274,8 @@ export const forwardRouter = (config: AppConfig): Router => {
           ],
         });
 
-        const modelJson = extractJson(result.content) as Record<string, unknown>;
-        const candidate = {
-          id: randomUUID(),
-          inputText: parsed.data.text,
-          detectedLocale: parsed.data.locale ?? 'en',
-          analyzedAt: new Date().toISOString(),
-          eciSources: OFFICIAL_SOURCES,
-          ...modelJson,
-        };
-        const checked = ForwardAnalysisSchema.safeParse(candidate);
-        if (checked.success) {
-          analysis = checked.data;
-          mode = 'llm-service';
-        } else {
-          analysis = localAnalysis(parsed.data.text, parsed.data.locale ?? 'en');
-          mode = 'fallback';
-        }
+        analysis = normalizeForwardAnalysisJson(extractJson(result.content), parsed.data.text, parsed.data.locale ?? 'en');
+        mode = 'llm-service';
       } catch (cause) {
         logger.warn('forward.llm_service_fallback', { cause: String(cause).slice(0, 160) });
         analysis = localAnalysis(parsed.data.text, parsed.data.locale ?? 'en');

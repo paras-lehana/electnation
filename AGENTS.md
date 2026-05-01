@@ -79,6 +79,10 @@ gcloud run deploy electnation-api --image gcr.io/event-manager-promptwars/electn
 gcloud run deploy electnation-web --image gcr.io/event-manager-promptwars/electnation-web --region us-central1 --platform managed --allow-unauthenticated --project event-manager-promptwars
 ```
 
+PowerShell gotcha: quote comma-separated Cloud Run env var lists and use the
+`--flag="KEY=value,KEY2=value2"` form. Unquoted comma lists can be split before
+they reach `gcloud`, leaving only the first env var on the revision.
+
 Post-deploy verification:
 
 ```powershell
@@ -97,6 +101,7 @@ and not through direct provider SDK calls in route handlers.
 
 Production settings:
 
+- `ALLOWED_ORIGINS=https://electnation-web-767171449038.us-central1.run.app`
 - `LLM_SERVICE_URL=https://llm.lehana.in`
 - `LLM_SERVICE_ENDPOINT=antigravity-manager`
 - `LLM_SERVICE_MODEL=gemini-3-flash`
@@ -115,8 +120,12 @@ Cloud Run secret wiring pattern:
 ```powershell
 gcloud secrets create electnation-llm-service-key --replication-policy=automatic --project event-manager-promptwars
 gcloud secrets versions add electnation-llm-service-key --data-file=- --project event-manager-promptwars
-gcloud run services update electnation-api --region us-central1 --project event-manager-promptwars --set-env-vars DEMO_MODE=false,LLM_SERVICE_ENABLED=true,LLM_SERVICE_URL=https://llm.lehana.in,LLM_SERVICE_ENDPOINT=antigravity-manager,LLM_SERVICE_MODEL=gemini-3-flash,LLM_SERVICE_PROVIDER=custom,LLM_SERVICE_PROVIDER_BASE_URL=https://antigravity.aidhunik.com/v1,LLM_SERVICE_BYOK=false --set-secrets LLM_SERVICE_INTERNAL_KEY=electnation-llm-service-key:latest
+gcloud run services update electnation-api --region us-central1 --project event-manager-promptwars --set-env-vars="DEMO_MODE=false,RECAPTCHA_BYPASS=true,ALLOWED_ORIGINS=https://electnation-web-767171449038.us-central1.run.app,LLM_SERVICE_ENABLED=true,LLM_SERVICE_URL=https://llm.lehana.in,LLM_SERVICE_ENDPOINT=antigravity-manager,LLM_SERVICE_MODEL=gemini-3-flash,LLM_SERVICE_PROVIDER=custom,LLM_SERVICE_PROVIDER_BASE_URL=https://antigravity.aidhunik.com/v1,LLM_SERVICE_BYOK=false" --set-secrets LLM_SERVICE_INTERNAL_KEY=electnation-llm-service-key:latest
 ```
+
+For the hackathon demo deployment, `/clinic` uses `RECAPTCHA_BYPASS=true` so judges
+can test the AI analysis without a production site-key challenge. Do not remove the
+reCAPTCHA route code; turn the bypass off when a live reCAPTCHA site key is wired.
 
 ## Gotchas
 

@@ -67,6 +67,10 @@ run without credentials. Production uses backend-only `llm-service` with
 Antigravity `gemini-3-flash`; secrets stay in Cloud Run env/Secret Manager and
 are never exposed through frontend config.
 
+For the hackathon Cloud Run demo, `RECAPTCHA_BYPASS=true` is set on the API so
+judges can exercise Forward Clinic without a site-key challenge. Turn that off
+after wiring a production reCAPTCHA site key.
+
 ### Smoke tests
 
 ```bash
