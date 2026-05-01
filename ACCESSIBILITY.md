@@ -11,13 +11,14 @@ Election Yatra targets **WCAG 2.2 AA** and ships an opinionated
 4. **Semantic HTML** — landmark roles, heading hierarchy H1 → H3, lists where lists belong, live regions for streaming chat.
 5. **Color contrast** — all body text ≥ 4.5:1 against khadi background; primary CTA saffron-500 on white passes AAA.
 
+auto-plays a 15-second Chunav Saathi narration in the selected locale.
 ## Easy Mode
 
-Toggled from NavBar language switcher ("Simple" option). Strips the UI
-to 4 giant icon-cards: **Register · Verify · Booth · Help**. Each card
-auto-plays a 15-second Chunav Saathi narration in the selected locale.
-Designed for Anganwadi classes, senior-citizen meetups, and rural
-digital-literacy volunteers.
+`/easy-mode` provides a low-literacy, audio-first entry point with large
+action cards for Yatra, Forward Clinic, Map, Migrant Corner, Vote
+Sanrakshan, and PwD support. It includes a visible transcript and a
+one-tap read-aloud button so community classes, senior-citizen groups,
+and rural digital-literacy volunteers can run the experience aloud.
 
 ## Languages
 

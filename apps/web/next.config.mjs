@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  output: 'standalone',
+  ...(process.env.NEXT_STANDALONE === 'true' ? { output: 'standalone' } : {}),
   transpilePackages: ['@yatra/core'],
   async rewrites() {
     return [

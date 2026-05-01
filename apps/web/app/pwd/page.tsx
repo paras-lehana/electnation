@@ -7,23 +7,22 @@ import { Button } from '@/components/ui/Button';
 export default function PwdPage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [audioUrl, setAudioUrl] = useState('');
+  const transcript = 'Accessibility and PwD Support. The Election Commission of India is committed to making voting accessible for all. Explore transport assistance, at-booth facilities, Braille and audio support, and voting from home through Form 12D.';
 
   const handleListen = async () => {
     setIsLoading(true);
     try {
-      const text = "Accessibility and PwD Support. The Election Commission of India is committed to making voting accessible for all. Explore the facilities available for Persons with Disabilities and Senior Citizens. Transport Assistance. At-Booth Facilities. Braille and Audio. Voting from Home via Form 12D.";
       const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://electnation-api-767171449038.us-central1.run.app';
       const response = await fetch(`${apiUrl}/api/tts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, languageCode: 'en-IN' }),
+        body: JSON.stringify({ text: transcript, languageCode: 'en-IN' }),
       });
       if (!response.ok) throw new Error('TTS failed');
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
-      const audio = new Audio(url);
-      audio.onended = () => setIsPlaying(false);
-      audio.play();
+      setAudioUrl(url);
       setIsPlaying(true);
     } catch (e) {
       console.error(e);
@@ -48,6 +47,14 @@ export default function PwdPage() {
                   {isLoading ? '⏳ Loading Audio...' : isPlaying ? '🔊 Playing...' : '🎧 Listen to Page'}
                 </Button>
               </div>
+              {audioUrl && (
+                <div className="mb-4 rounded-xl border border-indigo-chakra/20 bg-indigo-50 p-4" aria-live="polite">
+                  <audio controls src={audioUrl} className="w-full" onEnded={() => setIsPlaying(false)}>
+                    Your browser does not support audio playback.
+                  </audio>
+                  <p className="mt-3 text-sm text-indigo-chakra"><strong>Transcript:</strong> {transcript}</p>
+                </div>
+              )}
               <h1 className="font-display text-4xl font-bold text-ink-900 md:text-5xl">
                 Accessibility <span className="text-indigo-chakra">& PwD</span> Support
               </h1>

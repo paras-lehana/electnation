@@ -5,3 +5,5 @@ export * from './translationClient.js';
 export * from './youtubeClient.js';
 export * from './ttsClient.js';
 export * from './sttClient.js';
+export * from './recaptchaClient.js';
+export * from './calendarClient.js';

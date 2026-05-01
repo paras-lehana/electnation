@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { APIProvider, Map, AdvancedMarker, Pin } from '@vis.gl/react-google-maps';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -15,35 +15,51 @@ const LOCATIONS = {
 
 export default function MapPage() {
   const [apiKey, setApiKey] = useState('');
+  const [mapId, setMapId] = useState('election_yatra_map');
+  const [isConfigLoading, setIsConfigLoading] = useState(true);
+  const [configError, setConfigError] = useState('');
   
-  useEffect(() => {
+  const loadPublicConfig = useCallback(async () => {
+    setIsConfigLoading(true);
+    setConfigError('');
     // Try to get from build-time env first
     const buildTimeKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
     if (buildTimeKey) {
       setApiKey(buildTimeKey);
+      setIsConfigLoading(false);
       return;
     }
     // Fallback to runtime config from backend
     const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://electnation-api-767171449038.us-central1.run.app';
-    fetch(`${apiUrl}/api/config/public`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.mapsApiKey) setApiKey(data.mapsApiKey);
-      })
-      .catch(err => console.error('Failed to fetch map config', err));
+    try {
+      const res = await fetch(`${apiUrl}/api/config/public`);
+      const data = await res.json();
+      if (data.mapsApiKey) setApiKey(data.mapsApiKey);
+      if (data.mapsMapId) setMapId(data.mapsMapId);
+      if (!data.mapsApiKey) setConfigError('Map tiles are in demo mode because no Maps API key is configured.');
+    } catch {
+      setConfigError('Could not reach the map config service. Showing the accessible facility list instead.');
+    } finally {
+      setIsConfigLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    void loadPublicConfig();
+  }, [loadPublicConfig]);
 
   const renderMapArea = () => {
     if (!apiKey) {
       return (
-        <Card className="flex h-[600px] flex-col items-center justify-center border-2 border-dashed border-indigo-chakra/20 bg-saffron-50 p-8 text-center shadow-inner">
+        <Card className="flex h-[600px] flex-col items-center justify-center border-2 border-dashed border-indigo-chakra/20 bg-saffron-50 p-8 text-center shadow-inner" data-testid="map-fallback">
           <span className="text-4xl mb-4 animate-pulse">📡</span>
-          <h3 className="font-display text-xl font-bold text-ink-900">Connecting to Election Services...</h3>
-          <p className="mt-2 text-sm text-ink-700 max-w-md">We are fetching secure map tiles for your constituency. This usually takes a second.</p>
+          <h3 className="font-display text-xl font-bold text-ink-900">{isConfigLoading ? 'Connecting to Election Services...' : 'Accessible Map Demo Mode'}</h3>
+          <p className="mt-2 text-sm text-ink-700 max-w-md">{configError || 'We are fetching secure map tiles for your constituency. This usually takes a second.'}</p>
           <Button 
             variant="ghost" 
             className="mt-6 border-saffron-300 text-saffron-700"
-            onClick={() => window.location.reload()}
+            onClick={loadPublicConfig}
+            data-testid="map-config-retry"
           >
             Retry Connection
           </Button>
@@ -57,7 +73,7 @@ export default function MapPage() {
             <Map
               defaultCenter={LOCATIONS.user}
               defaultZoom={14}
-              mapId="election_yatra_map" // Using a dummy map id, requires advanced markers
+              mapId={mapId}
               disableDefaultUI={false}
               className="w-full h-full"
             >
@@ -119,7 +135,7 @@ export default function MapPage() {
         {/* Info Sidebar */}
         <div className="space-y-6">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-            <Card withPaisley className="bg-white border-leaf-100 border-2 hover:shadow-lg transition-shadow">
+            <Card withPaisley className="bg-white border-leaf-100 border-2 hover:shadow-lg transition-shadow" data-testid="facility-booth-card">
               <h3 className="font-display text-xl font-bold text-leaf-700 flex items-center gap-2">
                 <span className="text-2xl drop-shadow-sm">🗳️</span> Your Polling Booth
               </h3>
@@ -134,7 +150,7 @@ export default function MapPage() {
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
-            <Card className="bg-gradient-to-br from-saffron-50 to-white border-saffron-200 border-2 hover:shadow-lg transition-shadow">
+            <Card className="bg-gradient-to-br from-saffron-50 to-white border-saffron-200 border-2 hover:shadow-lg transition-shadow" data-testid="facility-ero-card">
               <h3 className="font-display text-xl font-bold text-saffron-800 flex items-center gap-2">
                 <span className="text-2xl drop-shadow-sm">🏛️</span> ERO Office
               </h3>
@@ -168,6 +184,18 @@ export default function MapPage() {
           </motion.div>
         </div>
       </div>
+
+      <section className="container-yatra mt-8" aria-label="Text-only polling facility list">
+        <Card className="bg-white/90 text-sm text-ink-700">
+          <h2 className="font-display text-xl font-bold text-ink-900">Text-only facility list</h2>
+          <p className="mt-2">For keyboard and screen-reader users, the important map locations are also listed here.</p>
+          <ol className="mt-4 grid gap-3 md:grid-cols-3">
+            <li><strong>Your location:</strong> New Delhi demo center ({LOCATIONS.user.lat}, {LOCATIONS.user.lng})</li>
+            <li><strong>Polling booth:</strong> Government Senior Secondary School, Room 4, around 1.2 km away.</li>
+            <li><strong>ERO office:</strong> District Election Office, Sector 2, around 2.5 km away.</li>
+          </ol>
+        </Card>
+      </section>
     </main>
   );
 }

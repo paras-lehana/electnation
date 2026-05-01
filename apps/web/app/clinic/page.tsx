@@ -10,23 +10,29 @@ export default function ClinicPage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<null | {
     category: string;
-    riskLevel: 'HIGH' | 'MEDIUM' | 'LOW';
-    explanation: string;
+    riskLevel: number;
+    explanation: { en: string; hi?: string };
+    verificationSteps: Array<{ en: string; hi?: string }>;
+    eciSources: string[];
     recommendedAction: string;
+    mode: 'gemini' | 'demo' | 'fallback';
+    recaptcha?: { bypassed: boolean };
   }>(null);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleAnalyze = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputText.trim()) return;
 
     setIsAnalyzing(true);
+    setErrorMessage('');
     
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://electnation-api-767171449038.us-central1.run.app';
       const response = await fetch(`${apiUrl}/api/forward/analysis`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: inputText }),
+        body: JSON.stringify({ text: inputText, locale: 'en', recaptchaToken: 'demo-bypass-token' }),
       });
 
       if (!response.ok) {
@@ -37,25 +43,33 @@ export default function ClinicPage() {
       setResult(resultData);
     } catch (err) {
       console.error(err);
+      setErrorMessage('Analysis service is in fallback mode. Showing a safe local guidance card.');
       // Fallback in case of error
       setResult({
-        category: 'Analysis Error',
-        riskLevel: 'MEDIUM',
-        explanation: 'We encountered an error while analyzing this message. Please try again later or consult official ECI channels.',
-        recommendedAction: 'Visit eci.gov.in for official information.'
+        category: 'unverified-rumor',
+        riskLevel: 3,
+        explanation: { en: 'We encountered an error while analyzing this message. Please try again later or consult official ECI channels.' },
+        verificationSteps: [{ en: 'Visit eci.gov.in or voters.eci.gov.in for official information.' }],
+        eciSources: ['https://eci.gov.in', 'https://voters.eci.gov.in'],
+        recommendedAction: 'Visit eci.gov.in for official information.',
+        mode: 'fallback',
+        recaptcha: { bypassed: true },
       });
     } finally {
       setIsAnalyzing(false);
     }
   };
 
-  const getRiskColor = (risk: string) => {
-    switch (risk) {
-      case 'HIGH': return 'bg-red-100 text-red-800 border-red-300';
-      case 'MEDIUM': return 'bg-orange-100 text-orange-800 border-orange-300';
-      case 'LOW': return 'bg-green-100 text-green-800 border-green-300';
-      default: return 'bg-gray-100 text-gray-800 border-gray-300';
-    }
+  const getRiskColor = (risk: number) => {
+    if (risk >= 4) return 'bg-red-100 text-red-800 border-red-300';
+    if (risk === 3) return 'bg-orange-100 text-orange-800 border-orange-300';
+    return 'bg-green-100 text-green-800 border-green-300';
+  };
+
+  const getRiskLabel = (risk: number) => {
+    if (risk >= 4) return 'HIGH';
+    if (risk === 3) return 'MEDIUM';
+    return 'LOW';
   };
 
   return (
@@ -91,6 +105,9 @@ export default function ClinicPage() {
               <textarea
                 id="forward-text"
                 rows={5}
+                aria-invalid={Boolean(errorMessage)}
+                aria-describedby={errorMessage ? 'forward-error' : undefined}
+                data-testid="forward-textarea"
                 className="w-full rounded-xl border-2 border-khadi-200 bg-khadi-50 p-4 text-ink-900 focus:border-saffron-500 focus:ring-saffron-500 focus:bg-white transition-all shadow-inner resize-none"
                 placeholder="e.g. 'Breaking: EVMs can be hacked using bluetooth...'"
                 value={inputText}
@@ -101,6 +118,7 @@ export default function ClinicPage() {
                 <Button 
                   type="submit" 
                   disabled={isAnalyzing || !inputText.trim()}
+                  data-testid="analyze-forward"
                   className="bg-saffron-600 hover:bg-saffron-700 shadow-md shadow-saffron-500/30 w-full sm:w-auto"
                 >
                   {isAnalyzing ? (
@@ -111,6 +129,10 @@ export default function ClinicPage() {
                 </Button>
               </div>
             </form>
+            <p className="mt-4 text-xs text-ink-500">
+              Protected by reCAPTCHA Enterprise in production. Local demo mode uses a safe bypass token for testing.
+            </p>
+            {errorMessage && <p id="forward-error" className="mt-3 text-sm font-semibold text-red-700">{errorMessage}</p>}
           </Card>
         </motion.div>
 
@@ -120,6 +142,9 @@ export default function ClinicPage() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
             className="mt-8"
+            role="status"
+            aria-live="polite"
+            data-testid="clinic-result"
           >
             <h2 className="font-display text-2xl font-bold text-ink-900 mb-4 flex items-center gap-2">
               <span className="text-3xl drop-shadow-sm">✅</span> Diagnosis Result
@@ -130,12 +155,20 @@ export default function ClinicPage() {
                   <div className="flex items-center gap-3 mb-3">
                     <span className="font-bold text-xl">{result.category}</span>
                     <span className={`text-xs font-bold px-3 py-1 rounded-full border shadow-sm ${getRiskColor(result.riskLevel)}`}>
-                      {result.riskLevel} RISK
+                      {getRiskLabel(result.riskLevel)} RISK · SCORE {result.riskLevel}/5
                     </span>
                   </div>
                   <p className="mt-2 text-ink-800 leading-relaxed text-lg">
-                    {result.explanation}
+                    {result.explanation.en}
                   </p>
+
+                  <ul className="mt-5 space-y-2 text-sm text-ink-800">
+                    {result.verificationSteps.map((step, index) => (
+                      <li key={`${step.en}-${index}`} className="rounded-lg bg-white/70 p-3 font-medium shadow-sm">
+                        {index + 1}. {step.en}
+                      </li>
+                    ))}
+                  </ul>
                   
                   <motion.div 
                     initial={{ opacity: 0, y: 10 }}
@@ -148,6 +181,16 @@ export default function ClinicPage() {
                     </p>
                     <p className="text-md text-ink-800 mt-2 font-medium">{result.recommendedAction}</p>
                   </motion.div>
+
+                  <div className="mt-4 flex flex-wrap gap-2 text-xs">
+                    <span className="rounded-full bg-white/70 px-3 py-1 font-bold text-ink-700">Mode: {result.mode}</span>
+                    {result.recaptcha?.bypassed && <span className="rounded-full bg-white/70 px-3 py-1 font-bold text-ink-700">reCAPTCHA demo bypass</span>}
+                    {result.eciSources.map((source) => (
+                      <a key={source} href={source} target="_blank" rel="noreferrer" className="rounded-full bg-white px-3 py-1 font-bold text-indigo-chakra underline">
+                        Official source
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </div>
             </Card>

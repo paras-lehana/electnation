@@ -4,6 +4,8 @@ import { AshokaChakra } from '../motifs/AshokaChakra';
 const links = [
   { href: '/yatra', label: 'Yatra' },
   { href: '/clinic', label: 'Forward Clinic' },
+  { href: '/sanrakshan', label: 'Vote Sanrakshan' },
+  { href: '/easy-mode', label: 'Easy Mode' },
   { href: '/map', label: 'Map' },
   { href: '/play', label: 'Play' },
   { href: '/about', label: 'About' },

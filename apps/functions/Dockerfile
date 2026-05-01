@@ -25,7 +25,7 @@ RUN pnpm install --frozen-lockfile
 
 # Build the project
 RUN pnpm --filter @yatra/core build
-RUN pnpm --filter functions build
+RUN pnpm --filter @yatra/functions build
 
 # Production image
 FROM base AS runner

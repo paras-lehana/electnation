@@ -7,6 +7,7 @@
 import express, { type Express } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import { APP_VERSION } from '@yatra/core';
 import { loadConfig } from './config.js';
 import { logger } from './middleware/logger.js';
 import { createRateLimiter } from './middleware/rateLimit.js';
@@ -16,6 +17,8 @@ import { mapRouter } from './routes/map.js';
 import { forwardRouter } from './routes/forward.js';
 import { ttsRouter } from './routes/tts.js';
 import { translateRouter } from './routes/translate.js';
+import { calendarRouter } from './routes/calendar.js';
+import { youtubeRouter } from './routes/youtube.js';
 
 export const buildApp = (config = loadConfig()): Express => {
   const app = express();
@@ -42,16 +45,30 @@ export const buildApp = (config = loadConfig()): Express => {
 
   app.use('/api', healthRouter(config));
   app.use('/api', chatRouter(config));
-  app.use('/api', mapRouter());
-  app.use('/api/forward', forwardRouter);
+  app.use('/api', mapRouter(config));
+  app.use('/api/forward', forwardRouter(config));
   app.use('/api/tts', ttsRouter);
   app.use('/api/translate', translateRouter);
+  app.use('/api', calendarRouter(config));
+  app.use('/api', youtubeRouter(config));
 
   app.get('/api/config/public', (_req, res) => {
     try {
       logger.info('config.public_requested', { hasMapsKey: !!config.maps.apiKey });
       res.json({
         mapsApiKey: config.maps.apiKey || '',
+        mapsMapId: config.maps.mapId,
+        recaptchaSiteKey: config.recaptcha.siteKey || '',
+        supportedLocales: ['en', 'hi', 'bn', 'ta', 'te', 'mr', 'gu', 'kn', 'ml', 'pa', 'ur'],
+        demoMode: config.demoMode,
+        featureFlags: {
+          calendar: true,
+          youtubeSveep: true,
+          mapsDirections: true,
+          tts: true,
+          translation: true,
+          recaptchaBypass: config.recaptcha.bypass,
+        },
       });
     } catch (err) {
       logger.error('config.public_failed', { err: String(err) });
@@ -62,7 +79,7 @@ export const buildApp = (config = loadConfig()): Express => {
   app.get('/', (_req, res) => {
     res.json({
       service: 'election-yatra-api',
-      version: '0.1.0',
+      version: APP_VERSION,
       docs: '/api/health',
     });
   });

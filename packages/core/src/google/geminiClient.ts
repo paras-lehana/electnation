@@ -139,13 +139,12 @@ export class GoogleGeminiClient implements GeminiClient {
           if (!payload || payload === '[DONE]') continue;
           try {
             const json = JSON.parse(payload);
-            console.log('Gemini payload chunk:', JSON.stringify(json).slice(0, 500));
             const text = json?.candidates?.[0]?.content?.parts?.[0]?.text;
             if (typeof text === 'string' && text.length > 0) {
               yield text;
             }
-          } catch (err) {
-            console.error('Failed to parse Gemini payload chunk:', payload.slice(0, 100), err);
+          } catch {
+            // Ignore malformed SSE frames; upstream occasionally sends keepalive metadata.
           }
         }
       }

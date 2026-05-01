@@ -104,7 +104,7 @@ export default function HomePage() {
             <h2 className="font-display text-4xl font-bold text-ink-900 md:text-5xl">
               Built for <span className="text-saffron-500">every</span> voter
             </h2>
-            <div className="mt-10 grid gap-6 md:grid-cols-3">
+            <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-5">
               <Card>
                 <div className="text-3xl">🧠</div>
                 <h3 className="mt-3 font-display text-xl font-bold">Misinformation Clinic</h3>
@@ -127,6 +127,20 @@ export default function HomePage() {
                 <p className="mt-2 text-sm text-ink-700">
                   Gamified scenarios — chai tapri bribes, fake forwards, booth rush — earn
                   Chakra Champion badges with your community.
+                </p>
+              </Card>
+              <Card>
+                <div className="text-3xl">🛡️</div>
+                <h3 className="mt-3 font-display text-xl font-bold">Vote Sanrakshan</h3>
+                <p className="mt-2 text-sm text-ink-700">
+                  Learn how to respond safely when money, gifts, fear, or pressure enter the voting conversation.
+                </p>
+              </Card>
+              <Card>
+                <div className="text-3xl">🔊</div>
+                <h3 className="mt-3 font-display text-xl font-bold">Easy Mode</h3>
+                <p className="mt-2 text-sm text-ink-700">
+                  Big buttons, less prose, and audio-first guidance for seniors, low-literacy users, and community classes.
                 </p>
               </Card>
             </div>

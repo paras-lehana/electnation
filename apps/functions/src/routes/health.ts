@@ -4,6 +4,7 @@
  */
 
 import { Router } from 'express';
+import { APP_VERSION } from '@yatra/core';
 import type { AppConfig } from '../config.js';
 
 const startedAt = Date.now();
@@ -20,7 +21,7 @@ export const healthRouter = (config: AppConfig): Router => {
     const allGood = Object.values(deps).every((v) => v === 'configured');
     res.status(allGood ? 200 : 200).json({
       status: allGood ? 'healthy' : 'degraded',
-      version: '0.1.0',
+      version: APP_VERSION,
       uptimeSeconds: Math.floor((Date.now() - startedAt) / 1000),
       environment: config.nodeEnv,
       dependencies: deps,

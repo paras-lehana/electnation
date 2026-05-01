@@ -1,14 +1,13 @@
 import { Router } from 'express';
-import { z } from 'zod';
 import { GoogleMapsClient } from '@yatra/core/google';
+import type { AppConfig } from '../config.js';
 
-// Create a singleton instance or use dependency injection in a real app
-const getMapsClient = () => {
-  const apiKey = process.env.GOOGLE_MAPS_API_KEY || '';
+const getMapsClient = (config: AppConfig) => {
+  const apiKey = config.maps.apiKey;
   return new GoogleMapsClient({ apiKey });
 };
 
-export const mapRouter = (): Router => {
+export const mapRouter = (config: AppConfig): Router => {
   const r = Router();
 
   r.get('/map/nearest-facilities', async (req, res) => {
@@ -21,10 +20,11 @@ export const mapRouter = (): Router => {
         return;
       }
 
-      const client = getMapsClient();
-      if (!process.env.GOOGLE_MAPS_API_KEY) {
+      const client = getMapsClient(config);
+      if (!config.maps.apiKey) {
          // Fallback dummy data if no key is present
          res.json({
+        mode: 'demo',
             status: 'ok',
             booth: { lat: 28.612, lng: 77.21, name: 'Dummy Polling Booth', distanceMeters: 1200 },
             ero: { lat: 28.615, lng: 77.215, name: 'Dummy ERO Office', distanceMeters: 2500 }
@@ -44,6 +44,7 @@ export const mapRouter = (): Router => {
       }
 
       res.json({
+        mode: 'google-distance-matrix',
         status: 'ok',
         data: result.value,
       });

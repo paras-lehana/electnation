@@ -48,12 +48,12 @@
 - [x] ✅ `mapsClient.ts` (geocode, reverse-geocode, distanceMatrix)
 - [x] ✅ `firebaseAdmin.ts` (lazy init handle)
 - [ ] ⏳ `geolocationClient.ts` (IP-fallback + `navigator.geolocation` wrapper)
-- [ ] ⏳ `calendarClient.ts` — OAuth 2.0 + `events.insert`
+- [x] ✅ `calendarClient.ts` — Google Calendar template links + ICS fallback
 - [x] ✅ `youtubeClient.ts` — curated SVEEP playlist
 - [x] ✅ `translationClient.ts` — Cloud Translation v2/v3
 - [x] ✅ `ttsClient.ts` — Cloud Text-to-Speech (Neural2/Chirp)
 - [x] ✅ `sttClient.ts` — Cloud Speech-to-Text (streaming)
-- [ ] ⏳ `recaptchaClient.ts` — Enterprise assessment
+- [x] ✅ `recaptchaClient.ts` — Enterprise assessment wrapper + demo bypass route path
 - [ ] ⏳ `secretManager.ts` — lazy fetch with env fallback
 - [ ] ⏳ `analyticsClient.ts` — GA4 Measurement Protocol
 - [ ] ⏳ `PlacesClient` — Text Search, Nearby Search, Place Details (Google Maps API integration)
@@ -68,24 +68,24 @@
 - [x] ✅ `POST /api/chat` — SSE streaming + demo-mode fallback
 
 ### Planned
-- [ ] ⏳ `POST /api/forward/analysis` — misinformation classifier, reCAPTCHA-gated
+- [x] ✅ `POST /api/forward/analysis` — misinformation classifier, Zod input/output validation, reCAPTCHA-ready demo/prod mode
 - [ ] ⏳ `POST /api/quiz/submit` — atomic XP/badge grant in Firestore
 - [ ] ⏳ `GET /api/quiz/next` — unseen question for persona
-- [ ] ⏳ `POST /api/calendar/add` — OAuth-gated events.insert
-- [ ] ⏳ `GET /api/calendar/ics` — `.ics` fallback (no OAuth)
-- [ ] ⏳ `GET /api/config/public` — supported locales, feature flags, timeline
-- [ ] ⏳ `GET /api/map/nearest-facilities` — user lat/lng → nearest booth+ERO with Distance Matrix
+- [x] ✅ `POST /api/calendar/add` — Google Calendar template links + OAuth-ready contract
+- [x] ✅ `GET /api/calendar/ics` — `.ics` fallback (no OAuth)
+- [x] ✅ `GET /api/config/public` — Maps key/id, reCAPTCHA site key, supported locales, feature flags
+- [x] ✅ `GET /api/map/nearest-facilities` — user lat/lng → demo nearest booth+ERO or Distance Matrix
 - [ ] ⏳ `GET /api/map/directions` — route + polyline
 - [ ] ⏳ `POST /api/tts` — text → audio (cached by sha-256)
 - [ ] ⏳ `POST /api/stt` — audio chunk → transcript
 - [ ] ⏳ `POST /api/leaderboard/me` — privacy-preserving upsert
 - [ ] ⏳ `GET /api/leaderboard/:city` — weekly top 20
 - [ ] ⏳ `POST /api/translate` — UI-string fallback translator
-- [ ] ⏳ `GET /api/youtube/sveep` — curated playlist
+- [x] ✅ `GET /api/youtube/sveep` — curated playlist route + explicit demo fallback
 - [ ] ⏳ `POST /api/feedback` — hCaptcha-gated free-text feedback
 - [ ] ⏳ `GET /api/metrics` — Prometheus-style basic metrics
 - [ ] ⏳ Auth middleware (Firebase ID-token verification)
-- [ ] ⏳ reCAPTCHA Enterprise middleware
+- [x] ✅ reCAPTCHA Enterprise verification on Forward Clinic (production) with explicit local demo bypass
 - [ ] ⏳ Structured logger → Cloud Logging sink
 - [ ] ⏳ OpenTelemetry traces (console exporter for dev)
 - [ ] ⏳ Supertest coverage for every route (happy + 2 error paths)
@@ -97,6 +97,8 @@
 - [ ] ⏳ `/yatra/[slug]` — per-station deep dive with ECI citations
 - [x] ✅ `/clinic` — Forward Clinic input + result card + verification steps
 - [ ] ⏳ `/clinic/history` — personal scan history (Firestore)
+- [x] ✅ `/sanrakshan` — Vote Sanrakshan anti-vote-buying and coercion guidance
+- [x] ✅ `/easy-mode` — low-literacy/audio-first action hub with read-aloud support
 - [x] ✅ `/map` — Maps JS API + nearest facility pins + route preview
 - [ ] ⏳ `/map/booth` — Street View preview of user's booth
 - [x] ✅ Ensure Maps API Keys (Maps JavaScript API, Places API, Geocoding API, Distance Matrix API) are configured in `.env` and loaded securely in Next.js/Express.
@@ -114,8 +116,8 @@
 
 ## Phase 6 — Gamification *(Day 7–9)*
 
-- [ ] ⏳ XP ledger: weighted points per action (quiz, reminder, forward, step)
-- [ ] ⏳ Badges (12+): Inked Finger, Samvidhan Shishya, Afwah Buster, Migrant Matrudev, Booth Buddy, Chakra Champion, Rangoli Raja, Daak Doot (postal ballot), Gyan Guru (100 quiz correct), Sabha Saarthi, Tyohar Tallika, Bhasha Bandhu
+- [x] ✅ XP ledger: localStorage-backed scenario XP with duplicate-claim prevention
+- [ ] ⏳ Badges (12+): first 4 implemented locally; full badge catalog still planned
 - [ ] ⏳ Streak system with "festival freeze" logic
 - [x] ✅ Scenario game #1 — "Chai tapri dilemma" (choose-your-own-adventure, dialogue tree)
 - [x] ✅ Scenario game #2 — "WhatsApp forward rush" (60-sec classify 10 forwards, Canvas timer)
@@ -129,19 +131,20 @@
 - [ ] ⏳ `next-intl` setup, locales: en, hi, bn, ta
 - [ ] ⏳ Translation JSON for every component (extract strings)
 - [ ] ⏳ Server-side fallback via Cloud Translation for bn/ta stubs
-- [ ] ⏳ Read-Aloud button with TTS + transcript
+- [x] ✅ Read-Aloud button with TTS + transcript on PwD page; reusable component still planned
 - [ ] ⏳ Mic input in chat + clinic using STT
 - [ ] ⏳ Keyboard-navigable stepper (arrow keys, `role="tablist"`)
-- [ ] ⏳ ARIA live regions for streaming chat
-- [ ] ⏳ Easy Mode layout (big icons, audio-first, no prose)
+- [x] ✅ ARIA live/result regions for Clinic and scenario feedback; streaming chat region still planned
+- [x] ✅ Easy Mode route (big icons, audio-first, minimal prose); per-page simplified views still planned
 - [ ] ⏳ `prefers-reduced-motion` fallbacks everywhere
 - [ ] ⏳ axe-core + lighthouse a11y ≥ 100
 - [ ] ⏳ VoiceOver/TalkBack manual smoke
 
 ## Phase 8 — Testing *(Day 10–11)*
 
-- [ ] ⏳ Unit: prompt builders, schemas, result helpers, quiz scoring
-- [ ] ⏳ Integration: Supertest per route + Firebase emulator
+- [x] ✅ Unit: result helpers, schemas, Maps wrapper
+- [x] ✅ Unit: Chunav Saathi prompt guardrails
+- [x] ✅ Integration: Supertest for health, Forward Clinic, Calendar ICS, YouTube demo route
 - [ ] ⏳ Component: RTL for QuizCard, ChatBubble, Stepper, ReadAloudButton
 - [ ] ⏳ E2E: Playwright — onboarding, yatra, clinic, quiz, calendar OAuth mock
 - [ ] ⏳ Coverage ≥ 75% lines / 80% core
@@ -151,7 +154,7 @@
 ## Phase 9 — Security hardening *(Day 11–12)*
 
 - [ ] ⏳ All secrets via Secret Manager; env fallback dev-only
-- [ ] ⏳ reCAPTCHA Enterprise on `/chat`, `/forward/analysis`, `/leaderboard/me`, `/feedback`
+- [ ] ⏳ reCAPTCHA Enterprise on `/chat`, `/leaderboard/me`, `/feedback`; `/forward/analysis` implemented
 - [ ] ⏳ Firebase Security Rules (per-user progress, read-only quizzes, server-only leaderboard writes)
 - [ ] ⏳ CSP + HSTS + Referrer-Policy + X-Content-Type-Options via Next.js `headers()`
 - [ ] ⏳ DOMPurify on any HTML-rendered content
@@ -159,7 +162,7 @@
 - [ ] ⏳ STRIDE-lite threat model written in `SECURITY.md`
 - [ ] ⏳ OWASP ZAP baseline scan pass
 - [ ] ⏳ `npm audit` / Dependabot clean
-- [ ] ⏳ PII minimization: no Aadhaar/EPIC stored, explicit redaction in chat logs
+- [x] ✅ PII minimization: Forward Clinic no raw model output logging; chat redaction helper still planned
 
 ## Phase 10 — Performance & PWA *(Day 12–13)*
 
@@ -181,6 +184,35 @@
 - [ ] ⏳ Attribution sweep: verify no third-party AI tool names leak into the repo
 - [ ] ⏳ Final accessibility audit
 - [ ] ⏳ Soft-launch + collect tester feedback
+
+---
+
+## Research Gap Audit — Highest-Impact Additions *(2026-05-01)*
+
+These items come directly from `docs/research.md` and are the strongest remaining
+ways to make the product feel deeper than a generic civic chatbot.
+
+### Priority A — Add before demo submission
+
+- [x] ✅ **Vote Sanrakshan module** — anti-vote-buying/coercion page plus a new Play scenario and badge.
+- [ ] ⏳ **Easy Mode** — initial route implemented; still extend one-tap listen controls into Yatra, Clinic, Map, Migrant Corner, and PwD page cards.
+- [ ] ⏳ **Migrant Yatra Planner** — turn `/migrant-corner` into an action planner: current city, home constituency, registration/address-update choice, travel reminder, and official source checklist.
+- [ ] ⏳ **Google Maps depth pack** — add Places search for ERO/voter centers, Directions route preview/polyline, and Street View Static preview for the booth card.
+- [x] ✅ **Prompt craftsmanship tests** — unit-test `buildChunavSaathiPrompt` for neutrality, official-source guidance, Hindi/easy-language adaptation, and audio-first behavior.
+
+### Priority B — Strong judge polish
+
+- [ ] ⏳ **SVEEP learning hub** — frontend page/section that calls `/api/youtube/sveep`, embeds curated videos, and links them to Yatra steps.
+- [ ] ⏳ **Voice question input** — mic button for Chat and Clinic using Cloud Speech-to-Text with text fallback.
+- [ ] ⏳ **Privacy-preserving leaderboard** — nickname + city only, no real name/EPIC/Aadhaar; weekly reset evidence via Cloud Scheduler plan.
+- [ ] ⏳ **Offline civic kit** — PWA cache for core FAQs, Yatra steps, quiz scenarios, and emergency official links for low-network voters.
+- [ ] ⏳ **Analytics funnel proof** — GA4/Firebase Analytics events for onboarding completion, clinic scans, calendar adds, map directions, and scenario completion.
+
+### Priority C — Stretch differentiators
+
+- [ ] ⏳ **Community-class mode** — projector-friendly flow for teachers/volunteers at panchayat halls or Anganwadi sessions.
+- [ ] ⏳ **Shareable badge cards** — generate image cards for completed scenarios with official-source reminder text and no party/candidate references.
+- [ ] ⏳ **Candidate-information guardrail** — neutral explanation of how to inspect affidavits and official candidate info without ranking or recommending candidates.
 
 ---
 

@@ -3,7 +3,8 @@
 import { useParams, useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { claimScenarioReward, readProgress } from '@/lib/progress';
 
 export default function ScenarioPage() {
   const { id } = useParams();
@@ -12,6 +13,8 @@ export default function ScenarioPage() {
 
   interface Scenario {
     title: string;
+    points: number;
+    badgeId: string;
     content: { text: string; image: string }[];
     choices: { text: string; isCorrect: boolean; feedback: string }[];
   }
@@ -20,6 +23,8 @@ export default function ScenarioPage() {
   const scenarios: Record<string, Scenario> = {
     'chai-tapri': {
       title: 'Chai Tapri Dilemma',
+      points: 50,
+      badgeId: 'cvigil-reporter',
       content: [
         { text: "You're at the local tea stall. A representative of a local candidate approaches and offers to pay for everyone's tea and snacks if they promise to vote for their party.", image: '☕' },
         { text: "He hands you a Rs 500 note along with a party pamphlet, winking. 'Rakh lo bhai, vote din yaad rakhna'.", image: '💸' }
@@ -32,6 +37,8 @@ export default function ScenarioPage() {
     },
     'whatsapp-rush': {
       title: 'WhatsApp Forward Rush',
+      points: 150,
+      badgeId: 'misinfo-shield',
       content: [
         { text: "Your family group chat is buzzing. Your uncle forwards a message: 'URGENT: EVMs in our ward have been pre-programmed to vote for Party X. Do not go to vote, it is rigged!'", image: '📱' },
         { text: "The message has 'Forwarded many times' label. It also contains a blurry photo of an EVM machine.", image: '🔍' }
@@ -42,8 +49,24 @@ export default function ScenarioPage() {
         { text: "Reply with the ECI Myth vs Reality link and ask him not to share rumors.", isCorrect: true, feedback: "Excellent! Countering fake news with official ECI facts (mythvsreality.eci.gov.in) helps maintain election integrity." }
       ]
     },
+    'vote-sanrakshan': {
+      title: 'Vote Sanrakshan Sabha',
+      points: 120,
+      badgeId: 'vote-sanrakshak',
+      content: [
+        { text: "A local contractor tells your basti that everyone will get Rs 1,000 after voting day, but only if they support his preferred candidate.", image: '🛡️' },
+        { text: "He adds that he will know who voted against him because his people are watching the booth. Some neighbors look nervous and ask what to do.", image: '👥' }
+      ],
+      choices: [
+        { text: "Accept the cash promise because everyone needs money.", isCorrect: false, feedback: "This normalizes vote buying and coercion. Your vote is secret, and selling it weakens public accountability for everyone." },
+        { text: "Tell neighbors their vote is secret, avoid confrontation, and guide them to official complaint channels such as cVIGIL or the election office.", isCorrect: true, feedback: "Correct. This protects people from pressure while using official, safer reporting channels." },
+        { text: "Start a loud argument and publicly name everyone involved.", isCorrect: false, feedback: "Safety first. Public confrontation can put voters at risk. Preserve evidence only if safe and use official channels." }
+      ]
+    },
     'booth-raasta': {
       title: 'Booth ka Raasta',
+      points: 100,
+      badgeId: 'migrant-ready',
       content: [
         { text: "You have moved to a new city for work. It's election day in your home constituency. You didn't register for postal ballot earlier.", image: '🗺️' },
         { text: "Your friend says you can just go to any polling booth in your current city and show your Aadhar card to vote.", image: '🏢' }
@@ -57,8 +80,26 @@ export default function ScenarioPage() {
   };
 
   const scenario = typeof id === 'string' && scenarios[id] ? scenarios[id] : scenarios['chai-tapri'];
+  const scenarioId = typeof id === 'string' && scenarios[id] ? id : 'chai-tapri';
 
   const [selectedChoice, setSelectedChoice] = useState<number | null>(null);
+  const [alreadyClaimed, setAlreadyClaimed] = useState(false);
+  const feedbackRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    setAlreadyClaimed(readProgress().completedScenarioIds.includes(scenarioId));
+  }, [scenarioId]);
+
+  useEffect(() => {
+    if (selectedChoice !== null) feedbackRef.current?.focus();
+  }, [selectedChoice]);
+
+  const claimReward = () => {
+    if (!scenario) return;
+    claimScenarioReward({ scenarioId, xp: scenario.points, badgeId: scenario.badgeId });
+    setAlreadyClaimed(true);
+    router.push('/play');
+  };
 
   if (!scenario) return null;
 
@@ -69,7 +110,7 @@ export default function ScenarioPage() {
           <div className="text-6xl mb-6">{scenario.content[0]?.image}</div>
           <h1 className="font-display text-4xl font-bold text-ink-900 mb-6">{scenario.title}</h1>
           <p className="text-xl text-ink-700 mb-8 leading-relaxed">{scenario.content[0]?.text}</p>
-          <Button className="w-full text-lg py-6 bg-saffron-600 hover:bg-saffron-700" onClick={() => setStep(1)}>
+          <Button className="w-full text-lg py-6 bg-saffron-600 hover:bg-saffron-700" data-testid="scenario-start" onClick={() => setStep(1)}>
             Continue →
           </Button>
         </Card>
@@ -92,6 +133,7 @@ export default function ScenarioPage() {
               <button
                 key={index}
                 onClick={() => setSelectedChoice(index)}
+                data-testid={`choice-${index}`}
                 className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
                   selectedChoice === index 
                     ? choice.isCorrect ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'
@@ -105,7 +147,14 @@ export default function ScenarioPage() {
           </div>
 
           {selectedChoice !== null && scenario.choices[selectedChoice] && (
-            <div className={`mt-8 p-6 rounded-xl animate-in slide-in-from-bottom-4 ${scenario.choices[selectedChoice]?.isCorrect ? 'bg-green-100 text-green-900' : 'bg-red-100 text-red-900'}`}>
+            <div
+              ref={feedbackRef}
+              tabIndex={-1}
+              role="status"
+              aria-live="polite"
+              data-testid="feedback-panel"
+              className={`mt-8 p-6 rounded-xl animate-in slide-in-from-bottom-4 motion-reduce:animate-none ${scenario.choices[selectedChoice]?.isCorrect ? 'bg-green-100 text-green-900' : 'bg-red-100 text-red-900'}`}
+            >
               <h3 className="font-bold text-xl mb-2">
                 {scenario.choices[selectedChoice]?.isCorrect ? '🎯 Correct!' : '❌ Think Again!'}
               </h3>
@@ -116,8 +165,13 @@ export default function ScenarioPage() {
                   Back to Hub
                 </Button>
                 {scenario.choices[selectedChoice]?.isCorrect && (
-                  <Button className="flex-1 bg-indigo-chakra text-white" onClick={() => router.push('/play')}>
-                    Claim +50 XP
+                  <Button
+                    className="flex-1 bg-indigo-chakra text-white"
+                    onClick={claimReward}
+                    disabled={alreadyClaimed}
+                    data-testid="claim-xp"
+                  >
+                    {alreadyClaimed ? 'XP Already Claimed' : `Claim +${scenario.points} XP`}
                   </Button>
                 )}
               </div>

@@ -90,6 +90,8 @@ export default function YatraPage() {
     }
   };
 
+  const calendarUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://electnation-api-767171449038.us-central1.run.app'}/api/calendar/ics?source=default`;
+
   const advanceStation = () => {
     const currentStation = INITIAL_STATIONS[currentStationIndex];
     if (!currentStation) return;
@@ -144,6 +146,11 @@ export default function YatraPage() {
                 >
                   {isLoading ? '⏳ Loading Audio...' : isPlaying ? '🔊 Playing...' : '🎧 Listen to Page'}
                 </Button>
+                <a href={calendarUrl} data-testid="calendar-ics-link">
+                  <Button variant="ghost" className="border-leaf-300 text-leaf-800 hover:bg-leaf-50">
+                    📅 Add reminders
+                  </Button>
+                </a>
               </div>
               <h1 className="font-display text-4xl font-bold text-ink-900">Your <span className="text-indigo-chakra">Election Yatra</span></h1>
               <p className="mt-2 text-ink-700">{INITIAL_STATIONS.length} stations to becoming a responsible voter.</p>

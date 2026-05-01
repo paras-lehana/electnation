@@ -1,5 +1,7 @@
 # Election Yatra — Janta ka Election Saathi
 
+> **Version 0.3.0** — Vote Sanrakshan, Easy Mode, scenario expansion, and prompt-craftsmanship tests.
+
 > **An AI companion for Indian voters.** Walk the 6-station yatra from
 > registration to polling booth, spot WhatsApp misinformation, find your
 > booth on the map, and learn through scenario-based play — all in your
@@ -34,6 +36,7 @@ election-yatra/
 ├── packages/
 │   └── core/          # Shared types, Zod schemas, Result, AppError, Google clients
 ├── tasks.md           # Granular task tracker (phase-by-phase)
+├── AGENTS.md          # Agent commands, validation, and GCloud deploy notes
 ├── ARCHITECTURE.md    # Data flow + layering
 ├── GOOGLE_SERVICES.md # Service → file mapping
 ├── EVALUATION_MAPPING.md  # Rubric ↔ code mapping
@@ -64,7 +67,7 @@ credentials. Perfect for first-run and CI.
 
 ```bash
 curl http://localhost:8080/api/health
-# → 200 {"status":"degraded","version":"0.1.0",...}
+# → 200 {"status":"degraded","version":"0.3.0",...}
 
 curl -N -X POST http://localhost:8080/api/chat \
   -H "content-type: application/json" \

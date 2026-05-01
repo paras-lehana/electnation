@@ -1,78 +1,216 @@
+import { randomUUID } from 'node:crypto';
 import { Router } from 'express';
-import { GoogleGeminiClient } from '@yatra/core';
+import {
+  ForwardAnalysisRequestSchema,
+  ForwardAnalysisSchema,
+  GoogleGeminiClient,
+  GoogleRecaptchaEnterpriseClient,
+} from '@yatra/core';
+import type { AppConfig } from '../config.js';
+import { logger } from '../middleware/logger.js';
 
-const router = Router();
+type AnalysisMode = 'gemini' | 'demo' | 'fallback';
 
-router.post('/analysis', async (req, res) => {
-  const { text } = req.body;
+const OFFICIAL_SOURCES = ['https://eci.gov.in', 'https://voters.eci.gov.in'];
 
-  if (!text) {
-    return res.status(400).json({ error: 'Text is required' });
+const extractJson = (value: string): unknown => {
+  const cleaned = value.trim().replace(/^```(?:json)?/i, '').replace(/```$/i, '').trim();
+  const start = cleaned.indexOf('{');
+  const end = cleaned.lastIndexOf('}');
+  if (start === -1 || end === -1 || end <= start) throw new Error('No JSON object found');
+  return JSON.parse(cleaned.slice(start, end + 1));
+};
+
+const localAnalysis = (text: string, locale = 'en') => {
+  const lower = text.toLowerCase();
+  const base = {
+    id: randomUUID(),
+    inputText: text,
+    detectedLocale: locale,
+    analyzedAt: new Date().toISOString(),
+    eciSources: OFFICIAL_SOURCES,
+  };
+
+  if (/evm|bluetooth|hack|programmed|rigged/.test(lower)) {
+    return {
+      ...base,
+      category: 'fake-news',
+      riskLevel: 5,
+      explanation: {
+        en: 'This looks like a high-risk EVM rumor. ECI repeatedly states that EVMs are standalone machines and voters should verify such claims only from official channels.',
+        hi: 'Yeh high-risk EVM afwah lagti hai. Aise daave sirf ECI/NVSP ke official channels se verify karein.',
+      },
+      verificationSteps: [
+        { en: 'Do not forward the message until it is verified.' },
+        { en: 'Check the latest advisory on eci.gov.in or voters.eci.gov.in.' },
+        { en: 'If it asks people not to vote, treat it as voter-suppression risk.' },
+      ],
+    };
   }
 
-  try {
-    const key = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || '';
-    console.log('Forward analysis using model: gemini-2.5-flash, key exists:', !!key);
-    const gemini = new GoogleGeminiClient({ apiKey: key });
-    const prompt = `Analyze the following election-related message for misinformation or rumors:
-    "${text}"
-    
-    Return a JSON response with:
-    - category: string (e.g. "EVM Rumor", "Polling Date Misinformation", etc.)
-    - riskLevel: "HIGH" | "MEDIUM" | "LOW"
-    - explanation: string (detailed fact-check based on ECI guidelines)
-    - recommendedAction: string (what the user should do)
-    `;
+  if (/cash|money|rs\.?\s?\d+|gift|liquor|free|bribe|daaru|paise/.test(lower)) {
+    return {
+      ...base,
+      category: 'misleading-context',
+      riskLevel: 4,
+      explanation: {
+        en: 'This appears related to vote inducement or bribery. Accepting gifts or money for votes is illegal and harms community accountability.',
+        hi: 'Yeh vote inducement/bribery se juda lagta hai. Vote ke badle paisa ya gift lena gair-kanuni hai.',
+      },
+      verificationSteps: [
+        { en: 'Do not accept or share inducement offers.' },
+        { en: 'Report suspected Model Code of Conduct violations through official complaint channels such as cVIGIL.' },
+      ],
+    };
+  }
 
-    let geminiResult;
-    let retries = 3;
-    while (retries > 0) {
-      geminiResult = await gemini.generate({
-        model: 'gemini-flash-latest',
-        systemInstruction: 'You are an expert fact-checker for Indian elections. Return ONLY valid JSON.',
-        messages: [{ role: 'user', text: prompt }]
+  if (/holiday|date|polling day|booth changed|voting cancelled/.test(lower)) {
+    return {
+      ...base,
+      category: 'unverified-rumor',
+      riskLevel: 3,
+      explanation: {
+        en: 'This may be a polling-date or booth-change rumor. Election dates and booth details should be confirmed from official ECI/NVSP sources.',
+        hi: 'Yeh polling date ya booth-change afwah ho sakti hai. Official ECI/NVSP source se confirm karein.',
+      },
+      verificationSteps: [
+        { en: 'Search your EPIC or constituency details on voters.eci.gov.in.' },
+        { en: 'Cross-check any date or booth change with the official district election office.' },
+      ],
+    };
+  }
+
+  return {
+    ...base,
+    category: 'benign',
+    riskLevel: 2,
+    explanation: {
+      en: 'No obvious high-risk election misinformation pattern was found, but the claim should still be cross-checked before sharing.',
+      hi: 'Koi obvious high-risk election misinformation pattern nahi mila, phir bhi share karne se pehle verify karein.',
+    },
+    verificationSteps: [
+      { en: 'Look for a direct official source, not screenshots or forwarded images.' },
+      { en: 'If the message creates fear or urgency, pause before forwarding.' },
+    ],
+  };
+};
+
+const recommendedAction = (riskLevel: number): string => {
+  if (riskLevel >= 4) return 'Do not forward it. Verify with ECI/NVSP and report if it suppresses voting or offers inducements.';
+  if (riskLevel === 3) return 'Treat it as unverified. Check official sources before sharing.';
+  return 'Share only with official source links and avoid adding claims not present in the source.';
+};
+
+export const forwardRouter = (config: AppConfig): Router => {
+  const router = Router();
+
+  router.post('/analysis', async (req, res) => {
+    const startedAt = Date.now();
+    const parsed = ForwardAnalysisRequestSchema.safeParse({
+      ...req.body,
+      recaptchaToken: req.body?.recaptchaToken ?? (config.recaptcha.bypass ? 'demo-bypass-token' : undefined),
+    });
+
+    if (!parsed.success) {
+      res.status(400).json({
+        error: {
+          code: 'VALIDATION_FAILED',
+          message: 'Invalid forward-analysis request.',
+          issues: parsed.error.issues.map((issue) => ({ path: issue.path, message: issue.message })),
+        },
       });
-      if (geminiResult.ok) break;
-      retries--;
-      if (retries > 0) {
-        console.log(`Retrying Gemini analysis... (${retries} left)`);
-        await new Promise(resolve => setTimeout(resolve, 2000));
+      return;
+    }
+
+    if (!config.recaptcha.bypass) {
+      const recaptcha = new GoogleRecaptchaEnterpriseClient(config.recaptcha);
+      const assessment = await recaptcha.verify({
+        token: parsed.data.recaptchaToken,
+        expectedAction: 'forward_analysis',
+        userIpAddress: req.ip,
+        userAgent: req.get('user-agent'),
+      });
+      if (!assessment.ok || !assessment.value.valid) {
+        logger.warn('forward.recaptcha_failed', {
+          ok: assessment.ok,
+          score: assessment.ok ? assessment.value.score : undefined,
+          reasons: assessment.ok ? assessment.value.reasons : [assessment.error.code],
+        });
+        res.status(400).json({ error: { code: 'RECAPTCHA_FAILED', message: 'Captcha verification failed.' } });
+        return;
       }
     }
-    
-    if (!geminiResult || !geminiResult.ok) {
-      throw geminiResult?.error || new Error('Failed after retries');
-    }
-    
-    // Parse the JSON from Gemini response — find first { and last }
-    const rawValue = geminiResult.value;
-    console.log('Gemini raw response for analysis:', rawValue);
-    
-    const startIdx = rawValue.indexOf('{');
-    const endIdx = rawValue.lastIndexOf('}');
-    
-    if (startIdx === -1 || endIdx === -1) {
-      console.error('No JSON found in Gemini response');
-      throw new Error('Gemini did not return valid JSON');
-    }
-    
-    const jsonStr = rawValue.slice(startIdx, endIdx + 1);
-    let analysis;
-    try {
-      analysis = JSON.parse(jsonStr);
-    } catch (parseErr) {
-      console.error('JSON Parse error:', parseErr, 'on string:', jsonStr);
-      throw parseErr;
-    }
-    
-    res.json(analysis);
-  } catch (error) {
-    console.error('Analysis error:', error);
-    res.status(500).json({ 
-      error: 'Failed to analyze message', 
-      details: error instanceof Error ? error.message : String(error) 
-    });
-  }
-});
 
-export const forwardRouter: Router = router;
+    let analysis: unknown;
+    let mode: AnalysisMode = 'demo';
+
+    if (config.gemini.apiKey) {
+      try {
+        const gemini = new GoogleGeminiClient({ apiKey: config.gemini.apiKey });
+        const result = await gemini.generate({
+          model: config.gemini.analysisModel,
+          temperature: 0.1,
+          maxOutputTokens: 900,
+          systemInstruction:
+            'You are a non-partisan Indian election misinformation analyst. Return only JSON. Never endorse or attack political parties or candidates.',
+          messages: [
+            {
+              role: 'user',
+              text:
+                'Analyze this election-related message. Return JSON with category exactly one of fake-news, unverified-rumor, misleading-context, exaggerated-true, benign, hate-speech; riskLevel as integer 1-5; explanation as {en:string,hi?:string}; verificationSteps as array of {en:string}; eciSources as official URLs. Message: ' +
+                parsed.data.text,
+            },
+          ],
+        });
+
+        if (result.ok) {
+          const modelJson = extractJson(result.value) as Record<string, unknown>;
+          const candidate = {
+            id: randomUUID(),
+            inputText: parsed.data.text,
+            detectedLocale: parsed.data.locale ?? 'en',
+            analyzedAt: new Date().toISOString(),
+            eciSources: OFFICIAL_SOURCES,
+            ...modelJson,
+          };
+          const checked = ForwardAnalysisSchema.safeParse(candidate);
+          if (checked.success) {
+            analysis = checked.data;
+            mode = 'gemini';
+          } else {
+            analysis = localAnalysis(parsed.data.text, parsed.data.locale ?? 'en');
+            mode = 'fallback';
+          }
+        } else {
+          analysis = localAnalysis(parsed.data.text, parsed.data.locale ?? 'en');
+          mode = 'fallback';
+        }
+      } catch (cause) {
+        logger.warn('forward.gemini_fallback', { cause: String(cause).slice(0, 160) });
+        analysis = localAnalysis(parsed.data.text, parsed.data.locale ?? 'en');
+        mode = 'fallback';
+      }
+    } else {
+      analysis = localAnalysis(parsed.data.text, parsed.data.locale ?? 'en');
+    }
+
+    const checked = ForwardAnalysisSchema.parse(analysis);
+    logger.info('forward.analysis_complete', {
+      mode,
+      category: checked.category,
+      riskLevel: checked.riskLevel,
+      inputLength: parsed.data.text.length,
+      latencyMs: Date.now() - startedAt,
+      recaptchaBypass: config.recaptcha.bypass,
+    });
+
+    res.json({
+      ...checked,
+      mode,
+      recommendedAction: recommendedAction(checked.riskLevel),
+      recaptcha: { bypassed: config.recaptcha.bypass },
+    });
+  });
+
+  return router;
+};
