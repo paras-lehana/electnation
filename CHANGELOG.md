@@ -10,6 +10,7 @@ All notable changes to Election Yatra.
 - Vote Sanrakshan Play scenario with XP and a new `Vote Sanrakshak` badge.
 - Prompt-craftsmanship tests for Chunav Saathi neutrality, official-source guidance, Hindi/easy-language adaptation, and audio-first behavior.
 - `AGENTS.md` with local validation, dev-server, and Google Cloud deployment notes.
+- `.gcloudignore` to keep local secrets, dependencies, build output, and ignored research docs out of Cloud Build uploads.
 
 ### Changed
 - Primary navigation now exposes Vote Sanrakshan and Easy Mode as first-class flows.

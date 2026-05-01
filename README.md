@@ -35,6 +35,7 @@ election-yatra/
 │   └── functions/     # Express on Cloud Run — SSE streaming + APIs
 ├── packages/
 │   └── core/          # Shared types, Zod schemas, Result, AppError, Google clients
+├── .gcloudignore      # Cloud Build upload exclusions for secrets/artifacts
 ├── tasks.md           # Granular task tracker (phase-by-phase)
 ├── AGENTS.md          # Agent commands, validation, and GCloud deploy notes
 ├── ARCHITECTURE.md    # Data flow + layering
