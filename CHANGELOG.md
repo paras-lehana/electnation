@@ -15,7 +15,7 @@ All notable changes to Election Yatra.
 ### Changed
 - Primary navigation now exposes Vote Sanrakshan and Easy Mode as first-class flows.
 - Home page highlights Vote Sanrakshan and Easy Mode alongside Clinic, Map, and Play.
-- Cloud Run Dockerfiles now use the correct `@yatra/*` pnpm filters, build shared core first, and enable Next standalone output for the web image.
+- Cloud Run Dockerfiles now use the correct `@yatra/*` pnpm filters, build shared core first, and enable Next standalone output for the web image without assuming an `apps/web/public` directory.
 
 ### Verified
 - `pnpm type-check` passed.
