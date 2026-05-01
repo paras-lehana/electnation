@@ -3,13 +3,13 @@ import { Router } from 'express';
 import {
   ForwardAnalysisRequestSchema,
   ForwardAnalysisSchema,
-  GoogleGeminiClient,
   GoogleRecaptchaEnterpriseClient,
 } from '@yatra/core';
 import type { AppConfig } from '../config.js';
 import { logger } from '../middleware/logger.js';
+import { LlmServiceClient } from '../services/llmServiceClient.js';
 
-type AnalysisMode = 'gemini' | 'demo' | 'fallback';
+type AnalysisMode = 'llm-service' | 'demo' | 'fallback';
 
 const OFFICIAL_SOURCES = ['https://eci.gov.in', 'https://voters.eci.gov.in'];
 
@@ -144,49 +144,44 @@ export const forwardRouter = (config: AppConfig): Router => {
     let analysis: unknown;
     let mode: AnalysisMode = 'demo';
 
-    if (config.gemini.apiKey) {
+    if (!config.demoMode && config.llmService.enabled) {
       try {
-        const gemini = new GoogleGeminiClient({ apiKey: config.gemini.apiKey });
-        const result = await gemini.generate({
-          model: config.gemini.analysisModel,
+        const llm = new LlmServiceClient(config.llmService);
+        const result = await llm.generate({
           temperature: 0.1,
-          maxOutputTokens: 900,
-          systemInstruction:
+          maxTokens: 900,
+          jsonMode: true,
+          systemPrompt:
             'You are a non-partisan Indian election misinformation analyst. Return only JSON. Never endorse or attack political parties or candidates.',
           messages: [
             {
               role: 'user',
-              text:
+              content:
                 'Analyze this election-related message. Return JSON with category exactly one of fake-news, unverified-rumor, misleading-context, exaggerated-true, benign, hate-speech; riskLevel as integer 1-5; explanation as {en:string,hi?:string}; verificationSteps as array of {en:string}; eciSources as official URLs. Message: ' +
                 parsed.data.text,
             },
           ],
         });
 
-        if (result.ok) {
-          const modelJson = extractJson(result.value) as Record<string, unknown>;
-          const candidate = {
-            id: randomUUID(),
-            inputText: parsed.data.text,
-            detectedLocale: parsed.data.locale ?? 'en',
-            analyzedAt: new Date().toISOString(),
-            eciSources: OFFICIAL_SOURCES,
-            ...modelJson,
-          };
-          const checked = ForwardAnalysisSchema.safeParse(candidate);
-          if (checked.success) {
-            analysis = checked.data;
-            mode = 'gemini';
-          } else {
-            analysis = localAnalysis(parsed.data.text, parsed.data.locale ?? 'en');
-            mode = 'fallback';
-          }
+        const modelJson = extractJson(result.content) as Record<string, unknown>;
+        const candidate = {
+          id: randomUUID(),
+          inputText: parsed.data.text,
+          detectedLocale: parsed.data.locale ?? 'en',
+          analyzedAt: new Date().toISOString(),
+          eciSources: OFFICIAL_SOURCES,
+          ...modelJson,
+        };
+        const checked = ForwardAnalysisSchema.safeParse(candidate);
+        if (checked.success) {
+          analysis = checked.data;
+          mode = 'llm-service';
         } else {
           analysis = localAnalysis(parsed.data.text, parsed.data.locale ?? 'en');
           mode = 'fallback';
         }
       } catch (cause) {
-        logger.warn('forward.gemini_fallback', { cause: String(cause).slice(0, 160) });
+        logger.warn('forward.llm_service_fallback', { cause: String(cause).slice(0, 160) });
         analysis = localAnalysis(parsed.data.text, parsed.data.locale ?? 'en');
         mode = 'fallback';
       }

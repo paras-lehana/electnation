@@ -14,8 +14,8 @@
 └───┬───────────┬──────────┬───────────┬─────────┬─────────┬─────────┘
     │           │          │           │         │         │
     ▼           ▼          ▼           ▼         ▼         ▼
- Gemini    Maps /       Calendar     YouTube   TTS       Firestore
- (stream)  Places /     OAuth                  STT       (Admin)
+ llm-      Maps /       Calendar     YouTube   TTS       Firestore
+ service   Places /     OAuth                  STT       (Admin)
            Directions                          Translate
 ```
 
@@ -28,20 +28,20 @@
 ## Data flow: Saathi chat
 
 1. Browser opens SSE POST to `/api/chat` with `{locale, literacyComfort, persona?, stepSlug?, message}`.
-2. Express validates with `ChatRequestSchema`. On config miss, streams `DEMO_REPLY`.
-3. Otherwise `buildChunavSaathiPrompt(ctx)` → `GoogleGeminiClient.streamGenerate()` → SSE frames to client.
+2. Express validates with `ChatRequestSchema`. In `DEMO_MODE`, it streams `DEMO_REPLY`.
+3. Otherwise `buildChunavSaathiPrompt(ctx)` -> `LlmServiceClient.generate()` -> SSE frames to client.
 4. Client appends `delta` tokens to active `ChatBubble` with reduced-motion fade-in.
 
 ## Data flow: Forward Clinic
 
 1. User pastes WhatsApp forward in `/clinic`.
 2. Frontend runs reCAPTCHA Enterprise, sends token + text.
-3. Backend validates via `ForwardAnalysisRequestSchema`, runs reCAPTCHA assessment, calls Gemini with classifier system prompt returning `ForwardAnalysisSchema`-shaped JSON.
+3. Backend validates via `ForwardAnalysisRequestSchema`, runs reCAPTCHA assessment, calls backend-only `llm-service` with Antigravity `gemini-3-flash` and a classifier system prompt returning `ForwardAnalysisSchema`-shaped JSON.
 4. Response stored in Firestore (per-user, TTL 90 days) + returned to UI as card with verdict, risk 1-5, category, reasoning, ECI citations.
 
 ## Extensibility seams
 
-- **Vertex swap**: replace `GoogleGeminiClient` with `VertexGeminiClient` — same `GeminiClient` interface.
+- **AI provider swap**: update `LLM_SERVICE_ENDPOINT`, `LLM_SERVICE_MODEL`, or BYOK env values without exposing keys to the browser.
 - **Mocking**: every Google wrapper accepts an injected HTTP fetcher → test fakes without mocking the network.
 - **New API route**: add route file + Zod schema → registered in `apps/functions/src/server.ts`.
 

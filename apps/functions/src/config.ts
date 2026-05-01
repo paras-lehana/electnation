@@ -25,6 +25,19 @@ export interface AppConfig {
     analysisModel: string;
   };
 
+  llmService: {
+    enabled: boolean;
+    baseUrl: string;
+    endpointName: string;
+    model: string;
+    provider: string;
+    providerBaseUrl: string;
+    apiKey: string;
+    internalKey: string;
+    useByok: boolean;
+    timeoutMs: number;
+  };
+
   maps: {
     apiKey: string;
     mapId: string;
@@ -89,6 +102,19 @@ export const loadConfig = (): AppConfig => ({
     apiKey: require_('GEMINI_API_KEY', process.env.GOOGLE_API_KEY),
     chatModel: process.env.VERTEX_MODEL_CHAT ?? 'gemini-flash-latest',
     analysisModel: process.env.VERTEX_MODEL_ANALYSIS ?? 'gemini-pro-latest',
+  },
+
+  llmService: {
+    enabled: process.env.LLM_SERVICE_ENABLED !== 'false',
+    baseUrl: process.env.LLM_SERVICE_URL ?? 'https://llm.lehana.in',
+    endpointName: process.env.LLM_SERVICE_ENDPOINT ?? 'antigravity-manager',
+    model: process.env.LLM_SERVICE_MODEL ?? 'gemini-3-flash',
+    provider: process.env.LLM_SERVICE_PROVIDER ?? 'custom',
+    providerBaseUrl: process.env.LLM_SERVICE_PROVIDER_BASE_URL ?? 'https://antigravity.aidhunik.com/v1',
+    apiKey: require_('LLM_SERVICE_API_KEY'),
+    internalKey: require_('LLM_SERVICE_INTERNAL_KEY', process.env.LLM_SERVICE_API_KEY),
+    useByok: process.env.LLM_SERVICE_BYOK === 'true',
+    timeoutMs: Number(process.env.LLM_SERVICE_TIMEOUT_MS ?? 90_000),
   },
 
   maps: {

@@ -6,6 +6,7 @@ process.env.FUNCTIONS_NO_START = '1';
 process.env.NODE_ENV = 'test';
 process.env.RECAPTCHA_BYPASS = 'true';
 process.env.GEMINI_API_KEY = '';
+process.env.LLM_SERVICE_ENABLED = 'false';
 process.env.GOOGLE_MAPS_API_KEY = '';
 
 let app: Express;
@@ -19,7 +20,7 @@ describe('Election Yatra API', () => {
   it('reports health with dependency readiness', async () => {
     const response = await request(app).get('/api/health').expect(200);
     expect(response.body.status).toMatch(/healthy|degraded/);
-    expect(response.body.dependencies).toHaveProperty('gemini');
+    expect(response.body.dependencies).toHaveProperty('llmService');
   });
 
   it('returns schema-shaped demo forward analysis', async () => {

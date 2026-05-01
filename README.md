@@ -1,6 +1,6 @@
 # Election Yatra — Janta ka Election Saathi
 
-> **Version 0.3.0** — Vote Sanrakshan, Easy Mode, scenario expansion, and prompt-craftsmanship tests.
+> **Version 0.4.0** — backend-only llm-service AI, stable Cloud Run deployment notes, and win-focused roadmap.
 
 > **An AI companion for Indian voters.** Walk the 6-station yatra from
 > registration to polling booth, spot WhatsApp misinformation, find your
@@ -19,7 +19,7 @@ _Google Prompt Wars_ hackathon (April 2026).
 | Axis | How Election Yatra delivers |
 | --- | --- |
 | **Novelty** | First civic companion that blends Chunav Saathi (conversational AI) + Misinformation Clinic + gamified yatra + voice-first Easy Mode |
-| **Google services used** | Gemini (chat + classification) · Vertex AI · Maps/Places/Directions/Distance Matrix/Street View · Calendar OAuth · YouTube Data v3 · Cloud Text-to-Speech + Speech-to-Text · Cloud Translation · Firebase Auth + Firestore · reCAPTCHA Enterprise · Secret Manager · Cloud Logging · Cloud Run |
+| **Google services used** | llm-service with Antigravity Gemini (`gemini-3-flash`) · Maps/Places/Directions/Distance Matrix/Street View · Calendar OAuth · YouTube Data v3 · Cloud Text-to-Speech + Speech-to-Text · Cloud Translation · Firebase Auth + Firestore · reCAPTCHA Enterprise · Secret Manager · Cloud Logging · Cloud Run |
 | **Accessibility** | WCAG-AA target · Easy Mode (audio-first) · 4+ languages · Read-aloud on every card |
 | **Security** | Secret Manager · reCAPTCHA Enterprise · Firebase Security Rules · STRIDE-lite threat model · PII minimization |
 | **Made in Bharat** | Ethnic-modern "Democracy ka Tyohar" aesthetic — Ashoka Chakra, rangoli patterns, khadi palette, Playfair × Noto Serif Devanagari |
@@ -45,6 +45,7 @@ election-yatra/
 ├── ACCESSIBILITY.md
 ├── TESTING.md
 ├── PROMPTS.md         # Chunav Saathi prompt engineering
+├── SUGGESTIONS.md     # Win-focused roadmap for maps, gamification, UI, tests
 └── CHANGELOG.md
 ```
 
@@ -60,15 +61,17 @@ pnpm dev                           # runs web (:3000) + functions (:8080) in par
 
 ### Demo mode
 
-If `GEMINI_API_KEY` is absent, `/api/chat` streams a scripted Hinglish
-demo reply so the UI and SSE pipeline can be exercised without
-credentials. Perfect for first-run and CI.
+If `DEMO_MODE=true`, `/api/chat` streams a scripted Hinglish demo reply and
+`/api/forward/analysis` uses deterministic local analysis so the UI and tests can
+run without credentials. Production uses backend-only `llm-service` with
+Antigravity `gemini-3-flash`; secrets stay in Cloud Run env/Secret Manager and
+are never exposed through frontend config.
 
 ### Smoke tests
 
 ```bash
 curl http://localhost:8080/api/health
-# → 200 {"status":"degraded","version":"0.3.0",...}
+# → 200 {"status":"degraded","version":"0.4.0",...}
 
 curl -N -X POST http://localhost:8080/api/chat \
   -H "content-type: application/json" \
@@ -91,7 +94,7 @@ yatra, ek vote."*
 - **Frontend**: Next.js 14 (App Router), TypeScript strict, Tailwind CSS, Framer Motion
 - **Backend**: Express 4 on Cloud Run, TypeScript, Zod validation
 - **Shared**: pnpm workspaces, `@yatra/core` package
-- **Google**: Gemini · Vertex AI · Maps · Calendar · YouTube · TTS · STT · Translation · Firebase · reCAPTCHA Enterprise · Secret Manager · Cloud Run · Cloud Logging
+- **Google**: llm-service with Antigravity Gemini · Maps · Calendar · YouTube · TTS · STT · Translation · Firebase · reCAPTCHA Enterprise · Secret Manager · Cloud Run · Cloud Logging
 - **Testing**: Vitest · Supertest · React Testing Library · Playwright · axe-core · Lighthouse CI
 - **DX**: ESLint flat · Prettier · Husky · GitHub Actions · Antigravity workspace
 

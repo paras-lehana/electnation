@@ -1,22 +1,19 @@
 /**
- * POST /api/chat — Streaming Gemini chat as "Chunav Saathi".
+ * POST /api/chat — Streaming Chunav Saathi responses through llm-service.
  *
  * Contract
  * - Request body validated against ChatRequestSchema.
  * - Response is Server-Sent Events: each `data: {...}\n\n` frame carries
  *   `{ delta: string }`. A final `data: [DONE]\n\n` marks completion.
- * - On config-missing (no GEMINI_API_KEY), server returns a deterministic
- *   demo stream so the frontend can still be exercised in developer mode.
+ * - In demo mode, server returns a deterministic stream so the frontend can
+ *   still be exercised without credentials.
  */
 
 import { Router } from 'express';
-import {
-  ChatRequestSchema,
-  GoogleGeminiClient,
-  buildChunavSaathiPrompt,
-} from '@yatra/core';
+import { ChatRequestSchema, buildChunavSaathiPrompt } from '@yatra/core';
 import type { AppConfig } from '../config.js';
 import { logger } from '../middleware/logger.js';
+import { LlmServiceClient } from '../services/llmServiceClient.js';
 
 const DEMO_REPLY =
   'Namaste! Main Chunav Saathi hoon. Aapke liye Election Yatra start karne ke liye tayar hoon. ' +
@@ -37,11 +34,25 @@ const streamDemo = async (res: import('express').Response) => {
   res.end();
 };
 
+const streamText = async (res: import('express').Response, text: string) => {
+  const tokens = text.split(/(\s+)/);
+  for (const token of tokens) {
+    if (token.length === 0) continue;
+    res.write(`data: ${JSON.stringify({ delta: token })}\n\n`);
+  }
+  res.write('data: [DONE]\n\n');
+  res.end();
+};
+
 export const chatRouter = (config: AppConfig): Router => {
   const r = Router();
 
   r.post('/chat', async (req, res) => {
-    logger.info('chat.request_received', { model: config.gemini.chatModel, hasKey: !!config.gemini.apiKey });
+    logger.info('chat.request_received', {
+      model: config.llmService.model,
+      llmServiceEnabled: config.llmService.enabled,
+      demoMode: config.demoMode,
+    });
     const parsed = ChatRequestSchema.safeParse(req.body);
     if (!parsed.success) {
       res.status(400).json({
@@ -60,13 +71,13 @@ export const chatRouter = (config: AppConfig): Router => {
     res.setHeader('x-accel-buffering', 'no');
     res.flushHeaders?.();
 
-    if (!config.gemini.apiKey) {
-      logger.warn('chat.demo_mode', { reason: 'GEMINI_API_KEY not set' });
+    if (config.demoMode || !config.llmService.enabled) {
+      logger.warn('chat.demo_mode', { reason: config.demoMode ? 'DEMO_MODE enabled' : 'LLM_SERVICE_DISABLED' });
       await streamDemo(res);
       return;
     }
 
-    const client = new GoogleGeminiClient({ apiKey: config.gemini.apiKey });
+    const client = new LlmServiceClient(config.llmService);
     const systemInstruction = buildChunavSaathiPrompt({
       locale: parsed.data.locale,
       literacyComfort: parsed.data.literacyComfort,
@@ -74,19 +85,16 @@ export const chatRouter = (config: AppConfig): Router => {
     });
 
     try {
-      for await (const chunk of client.streamGenerate({
-        model: config.gemini.chatModel,
-        systemInstruction,
-        messages: [{ role: 'user', text: parsed.data.message }],
+      const result = await client.generate({
+        systemPrompt: systemInstruction,
+        messages: [{ role: 'user', content: parsed.data.message }],
         temperature: 0.4,
-        maxOutputTokens: 1024,
-      })) {
-        res.write(`data: ${JSON.stringify({ delta: chunk })}\n\n`);
-      }
-      res.write('data: [DONE]\n\n');
-      res.end();
+        maxTokens: 1024,
+      });
+      logger.info('chat.llm_complete', { mode: result.mode, model: result.model });
+      await streamText(res, result.content);
     } catch (cause) {
-      logger.error('chat.stream_failed', { cause: String(cause) });
+      logger.error('chat.llm_failed', { cause: String(cause) });
       res.write(
         `data: ${JSON.stringify({ error: 'UPSTREAM_FAILURE', message: 'AI service is unavailable right now.' })}\n\n`,
       );

@@ -14,7 +14,7 @@ export const healthRouter = (config: AppConfig): Router => {
 
   r.get('/health', (_req, res) => {
     const deps = {
-      gemini: Boolean(config.gemini.apiKey) ? 'configured' : 'missing-key',
+      llmService: config.llmService.enabled && Boolean(config.llmService.baseUrl) ? 'configured' : 'disabled',
       maps: Boolean(config.maps.apiKey) ? 'configured' : 'missing-key',
       firebase: Boolean(config.firebase.projectId) ? 'configured' : 'missing-project',
     };

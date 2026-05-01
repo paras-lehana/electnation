@@ -2,6 +2,29 @@
 
 All notable changes to Election Yatra.
 
+## [0.4.0] - 2026-05-02
+
+### Added
+- Backend-only `llm-service` client for Antigravity `gemini-3-flash` with SMK and opt-in BYOK/secret support.
+- Unit tests proving the wrapper sends model overrides, auth headers, and falls back from BYOK to SMK.
+- Stable Cloud Run URL, slow deployment, and backend AI secret guidance in `AGENTS.md`.
+- `SUGGESTIONS.md` with win-focused product, gamification, Google Maps, UI, and testing ideas.
+
+### Changed
+- `/api/chat` now calls `llm-service` instead of direct Gemini route code when `DEMO_MODE=false`.
+- `/api/forward/analysis` now uses `llm-service` for Forward Clinic classification with deterministic local fallback.
+- Health checks now report `llmService` readiness instead of direct `gemini` key readiness.
+- README, architecture, and Google Services docs now describe the backend-only AI wrapper.
+
+### Fixed
+- AI and `/clinic` no longer depend on a direct `GEMINI_API_KEY` being present in Cloud Run.
+
+### Security
+- Added explicit documentation that `LLM_SERVICE_API_KEY` and `LLM_SERVICE_INTERNAL_KEY` must stay in Cloud Run env/Secret Manager or ignored `.env.local` only.
+
+### Verified
+- Pending final local and live deployment validation for this change.
+
 ## [0.3.0] — 2026-05-02
 
 ### Added
