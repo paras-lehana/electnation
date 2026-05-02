@@ -50,3 +50,18 @@
     @apply absolute -right-3 -bottom-3 h-8 w-8 rounded-full border-2 border-henna-500/30;
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

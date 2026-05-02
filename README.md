@@ -1,6 +1,6 @@
 # Election Yatra — Janta ka Election Saathi
 
-> **Version 0.4.3** — Security hardening for privacy redaction, prompt-injection boundaries, CORS, and production-scoped reCAPTCHA bypass.
+> **Version 0.4.4** — Testing and accessibility hardening with Playwright E2E, axe scans, and component coverage.
 
 > **An AI companion for Indian voters.** Walk the 6-station yatra from
 > registration to polling booth, spot WhatsApp misinformation, find your
@@ -37,7 +37,6 @@ election-yatra/
 │   └── core/          # Shared types, Zod schemas, Result, AppError, Google clients
 ├── .gcloudignore      # Cloud Build upload exclusions for secrets/artifacts
 ├── tasks.md           # Granular task tracker (phase-by-phase)
-├── AGENTS.md          # Agent commands, validation, and GCloud deploy notes
 ├── ARCHITECTURE.md    # Data flow + layering
 ├── GOOGLE_SERVICES.md # Service → file mapping
 ├── EVALUATION_MAPPING.md  # Rubric ↔ code mapping
@@ -59,7 +58,6 @@ election-yatra/
 | `apps/functions/src/services/requestSecurity.ts` | CORS origin checks and production-scoped reCAPTCHA bypass rules | API perimeter changes |
 | `packages/core/` | Shared schemas, types, Result/AppError helpers, Google wrappers, version constant | Cross-app contracts and validation |
 | `tasks.md` | Granular roadmap and code-quality hardening tracker | Session planning and rubric progress |
-| `AGENTS.md` | Local commands, mandatory Cloud Run deploy workflow, stable URLs, env/secret gotchas | Read first before any deployment |
 | `EVALUATION_MAPPING.md` | Rubric axis to proof mapping | Before submission review |
 
 ## Local setup
@@ -90,7 +88,7 @@ Turn bypass off after wiring a production reCAPTCHA site key.
 
 ```bash
 curl http://localhost:8080/api/health
-# → 200 {"status":"degraded","version":"0.4.3",...}
+# → 200 {"status":"degraded","version":"0.4.4",...}
 
 curl -N -X POST http://localhost:8080/api/chat \
   -H "content-type: application/json" \
@@ -114,7 +112,7 @@ yatra, ek vote."*
 - **Backend**: Express 4 on Cloud Run, TypeScript, Zod validation
 - **Shared**: pnpm workspaces, `@yatra/core` package
 - **Google**: llm-service with Antigravity Gemini · Maps · Calendar · YouTube · TTS · STT · Translation · Firebase · reCAPTCHA Enterprise · Secret Manager · Cloud Run · Cloud Logging
-- **Testing**: Vitest · Supertest · direct TypeScript checks · planned Playwright/axe/Lighthouse CI
+- **Testing**: Vitest · Supertest · React Testing Library · Playwright · axe-core · direct TypeScript checks
 - **DX**: TypeScript strict · Prettier · Cloud Build docs · planned ESLint/GitHub Actions · Antigravity workspace
 
 ## Non-partisan pledge

@@ -78,9 +78,36 @@ describe('Election Yatra API', () => {
     const serialized = JSON.stringify(response.body);
 
     expect(response.body).toHaveProperty('mapsApiKey');
+    expect(response.body.featureFlags).toMatchObject({ calendar: true, youtubeSveep: true, tts: true });
     expect(serialized).not.toContain('LLM_SERVICE_INTERNAL_KEY');
+    expect(serialized).not.toContain('LLM_SERVICE_API_KEY');
+    expect(serialized).not.toContain('GOOGLE_OAUTH_CLIENT_SECRET');
     expect(serialized).not.toContain('llmService');
     expect(serialized).not.toContain('recaptchaBypass');
+  });
+
+  it('streams demo chat as server-sent events', async () => {
+    const response = await request(app)
+      .post('/api/chat')
+      .set('Origin', 'http://localhost:3000')
+      .send({ locale: 'en', literacyComfort: 'standard', message: 'How do I register to vote?' })
+      .expect(200);
+
+    expect(response.headers['content-type']).toContain('text/event-stream');
+    expect(response.text).toContain('data:');
+    expect(response.text).toContain('[DONE]');
+    expect(response.text).toContain('"delta":"Chunav"');
+    expect(response.text).toContain('"delta":"Saathi"');
+  });
+
+  it('rejects invalid chat payloads before streaming', async () => {
+    const response = await request(app)
+      .post('/api/chat')
+      .set('Origin', 'http://localhost:3000')
+      .send({ locale: 'en', literacyComfort: 'standard', message: '' })
+      .expect(400);
+
+    expect(response.body.error.code).toBe('VALIDATION_FAILED');
   });
 
   it('allows production reCAPTCHA bypass only from the configured web origin', async () => {
@@ -105,6 +132,46 @@ describe('Election Yatra API', () => {
     const response = await request(app).get('/api/calendar/ics?source=default').expect(200);
     expect(response.text).toContain('BEGIN:VCALENDAR');
     expect(response.text).toContain('BEGIN:VEVENT');
+  });
+
+  it('creates Google Calendar template links for valid reminder batches', async () => {
+    const response = await request(app)
+      .post('/api/calendar/add')
+      .send({
+        events: [
+          {
+            id: 'poll-day',
+            kind: 'poll-day',
+            title: { en: 'Polling day reminder' },
+            startsAt: '2026-05-31T07:00:00.000Z',
+            endsAt: '2026-05-31T07:30:00.000Z',
+            eciSourceUrl: 'https://eci.gov.in',
+          },
+        ],
+      })
+      .expect(200);
+
+    expect(response.body.mode).toBe('google-calendar-template');
+    expect(response.body.links[0].googleCalendarUrl).toContain('calendar.google.com');
+    expect(response.body.icsUrl).toBe('/api/calendar/ics?source=default');
+  });
+
+  it('returns a typed map configuration error when Maps keys are absent outside demo mode', async () => {
+    const response = await request(app).get('/api/map/nearest-facilities?lat=28.61&lng=77.21').expect(503);
+
+    expect(response.body.error.code).toBe('MAPS_CONFIG_MISSING');
+  });
+
+  it('rejects invalid map coordinates', async () => {
+    const response = await request(app).get('/api/map/nearest-facilities?lat=abc&lng=77.21').expect(400);
+
+    expect(response.body.error.message).toContain('Invalid lat/lng');
+  });
+
+  it('validates TTS and translation request bodies before upstream calls', async () => {
+    await request(app).post('/api/tts').send({ languageCode: 'en-IN' }).expect(400);
+    await request(app).post('/api/translate').send({ text: 'Namaste' }).expect(400);
+    await request(app).post('/api/translate/detect').send({}).expect(400);
   });
 
   it('serves demo YouTube SVEEP content without API keys', async () => {

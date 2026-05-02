@@ -105,12 +105,12 @@ export default function ScenarioPage() {
 
   if (step === 0) {
     return (
-      <main className="min-h-screen bg-indigo-chakra flex items-center justify-center p-4">
+      <main id="main" className="min-h-screen bg-indigo-chakra flex items-center justify-center p-4">
         <Card className="max-w-2xl w-full bg-white text-center p-12 shadow-2xl">
           <div className="text-6xl mb-6">{scenario.content[0]?.image}</div>
           <h1 className="font-display text-4xl font-bold text-ink-900 mb-6">{scenario.title}</h1>
           <p className="text-xl text-ink-700 mb-8 leading-relaxed">{scenario.content[0]?.text}</p>
-          <Button className="w-full text-lg py-6 bg-saffron-600 hover:bg-saffron-700" data-testid="scenario-start" onClick={() => setStep(1)}>
+          <Button className="w-full text-lg py-6 bg-saffron-600 hover:bg-saffron-700 text-white" data-testid="scenario-start" onClick={() => setStep(1)}>
             Continue →
           </Button>
         </Card>
@@ -120,7 +120,7 @@ export default function ScenarioPage() {
 
   if (step === 1) {
     return (
-      <main className="min-h-screen bg-indigo-chakra flex items-center justify-center p-4">
+      <main id="main" className="min-h-screen bg-indigo-chakra flex items-center justify-center p-4">
         <Card className="max-w-2xl w-full bg-white p-8 md:p-12 shadow-2xl">
           <div className="text-center mb-8">
             <div className="text-5xl mb-4">{scenario.content[1]?.image}</div>

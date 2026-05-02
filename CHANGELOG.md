@@ -2,6 +2,31 @@
 
 All notable changes to Election Yatra.
 
+## [0.4.4] - 2026-05-02
+
+### Added
+- Added Playwright browser coverage for onboarding, Forward Clinic, Map, Easy Mode, Vote Sanrakshan, Yatra, Chunav Saathi chat, and axe accessibility scans.
+- Added React Testing Library coverage for Button, Stepper, ChatWidget, and the local progress ledger.
+- Added root scripts for focused unit/API/web tests, full E2E, headed E2E, and axe accessibility checks.
+
+### Changed
+- Made the Playwright suite run with one local worker so Windows + Next.js dev-server browser tests are deterministic.
+- Darkened the saffron palette and fixed shared Button/Card defaults so explicit custom backgrounds and text colors render reliably.
+- Improved Chunav Saathi chat semantics with a labelled dialog, `aria-expanded`, `aria-controls`, a polite `role="log"`, labelled input, labelled submit action, Escape close, focus return, and reduced-motion support.
+- Added skip-link `#main` targets to voter-facing routes and accessible labels/error announcements for key form controls.
+- Replaced low-contrast muted badge chips and opacity-dimmed readable Yatra cards with contrast-safe states.
+
+### Tested
+- Expanded API integration coverage for public config redaction, chat SSE, invalid chat payloads, Calendar template links, map errors, TTS validation, and translation validation.
+- Restored and updated testing documentation and rubric mapping to match the verified test counts.
+
+### Verified
+- `pnpm type-check` passed across core, functions, and web.
+- `pnpm test` passed (19 core tests, 30 backend/API tests, 7 web tests).
+- `pnpm build` passed across core, functions, and web.
+- `pnpm a11y` passed across 9 core routes with color contrast enabled.
+- `pnpm e2e:ci` passed (15 Chromium tests).
+
 ## [0.4.3] - 2026-05-02
 
 ### Security
@@ -62,7 +87,6 @@ All notable changes to Election Yatra.
 ### Added
 - Backend-only `llm-service` client for Antigravity `gemini-3-flash` with SMK and opt-in BYOK/secret support.
 - Unit tests proving the wrapper sends model overrides, auth headers, and falls back from BYOK to SMK.
-- Stable Cloud Run URL, slow deployment, and backend AI secret guidance in `AGENTS.md`.
 - `SUGGESTIONS.md` with win-focused product, gamification, Google Maps, UI, and testing ideas.
 
 ### Changed
@@ -97,7 +121,6 @@ All notable changes to Election Yatra.
 - Easy Mode page with large action tiles, transcript-first guidance, and browser read-aloud support.
 - Vote Sanrakshan Play scenario with XP and a new `Vote Sanrakshak` badge.
 - Prompt-craftsmanship tests for Chunav Saathi neutrality, official-source guidance, Hindi/easy-language adaptation, and audio-first behavior.
-- `AGENTS.md` with local validation, dev-server, and Google Cloud deployment notes.
 - `.gcloudignore` to keep local secrets, dependencies, build output, and ignored research docs out of Cloud Build uploads.
 
 ### Changed

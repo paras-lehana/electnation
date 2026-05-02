@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/Button';
 
 export default function MigrantCornerPage() {
   return (
-    <main className="min-h-screen bg-saffron-50 pb-20">
+    <main id="main" className="min-h-screen bg-saffron-50 pb-20">
       <div className="bg-white py-16 border-b border-saffron-100 shadow-sm">
         <div className="container-yatra text-center">
           <h1 className="font-display text-4xl font-bold text-ink-900 md:text-5xl">
@@ -34,7 +34,7 @@ export default function MigrantCornerPage() {
               <span className="text-leaf-600">✔</span> Takes approx 15-30 days for processing
             </li>
           </ul>
-          <Button className="w-full bg-indigo-chakra">Start Online Application</Button>
+          <Button className="w-full bg-indigo-chakra text-white">Start Online Application</Button>
         </Card>
 
         <Card className="bg-white p-8 border-t-8 border-t-leaf-500">
@@ -53,7 +53,7 @@ export default function MigrantCornerPage() {
               <span className="text-leaf-600">✔</span> Form 12D for senior citizens/PwD
             </li>
           </ul>
-          <Button className="w-full bg-leaf-600">Check Eligibility</Button>
+          <Button className="w-full bg-leaf-600 text-white">Check Eligibility</Button>
         </Card>
 
         <Card className="md:col-span-2 bg-indigo-900 text-white p-8">

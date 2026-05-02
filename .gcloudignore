@@ -26,7 +26,6 @@ bin/gh.exe
 docs/
 
 # Editor and local metadata
-.vscode/
 .idea/
 .DS_Store
 Thumbs.db

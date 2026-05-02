@@ -2,7 +2,7 @@ import { AshokaChakra } from '@/components/motifs/AshokaChakra';
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-khadi-50 pb-20">
+    <main id="main" className="min-h-screen bg-khadi-50 pb-20">
       <div className="bg-white py-16 shadow-sm border-b border-khadi-100">
         <div className="container-yatra text-center">
           <span className="inline-block px-4 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-bold mb-4 tracking-wider">
@@ -10,7 +10,7 @@ export default function AboutPage() {
           </span>
           <h1 className="font-display text-4xl font-bold text-ink-900 md:text-5xl flex justify-center items-center gap-4">
             <span className="text-indigo-chakra"><AshokaChakra size={48} /></span>
-            Election <span className="text-saffron-500">Yatra</span>
+            Election <span className="text-saffron-700">Yatra</span>
           </h1>
           <p className="mt-4 mx-auto max-w-2xl text-lg text-ink-700">
             Janta ka Election Saathi. Built to empower Indian voters through education, accessibility, and technology.

@@ -21,20 +21,11 @@ service-account*.json
 # Private design / research docs (NOT shipped in repo)
 docs/
 
-# Tool caches & editor junk
+# Tool caches and local metadata
 .DS_Store
 .idea/
-.vscode/
-.cursor/
 *.swp
 *.swo
-
-# AI tooling attribution — scrub from repo
-.github/copilot-*
-.aider*
-.codeium/
-.continue/
-AGENTS.md
 
 # Test & coverage
 coverage/

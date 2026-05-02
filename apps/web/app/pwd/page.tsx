@@ -32,7 +32,7 @@ export default function PwdPage() {
   };
 
   return (
-    <main className="min-h-screen bg-khadi-100 pb-20">
+    <main id="main" className="min-h-screen bg-khadi-100 pb-20">
       <div className="bg-white py-16 border-b border-khadi-200 shadow-sm">
         <div className="container-yatra">
           <div className="flex flex-col md:flex-row items-center gap-8">
@@ -98,7 +98,7 @@ export default function PwdPage() {
               <h2 className="font-display text-2xl font-bold text-leaf-900 mb-2">Voting from Home (Form 12D)</h2>
               <p className="text-leaf-800">For voters aged 85+ or PwD (with 40% benchmark disability), ECI provides the option to vote from the comfort of your home using postal ballots.</p>
               <div className="mt-4 flex gap-4">
-                <Button className="bg-leaf-600">Download Form 12D</Button>
+                <Button className="bg-leaf-600 text-white">Download Form 12D</Button>
                 <Button variant="ghost" className="border-leaf-300 text-leaf-800">Watch Video Tutorial</Button>
               </div>
             </div>

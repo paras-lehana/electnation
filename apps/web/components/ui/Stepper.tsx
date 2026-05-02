@@ -29,7 +29,7 @@ export const Stepper = ({ steps, activeId }: Props) => (
             className={clsx(
               'flex h-12 w-12 items-center justify-center rounded-full font-bold shadow-sm transition',
               isActive
-                ? 'bg-saffron-500 text-white ring-4 ring-saffron-200'
+                ? 'bg-saffron-600 text-white ring-4 ring-saffron-200'
                 : 'bg-khadi-100 text-ink-700 border border-khadi-300',
             )}
             aria-current={isActive ? 'step' : undefined}

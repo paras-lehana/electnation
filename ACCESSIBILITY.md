@@ -5,13 +5,11 @@ Election Yatra targets **WCAG 2.2 AA** and ships an opinionated
 
 ## Principles
 
-1. **Language over text** — read-aloud on every content card via Cloud TTS; mic input via Cloud STT.
-2. **Keyboard-first** — every interactive element reachable via Tab; stepper uses arrow keys; focus ring visible in saffron-200 outline.
-3. **Reduced motion** — marigold particles, chakra spin, and diya flicker all respect `prefers-reduced-motion`.
-4. **Semantic HTML** — landmark roles, heading hierarchy H1 → H3, lists where lists belong, live regions for streaming chat.
-5. **Color contrast** — all body text ≥ 4.5:1 against khadi background; primary CTA saffron-500 on white passes AAA.
-
-auto-plays a 15-second Chunav Saathi narration in the selected locale.
+1. **Language over text** — Easy Mode and PwD/Yatra surfaces provide read-aloud controls, transcripts, or simplified action tiles where the flow needs them most.
+2. **Keyboard-first** — core actions are native buttons/links with visible focus states and explicit labels.
+3. **Reduced motion** — global motion reduction disables long animations and smooth scrolling when `prefers-reduced-motion` is enabled.
+4. **Semantic HTML** — pages expose the global skip-link target, result regions use live announcements, and the streaming chat is a labelled dialog with a polite conversation log.
+5. **Color contrast** — the saffron palette and muted UI states were darkened so axe color-contrast checks pass without disabling the rule.
 ## Easy Mode
 
 `/easy-mode` provides a low-literacy, audio-first entry point with large
@@ -34,6 +32,7 @@ languages (Telugu, Marathi, Gujarati, Kannada, Malayalam, Punjabi, Urdu).
 ## Testing
 
 - Chunav Saathi chat open/close controls expose explicit accessible labels for keyboard and screen-reader users.
-- `pnpm test:a11y` runs axe-core against every route (target 0 violations).
-- Lighthouse CI budget: Accessibility ≥ 100.
+- `pnpm a11y` runs axe-core against 9 core routes with WCAG 2 A/AA tags and color contrast enabled.
+- `pnpm e2e:ci` runs the full Chromium browser suite, including the axe checks.
+- Lighthouse CI budget: Accessibility ≥ 100 is planned for the final preview deployment.
 - Manual: TalkBack + VoiceOver smoke on every release.

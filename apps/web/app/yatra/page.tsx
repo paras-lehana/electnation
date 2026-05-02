@@ -132,7 +132,7 @@ export default function YatraPage() {
   };
 
   return (
-    <main className="min-h-screen bg-khadi-50 pb-20">
+    <main id="main" className="min-h-screen bg-khadi-50 pb-20">
       <div className="bg-white py-12 shadow-sm border-b border-khadi-100">
         <div className="container-yatra">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -179,8 +179,8 @@ export default function YatraPage() {
               return (
                 <motion.div 
                   key={station.id} 
-                  initial={{ opacity: 0, x: -30 }}
-                  animate={{ opacity: 1, x: 0 }}
+                  initial={false}
+                  animate={{ x: 0 }}
                   transition={{ delay: index * 0.15, duration: 0.5 }}
                   className="relative flex items-start gap-8"
                 >
@@ -196,7 +196,7 @@ export default function YatraPage() {
                   <Card className={`flex-1 transition-all duration-300 border-l-8 ${
                     status === 'completed' ? 'border-l-leaf-500 bg-white hover:shadow-xl' :
                     status === 'current' ? 'border-l-[#312e81] bg-indigo-50/50 scale-[1.02] shadow-xl' :
-                    'border-l-khadi-300 bg-khadi-50/50 opacity-70'
+                    'border-l-khadi-300 bg-khadi-50/50'
                   }`}>
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div>
@@ -222,14 +222,18 @@ export default function YatraPage() {
 
                             {station.id === 'verification' && (
                               <div className="w-full">
+                                <label htmlFor="epic-number" className="sr-only">Enter EPIC number</label>
                                 <input 
+                                  id="epic-number"
                                   type="text" 
                                   placeholder="Enter EPIC number (e.g. ABC1234567)" 
                                   className="w-full border border-khadi-300 rounded-lg px-3 py-2 text-sm text-ink-900 focus:border-indigo-500 focus:outline-none"
                                   value={stationInput}
+                                  aria-invalid={stationError ? true : undefined}
+                                  aria-describedby={stationError ? 'epic-number-error' : undefined}
                                   onChange={(e) => setStationInput(e.target.value.toUpperCase())}
                                 />
-                                {stationError && <p className="text-red-500 text-xs mt-1">{stationError}</p>}
+                                {stationError && <p id="epic-number-error" role="alert" className="text-red-700 text-xs mt-1">{stationError}</p>}
                               </div>
                             )}
 
@@ -240,7 +244,7 @@ export default function YatraPage() {
                                     <Button onClick={() => setStationInput('real')} className="flex-1 bg-green-50 text-green-700 border-green-200 hover:bg-green-100">Real</Button>
                                     <Button onClick={() => setStationInput('fake')} className="flex-1 bg-red-50 text-red-700 border-red-200 hover:bg-red-100">Fake</Button>
                                 </div>
-                                {stationError && <p className="text-red-500 text-[10px]">{stationError}</p>}
+                                {stationError && <p role="alert" className="text-red-700 text-[10px]">{stationError}</p>}
                               </div>
                             )}
 
@@ -264,7 +268,7 @@ export default function YatraPage() {
                                         {item}
                                     </label>
                                 ))}
-                                {stationError && <p className="text-red-500 text-[10px]">{stationError}</p>}
+                                {stationError && <p role="alert" className="text-red-700 text-[10px]">{stationError}</p>}
                               </div>
                             )}
 

@@ -44,7 +44,7 @@ export default function ClinicPage() {
   };
 
   return (
-    <main className="min-h-screen bg-tricolor-soft pb-20 overflow-hidden">
+    <main id="main" className="min-h-screen bg-tricolor-soft pb-20 overflow-hidden">
       <div className="bg-white/90 backdrop-blur-sm border-b border-gray-100 py-12 shadow-sm relative z-10">
         <div className="container-yatra text-center relative">
           <motion.h1 
@@ -52,7 +52,7 @@ export default function ClinicPage() {
             animate={{ opacity: 1, scale: 1 }}
             className="font-display text-4xl font-bold text-ink-900 md:text-5xl"
           >
-            WhatsApp <span className="text-saffron-500 bg-saffron-50 px-2 rounded-md">Forward Clinic</span>
+            WhatsApp <span className="text-saffron-700 bg-saffron-50 px-2 rounded-md">Forward Clinic</span>
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 10 }}
@@ -66,7 +66,7 @@ export default function ClinicPage() {
       </div>
 
       <div className="container-yatra mt-12 max-w-3xl">
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+        <motion.div initial={false} animate={{ y: 0 }} transition={{ delay: 0.3 }}>
           <Card className="bg-white shadow-xl hover:shadow-2xl transition-shadow border-t-4 border-t-saffron-500 relative overflow-hidden">
             <div className="absolute top-0 right-0 p-4 opacity-5 text-6xl pointer-events-none">🩺</div>
             <form onSubmit={handleAnalyze} className="relative z-10">
@@ -151,9 +151,9 @@ export default function ClinicPage() {
                     <p className="text-md text-ink-800 mt-2 font-medium">{result.recommendedAction}</p>
                   </motion.div>
                   <div className="mt-4 flex flex-wrap gap-2 text-xs">
-                    {result.eciSources.map((source) => (
+                    {result.eciSources.map((source, index) => (
                       <a key={source} href={source} target="_blank" rel="noreferrer" className="rounded-full bg-white px-3 py-1 font-bold text-indigo-chakra underline">
-                        Official source
+                        Official source {index + 1}
                       </a>
                     ))}
                   </div>

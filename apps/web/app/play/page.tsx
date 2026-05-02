@@ -56,7 +56,7 @@ export default function PlayPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-khadi-50 pb-20">
+    <main id="main" className="min-h-screen bg-khadi-50 pb-20">
       <div className="bg-saffron-50 py-16 border-b border-saffron-100">
         <div className="container-yatra text-center">
           <span className="inline-block px-4 py-1 bg-saffron-200 text-saffron-800 rounded-full text-sm font-bold mb-4 tracking-wider">
@@ -89,7 +89,7 @@ export default function PlayPage() {
                 <span
                   key={badgeId}
                   className={`rounded-full border px-3 py-1 text-xs font-bold ${
-                    earned ? 'border-leaf-300 bg-leaf-50 text-leaf-700' : 'border-khadi-200 bg-white/70 text-ink-300'
+                    earned ? 'border-leaf-300 bg-leaf-50 text-leaf-700' : 'border-khadi-300 bg-white text-ink-700'
                   }`}
                 >
                   {earned ? '✓ ' : ''}{label}

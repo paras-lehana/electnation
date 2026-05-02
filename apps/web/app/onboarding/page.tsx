@@ -90,7 +90,9 @@ export default function OnboardingPage() {
       case 3:
         return (
           <div className="space-y-4">
+            <label htmlFor="voter-location" className="sr-only">Enter your city or ZIP code</label>
             <input 
+              id="voter-location"
               type="text" 
               placeholder="Enter your City or ZIP code"
               className="w-full p-4 rounded-xl border-2 border-khadi-200 focus:border-indigo-chakra"
@@ -106,7 +108,7 @@ export default function OnboardingPage() {
   };
 
   return (
-    <main className="min-h-screen bg-tricolor-soft flex items-center justify-center p-4">
+    <main id="main" className="min-h-screen bg-tricolor-soft flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         <div className="mb-8 flex justify-between gap-2">
           {STEPS.map((_, i) => (
@@ -115,7 +117,7 @@ export default function OnboardingPage() {
         </div>
 
         <Card className="bg-white shadow-2xl p-8">
-          <span className="text-sm font-bold text-saffron-600 uppercase tracking-widest mb-2 block">Step {currentStep + 1} of 4</span>
+          <span className="text-sm font-bold text-saffron-700 uppercase tracking-widest mb-2 block">Step {currentStep + 1} of 4</span>
           <h1 className="font-display text-3xl font-bold text-ink-900 mb-2">{STEPS[currentStep]?.title}</h1>
           <p className="text-ink-700 mb-8">{STEPS[currentStep]?.description}</p>
           
@@ -130,7 +132,7 @@ export default function OnboardingPage() {
               Back
             </Button>
             <Button 
-              className="flex-1 bg-indigo-chakra"
+              className="flex-1 bg-indigo-chakra text-white"
               disabled={
                 (currentStep === 0 && !formData.age) ||
                 (currentStep === 1 && !formData.firstTime) ||

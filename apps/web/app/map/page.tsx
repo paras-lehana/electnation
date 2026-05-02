@@ -98,7 +98,7 @@ export default function MapPage() {
   };
 
   return (
-    <main className="min-h-screen bg-tricolor-soft pb-20 overflow-hidden">
+    <main id="main" className="min-h-screen bg-tricolor-soft pb-20 overflow-hidden">
       <div className="bg-white/80 backdrop-blur-md border-b border-gray-100 py-12 shadow-sm relative z-10">
         <div className="container-yatra relative">
           <motion.h1 
@@ -145,7 +145,7 @@ export default function MapPage() {
               <p className="text-xs text-ink-500 mt-2">Recommended before polling day, travel planning, or address corrections.</p>
               <div className="mt-4 flex gap-2">
                 <a href="https://voters.eci.gov.in" target="_blank" rel="noreferrer" className="w-full">
-                  <Button className="w-full bg-leaf-600 hover:bg-leaf-700 shadow-md shadow-leaf-500/20">Open voter portal</Button>
+                  <Button className="w-full bg-leaf-600 hover:bg-leaf-700 text-white shadow-md shadow-leaf-500/20">Open voter portal</Button>
                 </a>
               </div>
             </Card>
