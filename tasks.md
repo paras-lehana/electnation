@@ -18,7 +18,7 @@
 - [x] ✅ Add focused tests for redaction, prompt boundaries, request-origin rules, public-config secret absence, and bypass enforcement.
 - [x] ✅ Bump release metadata to `0.4.3` and update security/rubric docs.
 - [x] ✅ Run full root validation, Cloud Build deploy, and live browser smoke.
-- [ ] ⏳ Commit and push the security release.
+- [x] ✅ Commit and push the security release.
 
 ---
 
