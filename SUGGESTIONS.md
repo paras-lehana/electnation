@@ -105,3 +105,17 @@ Purpose: win-focused backlog for improving Election Yatra beyond the current dep
 - Add Playwright and axe coverage for the preference drawer, Easy Mode blueprint panel, STT correction surface, and print packet route.
 
 **Why it helps win**: The code already shows a broad accessibility architecture; wiring these controls will turn scaffolded proof into demo-visible assistive workflows.
+
+## Priority 9 - Live Google Civic Stack Wiring
+
+**Issue**: Version 0.5.0 now exposes a broad typed Google Civic Stack with honest `implemented`, `ready-with-key`, and `planned` statuses. The next scoring lift is converting the strongest key-ready services into live demo-visible paths.
+
+**Plan**:
+
+- Wire a referrer-restricted browser Maps key so `/map` renders real Google tiles in production while keeping the text fallback.
+- Add Places Nearby Search and Directions/Routes route cards for polling help, ERO/BLO offices, transit, walking, and accessibility landmarks.
+- Add a Google Calendar OAuth write flow while preserving the current ICS fallback.
+- Add a YouTube SVEEP frontend section grouped by voter journey step.
+- Add Cloud Monitoring uptime checks and a BigQuery/GA4 privacy-safe event schema for operational proof.
+
+**Why it helps win**: The code now proves breadth; keyed live paths will prove depth and make the Google Services rubric unmistakable in both code review and browser demos.

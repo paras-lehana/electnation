@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/Card';
 import { Stepper } from '@/components/ui/Stepper';
 import { AshokaChakra } from '@/components/motifs/AshokaChakra';
 import { RangoliPattern } from '@/components/motifs/RangoliPattern';
+import { getGoogleServiceScorecard } from '@yatra/core/google';
 
 const yatraSteps = [
   { id: 'register', title: 'Register', hindi: 'नाम दर्ज' },
@@ -15,6 +16,8 @@ const yatraSteps = [
 ];
 
 export default function HomePage() {
+  const googleScorecard = getGoogleServiceScorecard();
+
   return (
     <>
       <main id="main">
@@ -72,7 +75,12 @@ export default function HomePage() {
                 </div>
                 <div className="rounded-2xl rounded-tl-md bg-khadi-100 p-3 text-ink-900">
                   Aap{' '}
-                  <a className="underline" href="https://voters.eci.gov.in" target="_blank" rel="noreferrer">
+                  <a
+                    className="underline"
+                    href="https://voters.eci.gov.in"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     voters.eci.gov.in
                   </a>{' '}
                   par Form 6 bhar sakte hain. Main aapko steps dikha doon?
@@ -89,8 +97,8 @@ export default function HomePage() {
               Your journey in <span className="text-leaf-500">six stations</span>
             </h2>
             <p className="mt-4 text-lg text-ink-700">
-              Each step is a short, friendly conversation — read it, listen to it, or ask
-              Saathi anything. Adapted for first-time voters, migrants, and seniors.
+              Each step is a short, friendly conversation — read it, listen to it, or ask Saathi
+              anything. Adapted for first-time voters, migrants, and seniors.
             </p>
           </div>
           <div className="mt-10 overflow-x-auto pb-4">
@@ -109,8 +117,8 @@ export default function HomePage() {
                 <div className="text-3xl">🧠</div>
                 <h3 className="mt-3 font-display text-xl font-bold">Misinformation Clinic</h3>
                 <p className="mt-2 text-sm text-ink-700">
-                  Paste any WhatsApp forward. Saathi tells you if it's verified, misleading, or
-                  fake — with ECI sources to cross-check.
+                  Paste any WhatsApp forward. Saathi tells you if it's verified, misleading, or fake
+                  — with ECI sources to cross-check.
                 </p>
               </Card>
               <Card>
@@ -125,22 +133,24 @@ export default function HomePage() {
                 <div className="text-3xl">🎮</div>
                 <h3 className="mt-3 font-display text-xl font-bold">Play & Learn</h3>
                 <p className="mt-2 text-sm text-ink-700">
-                  Gamified scenarios — chai tapri bribes, fake forwards, booth rush — earn
-                  Chakra Champion badges with your community.
+                  Gamified scenarios — chai tapri bribes, fake forwards, booth rush — earn Chakra
+                  Champion badges with your community.
                 </p>
               </Card>
               <Card>
                 <div className="text-3xl">🛡️</div>
                 <h3 className="mt-3 font-display text-xl font-bold">Vote Sanrakshan</h3>
                 <p className="mt-2 text-sm text-ink-700">
-                  Learn how to respond safely when money, gifts, fear, or pressure enter the voting conversation.
+                  Learn how to respond safely when money, gifts, fear, or pressure enter the voting
+                  conversation.
                 </p>
               </Card>
               <Card>
                 <div className="text-3xl">🔊</div>
                 <h3 className="mt-3 font-display text-xl font-bold">Easy Mode</h3>
                 <p className="mt-2 text-sm text-ink-700">
-                  Big buttons, less prose, and audio-first guidance for seniors, low-literacy users, and community classes.
+                  Big buttons, less prose, and audio-first guidance for seniors, low-literacy users,
+                  and community classes.
                 </p>
               </Card>
             </div>
@@ -157,9 +167,9 @@ export default function HomePage() {
                   <span className="text-saffron-300">Bharat-first.</span>
                 </h3>
                 <p className="mt-4 text-khadi-100">
-                  Speak your doubt in Hindi, Bengali, Tamil, Marathi. Read-aloud on every card
-                  via Google Text-to-Speech. Easy Mode strips the UI to big audio-first cards
-                  for community classes and Anganwadi sessions.
+                  Speak your doubt in Hindi, Bengali, Tamil, Marathi. Read-aloud on every card via
+                  Google Text-to-Speech. Easy Mode strips the UI to big audio-first cards for
+                  community classes and Anganwadi sessions.
                 </p>
               </div>
               <div className="flex justify-center">
@@ -169,6 +179,71 @@ export default function HomePage() {
               </div>
             </div>
           </Card>
+        </section>
+
+        {/* GOOGLE CIVIC STACK */}
+        <section className="bg-white/70 py-16 md:py-24" aria-labelledby="google-stack-heading">
+          <div className="container-yatra grid gap-6 md:grid-cols-[1fr_1.1fr] md:items-center">
+            <div>
+              <p className="text-sm font-black uppercase tracking-[0.18em] text-indigo-chakra">
+                Google Civic Stack
+              </p>
+              <h2
+                id="google-stack-heading"
+                className="mt-3 font-display text-4xl font-bold text-ink-900 md:text-5xl"
+              >
+                Google services are mapped to real voter jobs.
+              </h2>
+              <p className="mt-4 text-lg text-ink-700">
+                AI, Maps, Calendar, YouTube, voice, translation, reCAPTCHA, Cloud Run, Cloud Build,
+                Secret Manager, and analytics scaffolds are tracked as code with honest
+                implementation status and fallback modes.
+              </p>
+              <div className="mt-6">
+                <Link href="/google-services">
+                  <Button>Review Google stack →</Button>
+                </Link>
+              </div>
+            </div>
+            <Card className="border-2 border-indigo-chakra/10 bg-white shadow-lg">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <div className="rounded-2xl bg-indigo-50 p-4">
+                  <p className="text-3xl font-black text-indigo-chakra">
+                    {googleScorecard.totalServices}
+                  </p>
+                  <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-ink-600">
+                    services
+                  </p>
+                </div>
+                <div className="rounded-2xl bg-leaf-50 p-4">
+                  <p className="text-3xl font-black text-leaf-900">{googleScorecard.implemented}</p>
+                  <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-ink-600">
+                    live paths
+                  </p>
+                </div>
+                <div className="rounded-2xl bg-saffron-50 p-4">
+                  <p className="text-3xl font-black text-saffron-900">
+                    {googleScorecard.readyWithKey}
+                  </p>
+                  <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-ink-600">
+                    key-ready
+                  </p>
+                </div>
+                <div className="rounded-2xl bg-khadi-100 p-4">
+                  <p className="text-3xl font-black text-ink-900">
+                    {googleScorecard.productFamilies}
+                  </p>
+                  <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-ink-600">
+                    products
+                  </p>
+                </div>
+              </div>
+              <p className="mt-4 text-sm font-semibold text-ink-700">
+                Public route: <span className="font-black">/api/google/services</span>. It exposes
+                service names, statuses, and code paths, never secret values.
+              </p>
+            </Card>
+          </div>
         </section>
       </main>
     </>

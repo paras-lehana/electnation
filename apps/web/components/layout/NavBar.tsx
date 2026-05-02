@@ -7,6 +7,7 @@ const links = [
   { href: '/sanrakshan', label: 'Vote Sanrakshan' },
   { href: '/easy-mode', label: 'Easy Mode' },
   { href: '/map', label: 'Map' },
+  { href: '/google-services', label: 'Google Stack' },
   { href: '/play', label: 'Play' },
   { href: '/about', label: 'About' },
 ];
@@ -34,7 +35,10 @@ export const NavBar = () => (
           <option value="ta">தமி</option>
         </select>
       </div>
-      <nav className="flex w-full md:w-auto order-3 md:order-2 gap-4 md:gap-6 overflow-x-auto whitespace-nowrap scrollbar-hide text-sm items-center pb-1 md:pb-0" aria-label="Primary">
+      <nav
+        className="flex w-full md:w-auto order-3 md:order-2 gap-4 md:gap-6 overflow-x-auto whitespace-nowrap scrollbar-hide text-sm items-center pb-1 md:pb-0"
+        aria-label="Primary"
+      >
         {links.map((l) => (
           <Link
             key={l.href}
@@ -45,7 +49,6 @@ export const NavBar = () => (
           </Link>
         ))}
       </nav>
-
     </div>
     <div className="tricolor-divider opacity-60" />
   </header>

@@ -156,6 +156,8 @@
 - [ ] ⏳ `analyticsClient.ts` — GA4 Measurement Protocol
 - [ ] ⏳ `PlacesClient` — Text Search, Nearby Search, Place Details (Google Maps API integration)
 - [ ] ⏳ `DirectionsClient` — driving/walking/transit routes (Google Maps API integration)
+- [x] ✅ Google Civic Stack catalog — 30+ typed service integrations with status, env contract, fallback, code path, and judge evidence
+- [x] ✅ Google Civic Journey map — Ask, Verify, Locate, Remember, Learn, Persist, Operate mapped to concrete Google service groups
 - [ ] ⏳ Streaming adapter using `@google-cloud/vertexai` SDK (production swap)
 - [ ] ⏳ Mock implementations for each client (tests)
 
@@ -182,6 +184,7 @@
 - [ ] ⏳ `GET /api/leaderboard/:city` — weekly top 20
 - [ ] ⏳ `POST /api/translate` — UI-string fallback translator
 - [x] ✅ `GET /api/youtube/sveep` — curated playlist route + explicit demo fallback
+- [x] ✅ `GET /api/google/services` — evaluator-facing Google Civic Stack scorecard, journey map, runtime readiness, and catalog
 - [ ] ⏳ `POST /api/feedback` — hCaptcha-gated free-text feedback
 - [ ] ⏳ `GET /api/metrics` — Prometheus-style basic metrics
 - [ ] ⏳ Auth middleware (Firebase ID-token verification)
@@ -206,6 +209,7 @@
 - [x] ✅ `/play` — quiz engine shell
 - [x] ✅ `/play/scenario/[id]` — scenario mini-game routes
 - [ ] ⏳ `/leaderboard` — privacy-preserving city leaderboard
+- [x] ✅ `/google-services` — judge-facing Google Services proof page with implemented/key-ready/planned status separation
 - [x] ✅ `/migrant-corner` — address update, postal ballot explainer, travel plan
 - [x] ✅ `/pwd` — accessibility-first guidance (braille EPIC, AMF)
 - [ ] ⏳ `/about` — team, mission, neutrality statement
@@ -278,6 +282,7 @@
 
 - [ ] ⏳ Root docs: `README.md`, `ARCHITECTURE.md`, `GOOGLE_SERVICES.md`, `EVALUATION_MAPPING.md`, `SECURITY.md`, `ACCESSIBILITY.md`, `TESTING.md`, `PROMPTS.md`, `CHANGELOG.md`
 - [ ] ⏳ `EVALUATION_MAPPING.md` table: Rubric Axis → code paths + tests + docs (target: 100% rubric coverage)
+- [x] ✅ Google Services rubric evidence: typed catalog, API route, proof page, public config summary, tests, and docs
 - [ ] ⏳ Architecture diagram (Mermaid)
 - [ ] ⏳ README screenshots + 60-sec demo video script
 - [ ] ⏳ Firebase Hosting + Cloud Run deploy via GitHub Actions

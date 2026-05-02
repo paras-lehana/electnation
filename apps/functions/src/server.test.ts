@@ -99,6 +99,14 @@ describe('Election Yatra API', () => {
       userProfiles: expect.any(Number),
       inputModesCovered: expect.any(Number),
     });
+    expect(response.body.googleServices).toMatchObject({
+      totalServices: expect.any(Number),
+      implemented: expect.any(Number),
+      readyWithKey: expect.any(Number),
+      planned: expect.any(Number),
+      productFamilies: expect.any(Number),
+    });
+    expect(response.body.googleServices.totalServices).toBeGreaterThanOrEqual(30);
     expect(response.body.featureFlags).toMatchObject({
       calendar: true,
       youtubeSveep: true,
@@ -109,6 +117,26 @@ describe('Election Yatra API', () => {
     expect(serialized).not.toContain('GOOGLE_OAUTH_CLIENT_SECRET');
     expect(serialized).not.toContain('llmService');
     expect(serialized).not.toContain('recaptchaBypass');
+  });
+
+  it('serves an evaluator-facing Google Civic Stack catalog without secret values', async () => {
+    const response = await request(app).get('/api/google/services').expect(200);
+    const serialized = JSON.stringify(response.body);
+
+    expect(response.body.mode).toBe('google-civic-stack');
+    expect(response.body.scorecard.totalServices).toBeGreaterThanOrEqual(30);
+    expect(response.body.scorecard.implemented).toBeGreaterThanOrEqual(12);
+    expect(response.body.journey).toHaveLength(7);
+    expect(response.body.services).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: 'antigravity-gemini-chat', status: 'implemented' }),
+        expect.objectContaining({ id: 'maps-javascript', status: 'implemented' }),
+        expect.objectContaining({ id: 'places-new', status: 'ready-with-key' }),
+        expect.objectContaining({ id: 'bigquery', status: 'planned' }),
+      ]),
+    );
+    expect(response.body.safety.exposesSecretValues).toBe(false);
+    expect(serialized).not.toContain('super-secret-google-key-value');
   });
 
   it('streams demo chat as server-sent events', async () => {

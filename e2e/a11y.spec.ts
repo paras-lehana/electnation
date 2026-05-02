@@ -9,6 +9,7 @@ const routes = [
   '/play',
   '/play/scenario/vote-sanrakshan',
   '/map',
+  '/google-services',
   '/pwd',
   '/yatra',
 ];

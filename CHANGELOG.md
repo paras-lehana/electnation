@@ -2,6 +2,35 @@
 
 All notable changes to Election Yatra.
 
+## [0.5.0] - 2026-05-03
+
+### Added
+
+- Added a typed Google Civic Stack catalog with 30+ Google service slots, implementation statuses, code paths, API surfaces, browser surfaces, env contracts, fallback modes, evidence signals, and next steps.
+- Added `GET /api/google/services`, an evaluator-facing evidence route that returns the service scorecard, civic journey map, runtime readiness, and catalog without exposing secret values.
+- Added a public `googleServices` summary to `/api/config/public` for count-only UI evidence.
+- Added `/google-services`, a judge-facing proof page that maps Google services to voter jobs and separates implemented, ready-with-key, and planned scaffolds.
+
+### Changed
+
+- Updated the homepage and primary navigation to surface the Google Civic Stack as first-class evidence.
+- Updated README, Google Services docs, rubric mapping, and testing docs to point to the new catalog, API route, and browser validation path.
+- Bumped release metadata to `0.5.0` across the root, core, web, functions, and API health version source.
+
+### Tested
+
+- Added core tests for Google service catalog breadth, honest unimplemented status rules, civic journey references, public summary safety, and deep-linkable evidence entries.
+- Added API integration assertions for `/api/google/services` and public config Google service counts.
+- Added Playwright coverage for `/google-services` and included the page in axe accessibility scans.
+
+### Verified
+
+- `pnpm type-check` passed across core, functions, and web.
+- `pnpm test` passed with 34 core tests, 31 functions/API tests, and 7 web tests.
+- `pnpm build` passed across core, functions, and web.
+- `pnpm a11y` passed across 10 routes, including `/google-services`.
+- `pnpm e2e:ci` passed with 17 Chromium tests, including the Google Services proof page.
+
 ## [0.4.6] - 2026-05-03
 
 ### Added

@@ -7,3 +7,4 @@ export * from './ttsClient.js';
 export * from './sttClient.js';
 export * from './recaptchaClient.js';
 export * from './calendarClient.js';
+export * from './serviceCatalog.js';

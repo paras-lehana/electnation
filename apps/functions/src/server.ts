@@ -7,7 +7,12 @@
 import express, { type Express } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import { APP_VERSION, getAccessibilityCoverageSummary, getSupportedLocaleCodes } from '@yatra/core';
+import {
+  APP_VERSION,
+  getAccessibilityCoverageSummary,
+  getGoogleServicesPublicSummary,
+  getSupportedLocaleCodes,
+} from '@yatra/core';
 import { loadConfig } from './config.js';
 import { logger } from './middleware/logger.js';
 import { createRateLimiter } from './middleware/rateLimit.js';
@@ -19,6 +24,7 @@ import { ttsRouter } from './routes/tts.js';
 import { translateRouter } from './routes/translate.js';
 import { calendarRouter } from './routes/calendar.js';
 import { youtubeRouter } from './routes/youtube.js';
+import { googleServicesRouter } from './routes/googleServices.js';
 import { isCorsOriginAllowed } from './services/requestSecurity.js';
 
 export const buildApp = (config = loadConfig()): Express => {
@@ -59,6 +65,7 @@ export const buildApp = (config = loadConfig()): Express => {
   app.use('/api/translate', translateRouter);
   app.use('/api', calendarRouter(config));
   app.use('/api', youtubeRouter(config));
+  app.use('/api', googleServicesRouter(config));
 
   app.get('/api/config/public', (_req, res) => {
     try {
@@ -69,6 +76,7 @@ export const buildApp = (config = loadConfig()): Express => {
         recaptchaSiteKey: config.recaptcha.siteKey || '',
         supportedLocales: ['en', ...getSupportedLocaleCodes()],
         accessibility: getAccessibilityCoverageSummary(),
+        googleServices: getGoogleServicesPublicSummary(),
         featureFlags: {
           calendar: true,
           youtubeSveep: true,

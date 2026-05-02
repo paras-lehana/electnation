@@ -149,6 +149,7 @@ Post-deploy verification:
 
 ```powershell
 Invoke-RestMethod https://electnation-api-767171449038.us-central1.run.app/api/health | ConvertTo-Json -Depth 4
+(Invoke-RestMethod https://electnation-api-767171449038.us-central1.run.app/api/google/services).scorecard | ConvertTo-Json -Depth 4
 @('/','/easy-mode','/sanrakshan','/clinic','/play/scenario/vote-sanrakshan') | ForEach-Object {
 	$url = "https://electnation-web-767171449038.us-central1.run.app$_"
 	$response = Invoke-WebRequest $url -UseBasicParsing -TimeoutSec 30
@@ -195,6 +196,7 @@ reCAPTCHA route code; turn the bypass off when a live reCAPTCHA site key is wire
 ## Gotchas
 
 - `docs/` is intentionally gitignored for research and session logs.
+- Google Services evidence lives in `packages/core/src/google/serviceCatalog.ts`, `GET /api/google/services`, and `/google-services`; keep statuses honest (`implemented`, `ready-with-key`, `planned`) when adding new Google APIs.
 - Do not commit real `.env` secrets.
 - AI keys are backend-only. Use Cloud Secret Manager or ignored `.env.local`.
 - The web Dockerfile must set `NEXT_STANDALONE=true`; local Windows builds should not require standalone output.

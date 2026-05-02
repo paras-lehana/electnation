@@ -35,4 +35,20 @@ test.describe('Map and Easy Mode validation', () => {
     await expectNoHorizontalOverflow(page);
     expectNoCriticalConsoleErrors(consoleErrors);
   });
+
+  test('renders Google Services evidence with honest implementation statuses', async ({ page }) => {
+    const consoleErrors = collectConsoleErrors(page);
+    await page.goto('/google-services');
+
+    await expect(page.getByRole('heading', { name: /google civic stack/i })).toBeVisible();
+    await expect(page.getByText(/Google service slots/i)).toBeVisible();
+    await expect(page.getByText(/Implemented/i).first()).toBeVisible();
+    await expect(page.getByText(/Ready with key/i).first()).toBeVisible();
+    await expect(page.getByText(/Planned scaffold/i).first()).toBeVisible();
+    await expect(page.getByText(/Antigravity Gemini/i).first()).toBeVisible();
+    await expect(page.getByText(/Google Maps JavaScript API/i).first()).toBeVisible();
+
+    await expectNoHorizontalOverflow(page);
+    expectNoCriticalConsoleErrors(consoleErrors);
+  });
 });
