@@ -2,7 +2,29 @@ import { NavBar } from '@/components/layout/NavBar';
 import { Footer } from '@/components/layout/Footer';
 import { ChatWidget } from '@/components/ui/ChatWidget';
 import type { Metadata, Viewport } from 'next';
+import { Noto_Serif_Devanagari, Playfair_Display, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
+
+const displayFont = Playfair_Display({
+  subsets: ['latin'],
+  weight: ['500', '700', '900'],
+  variable: '--font-display',
+  display: 'swap',
+});
+
+const sansFont = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-sans',
+  display: 'swap',
+});
+
+const devanagariFont = Noto_Serif_Devanagari({
+  subsets: ['devanagari'],
+  weight: ['500', '700'],
+  variable: '--font-devanagari',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'Election Yatra — Janta ka Election Saathi',
@@ -34,15 +56,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="scroll-smooth">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Noto+Serif+Devanagari:wght@500;700&display=swap"
-        />
-      </head>
+    <html
+      lang="en"
+      className={`${displayFont.variable} ${sansFont.variable} ${devanagariFont.variable} scroll-smooth`}
+    >
       <body className="min-h-screen flex flex-col relative">
         <a
           href="#main"
@@ -51,9 +68,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
         <NavBar />
-        <div className="flex-1 flex flex-col">
-          {children}
-        </div>
+        <div className="flex-1 flex flex-col">{children}</div>
         <Footer />
         <ChatWidget />
       </body>

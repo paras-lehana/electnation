@@ -7,7 +7,30 @@
  * on shape without drifting.
  */
 
-export type Locale = 'en' | 'hi' | 'bn' | 'ta' | 'te' | 'mr' | 'gu' | 'kn' | 'ml' | 'pa' | 'ur';
+export type Locale =
+  | 'en'
+  | 'as'
+  | 'bn'
+  | 'brx'
+  | 'doi'
+  | 'gu'
+  | 'hi'
+  | 'kn'
+  | 'ks'
+  | 'kok'
+  | 'mai'
+  | 'ml'
+  | 'mni'
+  | 'mr'
+  | 'ne'
+  | 'or'
+  | 'pa'
+  | 'sa'
+  | 'sat'
+  | 'sd'
+  | 'ta'
+  | 'te'
+  | 'ur';
 
 export type LiteracyComfort = 'audio-first' | 'easy' | 'standard';
 export type AgeBand = '18-24' | '25-34' | '35-49' | '50-64' | '65+';

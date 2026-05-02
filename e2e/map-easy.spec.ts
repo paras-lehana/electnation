@@ -26,6 +26,11 @@ test.describe('Map and Easy Mode validation', () => {
     await expect(page.getByText(/easy mode/i).first()).toBeVisible();
     await expect(page.getByRole('button', { name: /listen/i })).toBeVisible();
     await expect(page.getByRole('link', { name: /forward check karo/i })).toBeVisible();
+    await expect(page.getByTestId('easy-mode-language')).toBeVisible();
+    await expect(page.getByTestId('easy-mode-transcript')).toContainText(/ईज़ी मोड|Easy Mode/i);
+    await page.getByTestId('easy-mode-language').selectOption('ta');
+    await expect(page.getByTestId('easy-mode-transcript')).toContainText(/ஈசி மோடு/);
+    await expect(page.getByTestId('easy-mode-voice-support')).toContainText(/Tamil/);
 
     await expectNoHorizontalOverflow(page);
     expectNoCriticalConsoleErrors(consoleErrors);

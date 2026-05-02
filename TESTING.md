@@ -5,14 +5,14 @@ accessibility, and browser flows can be checked independently before deployment.
 
 ## Layers
 
-| Layer | Tool | Location | Current status |
-| --- | --- | --- | --- |
-| Unit | Vitest | `packages/core/src/**/*.test.ts`, `apps/functions/src/services/**/*.test.ts` | 49 core/API tests passing |
-| Component | React Testing Library + Vitest | `apps/web/components/**/*.test.tsx`, `apps/web/lib/**/*.test.ts` | 7 web tests passing |
-| Integration | Supertest + Vitest | `apps/functions/src/server.test.ts` | API route, CORS, config, calendar, map, chat, TTS, translation tests passing |
-| E2E | Playwright | `e2e/*.spec.ts` | 15 Chromium tests passing |
-| Accessibility | axe-core + Playwright | `e2e/a11y.spec.ts` | 9 core routes passing with color contrast enabled |
-| Performance | Next build | `pnpm build` | Production build passing |
+| Layer         | Tool                           | Location                                                                     | Current status                                                               |
+| ------------- | ------------------------------ | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Unit          | Vitest                         | `packages/core/src/**/*.test.ts`, `apps/functions/src/services/**/*.test.ts` | 56 core/API tests passing                                                    |
+| Component     | React Testing Library + Vitest | `apps/web/components/**/*.test.tsx`, `apps/web/lib/**/*.test.ts`             | 7 web tests passing                                                          |
+| Integration   | Supertest + Vitest             | `apps/functions/src/server.test.ts`                                          | API route, CORS, config, calendar, map, chat, TTS, translation tests passing |
+| E2E           | Playwright                     | `e2e/*.spec.ts`                                                              | 15 Chromium tests passing                                                    |
+| Accessibility | axe-core + Playwright          | `e2e/a11y.spec.ts`                                                           | 9 core routes passing with color contrast enabled                            |
+| Performance   | Next build                     | `pnpm build`                                                                 | Production build passing                                                     |
 
 ## Scripts
 
@@ -37,7 +37,8 @@ pnpm e2e:headed
 ## Current Verified Coverage
 
 - `packages/core/src/result.test.ts` — Result helpers.
-- `packages/core/src/schemas.test.ts` — chat, forward-analysis, output, and calendar schemas.
+- `packages/core/src/schemas.test.ts` — scheduled-language locales, chat, forward-analysis, output, and calendar schemas.
+- `packages/core/src/accessibility.test.ts` — 22 scheduled-language Easy Mode presets, browser/Google TTS request helpers, fallback behavior, and evidence catalog honesty.
 - `packages/core/src/google/geminiClient.test.ts` — Chunav Saathi prompt neutrality, official-source guidance, Hindi/easy-language adaptation, and audio-first behavior.
 - `packages/core/src/google/mapsClient.test.ts` — geocoding and distance-matrix wrapper mapping.
 - `apps/functions/src/services/forwardAnalysisService.test.ts` — llm-service success, schema-drift normalization, official-source filtering, prompt boundaries, PII redaction, and deterministic fallback behavior.
@@ -56,7 +57,7 @@ pnpm e2e:headed
 
 ```bash
 pnpm type-check  # passed across core, functions, and web
-pnpm test        # passed: 19 core + 30 functions + 7 web tests
+pnpm test        # passed: 26 core + 30 functions + 7 web tests
 pnpm build       # passed across core, functions, and web
 pnpm e2e:ci      # passed: 15 Chromium tests
 pnpm a11y        # passed: 9 routes, color contrast enabled
@@ -67,7 +68,7 @@ Note: Playwright runs with one worker locally to keep the Next.js dev server sta
 ## Browser Coverage
 
 - `/` homepage axe scan.
-- `/easy-mode` action tiles and read-aloud control.
+- `/easy-mode` action tiles, 22-language selector, transcript switching, and read-aloud control.
 - `/sanrakshan` axe scan and Vote Sanrakshan route coverage through Play.
 - `/clinic` suspicious-forward analysis with official-source guidance.
 - `/play/scenario/vote-sanrakshan` correct safety answer, XP claim, duplicate-claim guard, and badge state.

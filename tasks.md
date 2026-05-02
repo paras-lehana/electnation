@@ -8,7 +8,36 @@
 
 ---
 
-## Security Hardening Slice *(2026-05-02)*
+## Accessibility Evidence and 22-Language Slice _(2026-05-02)_
+
+### Critic review before implementation
+
+- [x] ✅ Current strength: axe scans, skip links, live regions, contrast-safe UI, and chat dialog semantics already give real accessibility proof.
+- [x] ✅ Current gap: Easy Mode was still one English transcript and did not prove India-wide scheduled-language coverage in code.
+- [x] ✅ Honesty rule: do not fake native audio for languages where browser or Google TTS support is uncertain; expose fallback state instead.
+
+### Implemented tasks
+
+- [x] ✅ Create a shared accessibility evidence module with typed language presets, WCAG evidence items, and assistive-tech checks.
+- [x] ✅ Prefill Easy Mode transcripts for all 22 scheduled Indian languages with native names, script metadata, BCP-47 tags, and voice-readiness states.
+- [x] ✅ Add helper functions for browser speech settings, Google TTS request drafting, status announcements, evidence summaries, and language-code validation.
+- [x] ✅ Expand the shared locale schema and public API config so the backend advertises English plus the 22 scheduled-language codes.
+- [x] ✅ Wire `/easy-mode` to a language selector, transcript panel, voice support status, and accessibility evidence counters.
+- [x] ✅ Add tests that verify catalog completeness, fallback behavior, public locale coverage, schema support, and Easy Mode transcript switching.
+- [x] ✅ Fix Next.js lint/build quality by adding `eslint-config-next` and moving manual Google Font links to `next/font/google`.
+- [x] ✅ Add a resolver priority regression so BCP-47 inputs like `hi-IN` and `ur-IN` map to their exact presets before fallback TTS aliases.
+
+### Planned follow-up tasks
+
+- [ ] ⏳ Manually verify native speech quality for each language in Chrome, Edge, Android TalkBack, and iOS VoiceOver.
+- [ ] ⏳ Cache server-generated TTS audio by language + transcript hash after confirming Google TTS support per language.
+- [ ] ⏳ Add reusable read-aloud controls to Yatra, Clinic, Map, Migrant Corner, Sanrakshan, and PwD cards.
+- [ ] ⏳ Add voice input/STT controls for Chat and Forward Clinic with visible transcript correction.
+- [ ] ⏳ Add classroom/projector Easy Mode with facilitator prompts and larger touch targets.
+
+---
+
+## Security Hardening Slice _(2026-05-02)_
 
 - [x] ✅ Add server-side voter identifier redaction before chat and Forward Clinic text reaches llm-service.
 - [x] ✅ Wrap chat and Forward Clinic text in explicit `### USER_INPUT` prompt-injection boundaries.
@@ -22,7 +51,7 @@
 
 ---
 
-## Production Hardening Final Push *(2026-05-02)*
+## Production Hardening Final Push _(2026-05-02)_
 
 - [x] ✅ Make `DEMO_MODE` opt-in in backend config and add a regression test for the default-off behavior.
 - [x] ✅ Remove production-facing demo and bypass badges/copy from Clinic and Map, replacing fake booth data with official Election Commission guidance.
@@ -32,7 +61,7 @@
 
 ---
 
-## Code Quality Hardening Slice *(2026-05-02)*
+## Code Quality Hardening Slice _(2026-05-02)_
 
 - [x] ✅ Extract Forward Clinic domain logic from `routes/forward.ts` into `services/forwardAnalysisService.ts`.
 - [x] ✅ Add service-level tests for llm-service success, schema-drift normalization, and deterministic fallback.
@@ -47,7 +76,7 @@
 
 ---
 
-## Phase 0 — Repo scaffolding & infra *(Day 1)*
+## Phase 0 — Repo scaffolding & infra _(Day 1)_
 
 - [x] ✅ pnpm workspace (`apps/*`, `packages/*`)
 - [x] ✅ Root `tsconfig.base.json`, Prettier, `.gitignore`, `.env.example`
@@ -59,7 +88,7 @@
 - [ ] ⏳ GitHub Actions: lint + type-check + test + build
 - [x] ✅ Dockerfile for Cloud Run (api + web)
 
-## Phase 1 — Design system & landing *(Day 1–2)*
+## Phase 1 — Design system & landing _(Day 1–2)_
 
 - [x] ✅ Tailwind tokens (saffron/leaf/indigo-chakra/khadi/marigold/henna)
 - [x] ✅ Font pipeline (Playfair, Plus Jakarta, Noto Serif Devanagari)
@@ -74,14 +103,14 @@
 - [ ] ⏳ Dark mode palette (khadi-night / henna accents)
 - [ ] ⏳ PWA manifest + splash screens
 
-## Phase 2 — Domain model *(Day 2)*
+## Phase 2 — Domain model _(Day 2)_
 
 - [x] ✅ Types: VoterPersona, ElectionStep, ForwardAnalysis, QuizQuestion, BadgeDefinition, UserProgress, LeaderboardEntry, PollingFacility, ChatRequest
 - [x] ✅ Zod schemas mirror for every type
 - [x] ✅ `Result<T,E>` + `AppError` taxonomy
 - [ ] ⏳ Unit tests on every schema (`packages/core/__tests__/schemas.test.ts`) — happy + invalid fixtures
 
-## Phase 3 — Google client wrappers *(Day 2–3)*
+## Phase 3 — Google client wrappers _(Day 2–3)_
 
 - [x] ✅ `geminiClient.ts` (streaming + non-stream) + `buildChunavSaathiPrompt`
 - [x] ✅ `mapsClient.ts` (geocode, reverse-geocode, distanceMatrix)
@@ -100,13 +129,15 @@
 - [ ] ⏳ Streaming adapter using `@google-cloud/vertexai` SDK (production swap)
 - [ ] ⏳ Mock implementations for each client (tests)
 
-## Phase 4 — Backend APIs *(Day 3–5)*
+## Phase 4 — Backend APIs _(Day 3–5)_
 
 ### Implemented
+
 - [x] ✅ `GET /api/health` — status, version, uptime, dep readiness
 - [x] ✅ `POST /api/chat` — SSE streaming + demo-mode fallback
 
 ### Planned
+
 - [x] ✅ `POST /api/forward/analysis` — misinformation classifier, Zod input/output validation, reCAPTCHA-ready demo/prod mode
 - [ ] ⏳ `POST /api/quiz/submit` — atomic XP/badge grant in Firestore
 - [ ] ⏳ `GET /api/quiz/next` — unseen question for persona
@@ -129,7 +160,7 @@
 - [ ] ⏳ OpenTelemetry traces (console exporter for dev)
 - [ ] ⏳ Supertest coverage for every route (happy + 2 error paths)
 
-## Phase 5 — Frontend flows *(Day 5–8)*
+## Phase 5 — Frontend flows _(Day 5–8)_
 
 - [x] ✅ `/onboarding` — 4-step wizard (age / first-time / language / location) with progress bar
 - [x] ✅ `/yatra` — 6-station stepper page with drawer-based Saathi chat
@@ -153,7 +184,7 @@
 - [ ] ⏳ Skeleton screens for every async surface
 - [ ] ⏳ 404 + 500 + offline pages with yatra-styled illustrations
 
-## Phase 6 — Gamification *(Day 7–9)*
+## Phase 6 — Gamification _(Day 7–9)_
 
 - [x] ✅ XP ledger: localStorage-backed scenario XP with duplicate-claim prevention
 - [ ] ⏳ Badges (12+): first 4 implemented locally; full badge catalog still planned
@@ -165,7 +196,7 @@
 - [ ] ⏳ Weekly leaderboard reset (Cloud Scheduler cron)
 - [ ] ⏳ Celebration animations (confetti + muted diya glow, respects prefers-reduced-motion)
 
-## Phase 7 — i18n & accessibility *(Day 9–10)*
+## Phase 7 — i18n & accessibility _(Day 9–10)_
 
 - [ ] ⏳ `next-intl` setup, locales: en, hi, bn, ta
 - [ ] ⏳ Translation JSON for every component (extract strings)
@@ -180,7 +211,7 @@
 - [ ] ⏳ Lighthouse a11y ≥ 100
 - [ ] ⏳ VoiceOver/TalkBack manual smoke
 
-## Phase 8 — Testing *(Day 10–11)*
+## Phase 8 — Testing _(Day 10–11)_
 
 - [x] ✅ Unit: result helpers, schemas, Maps wrapper
 - [x] ✅ Unit: Chunav Saathi prompt guardrails
@@ -191,7 +222,7 @@
 - [x] ✅ `pnpm e2e:ci` — headless Chromium browser suite
 - [ ] ⏳ Lighthouse CI budgets for every route
 
-## Phase 9 — Security hardening *(Day 11–12)*
+## Phase 9 — Security hardening _(Day 11–12)_
 
 - [ ] ⏳ All secrets via Secret Manager; env fallback dev-only
 - [ ] ⏳ reCAPTCHA Enterprise on `/chat`, `/leaderboard/me`, `/feedback`; `/forward/analysis` implemented
@@ -204,7 +235,7 @@
 - [ ] ⏳ `npm audit` / Dependabot clean
 - [x] ✅ PII minimization: Forward Clinic no raw model output logging; chat redaction helper still planned
 
-## Phase 10 — Performance & PWA *(Day 12–13)*
+## Phase 10 — Performance & PWA _(Day 12–13)_
 
 - [ ] ⏳ Next.js Image + AVIF/WebP for all raster assets
 - [ ] ⏳ Dynamic imports for Map page + Quiz engine + Scenario canvas
@@ -213,7 +244,7 @@
 - [ ] ⏳ Service worker (Serwist) with offline fallback for FAQs/yatra static content
 - [ ] ⏳ Lighthouse Performance + PWA ≥ 90
 
-## Phase 11 — Docs, deploy, polish *(Day 13–14)*
+## Phase 11 — Docs, deploy, polish _(Day 13–14)_
 
 - [ ] ⏳ Root docs: `README.md`, `ARCHITECTURE.md`, `GOOGLE_SERVICES.md`, `EVALUATION_MAPPING.md`, `SECURITY.md`, `ACCESSIBILITY.md`, `TESTING.md`, `PROMPTS.md`, `CHANGELOG.md`
 - [ ] ⏳ `EVALUATION_MAPPING.md` table: Rubric Axis → code paths + tests + docs (target: 100% rubric coverage)
@@ -227,7 +258,7 @@
 
 ---
 
-## Research Gap Audit — Highest-Impact Additions *(2026-05-01)*
+## Research Gap Audit — Highest-Impact Additions _(2026-05-01)_
 
 These items come directly from `docs/research.md` and are the strongest remaining
 ways to make the product feel deeper than a generic civic chatbot.

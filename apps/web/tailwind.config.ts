@@ -62,9 +62,9 @@ const config: Config = {
         },
       },
       fontFamily: {
-        display: ['"Playfair Display"', 'serif'],
-        devanagari: ['"Noto Serif Devanagari"', 'serif'],
-        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+        display: ['var(--font-display)', 'serif'],
+        devanagari: ['var(--font-devanagari)', 'serif'],
+        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
         khadi: '0 10px 30px -12px rgba(139, 70, 12, 0.25)',

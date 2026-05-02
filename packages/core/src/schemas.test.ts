@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  LocaleSchema,
   ChatRequestSchema,
   ForwardAnalysisRequestSchema,
   ForwardAnalysisSchema,
@@ -7,6 +8,12 @@ import {
 } from './schemas/index.js';
 
 describe('shared Zod schemas', () => {
+  it('accepts Election Yatra scheduled language locales', () => {
+    expect(LocaleSchema.safeParse('sat').success).toBe(true);
+    expect(LocaleSchema.safeParse('doi').success).toBe(true);
+    expect(LocaleSchema.safeParse('fr').success).toBe(false);
+  });
+
   it('validates chat requests for Chunav Saathi', () => {
     const parsed = ChatRequestSchema.safeParse({
       locale: 'hi',
@@ -18,7 +25,10 @@ describe('shared Zod schemas', () => {
   });
 
   it('rejects unsafe short forward analysis payloads', () => {
-    const parsed = ForwardAnalysisRequestSchema.safeParse({ text: 'fake', recaptchaToken: 'demo-bypass-token' });
+    const parsed = ForwardAnalysisRequestSchema.safeParse({
+      text: 'fake',
+      recaptchaToken: 'demo-bypass-token',
+    });
     expect(parsed.success).toBe(false);
   });
 

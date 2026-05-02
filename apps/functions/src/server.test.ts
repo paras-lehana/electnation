@@ -17,7 +17,10 @@ let buildConfiguredApp!: (config?: AppConfig) => Express;
 let loadedConfig!: AppConfig;
 
 beforeAll(async () => {
-  const [{ buildApp }, { loadConfig }] = await Promise.all([import('./server.js'), import('./config.js')]);
+  const [{ buildApp }, { loadConfig }] = await Promise.all([
+    import('./server.js'),
+    import('./config.js'),
+  ]);
   buildConfiguredApp = buildApp;
   loadedConfig = loadConfig();
   app = buildApp(loadedConfig);
@@ -47,7 +50,10 @@ describe('Election Yatra API', () => {
     const response = await request(app)
       .post('/api/forward/analysis')
       .set('Origin', 'http://localhost:3000')
-      .send({ text: 'Forwarded many times: EVM bluetooth hack means voting is rigged', locale: 'en' })
+      .send({
+        text: 'Forwarded many times: EVM bluetooth hack means voting is rigged',
+        locale: 'en',
+      })
       .expect(200);
 
     expect(response.body.mode).toBe('demo');
@@ -66,10 +72,16 @@ describe('Election Yatra API', () => {
   });
 
   it('sets CORS only for configured browser origins', async () => {
-    const allowed = await request(app).get('/api/health').set('Origin', 'http://localhost:3000').expect(200);
+    const allowed = await request(app)
+      .get('/api/health')
+      .set('Origin', 'http://localhost:3000')
+      .expect(200);
     expect(allowed.headers['access-control-allow-origin']).toBe('http://localhost:3000');
 
-    const denied = await request(app).get('/api/health').set('Origin', 'https://evil.example').expect(200);
+    const denied = await request(app)
+      .get('/api/health')
+      .set('Origin', 'https://evil.example')
+      .expect(200);
     expect(denied.headers['access-control-allow-origin']).toBeUndefined();
   });
 
@@ -78,7 +90,14 @@ describe('Election Yatra API', () => {
     const serialized = JSON.stringify(response.body);
 
     expect(response.body).toHaveProperty('mapsApiKey');
-    expect(response.body.featureFlags).toMatchObject({ calendar: true, youtubeSveep: true, tts: true });
+    expect(response.body.supportedLocales).toHaveLength(23);
+    expect(response.body.supportedLocales).toContain('sat');
+    expect(response.body.supportedLocales).toContain('ur');
+    expect(response.body.featureFlags).toMatchObject({
+      calendar: true,
+      youtubeSveep: true,
+      tts: true,
+    });
     expect(serialized).not.toContain('LLM_SERVICE_INTERNAL_KEY');
     expect(serialized).not.toContain('LLM_SERVICE_API_KEY');
     expect(serialized).not.toContain('GOOGLE_OAUTH_CLIENT_SECRET');
@@ -116,14 +135,20 @@ describe('Election Yatra API', () => {
     const allowed = await request(productionApp)
       .post('/api/forward/analysis')
       .set('Origin', 'https://web.example')
-      .send({ text: 'Forwarded many times: EVM bluetooth hack means voting is rigged', locale: 'en' })
+      .send({
+        text: 'Forwarded many times: EVM bluetooth hack means voting is rigged',
+        locale: 'en',
+      })
       .expect(200);
     expect(allowed.body.recaptcha.bypassed).toBe(true);
 
     const denied = await request(productionApp)
       .post('/api/forward/analysis')
       .set('Origin', 'https://evil.example')
-      .send({ text: 'Forwarded many times: EVM bluetooth hack means voting is rigged', locale: 'en' })
+      .send({
+        text: 'Forwarded many times: EVM bluetooth hack means voting is rigged',
+        locale: 'en',
+      })
       .expect(400);
     expect(denied.body.error.code).toBe('RECAPTCHA_REQUIRED');
   });
@@ -157,13 +182,17 @@ describe('Election Yatra API', () => {
   });
 
   it('returns a typed map configuration error when Maps keys are absent outside demo mode', async () => {
-    const response = await request(app).get('/api/map/nearest-facilities?lat=28.61&lng=77.21').expect(503);
+    const response = await request(app)
+      .get('/api/map/nearest-facilities?lat=28.61&lng=77.21')
+      .expect(503);
 
     expect(response.body.error.code).toBe('MAPS_CONFIG_MISSING');
   });
 
   it('rejects invalid map coordinates', async () => {
-    const response = await request(app).get('/api/map/nearest-facilities?lat=abc&lng=77.21').expect(400);
+    const response = await request(app)
+      .get('/api/map/nearest-facilities?lat=abc&lng=77.21')
+      .expect(400);
 
     expect(response.body.error.message).toContain('Invalid lat/lng');
   });

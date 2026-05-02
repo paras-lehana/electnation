@@ -7,15 +7,27 @@ import { z } from 'zod';
 
 export const LocaleSchema = z.enum([
   'en',
+  'as',
   'hi',
   'bn',
-  'ta',
-  'te',
-  'mr',
+  'brx',
+  'doi',
   'gu',
   'kn',
+  'ks',
+  'kok',
+  'mai',
   'ml',
+  'mni',
+  'mr',
+  'ne',
+  'or',
   'pa',
+  'sa',
+  'sat',
+  'sd',
+  'ta',
+  'te',
   'ur',
 ]);
 
@@ -123,7 +135,11 @@ export const CalendarAddRequestSchema = z.object({
 });
 
 export const LeaderboardUpsertSchema = z.object({
-  nickname: z.string().min(2).max(24).regex(/^[a-zA-Z0-9_\- ]+$/),
+  nickname: z
+    .string()
+    .min(2)
+    .max(24)
+    .regex(/^[a-zA-Z0-9_\- ]+$/),
   city: z.string().min(2).max(48).optional(),
   xp: z.number().int().min(0).max(1_000_000),
 });

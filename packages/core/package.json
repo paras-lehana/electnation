@@ -1,12 +1,13 @@
 {
   "name": "@yatra/core",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "private": true,
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./dist/index.js",
+    "./accessibility": "./dist/accessibility.js",
     "./types": "./dist/types/index.js",
     "./schemas": "./dist/schemas/index.js",
     "./google": "./dist/google/index.js",

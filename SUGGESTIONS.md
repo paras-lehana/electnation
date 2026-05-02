@@ -7,6 +7,7 @@ Purpose: win-focused backlog for improving Election Yatra beyond the current dep
 **Issue**: The map flow proves Maps and Distance Matrix, but judges will notice if it does not feel like a complete voter logistics assistant.
 
 **Plan**:
+
 - Add one-tap geolocation for "near me" civic help.
 - Use Places Nearby Search for ERO/BLO offices, polling help desks, public transport, hospitals, police stations, and accessible facilities.
 - Use Directions or Routes API for walking, transit, and driving route cards.
@@ -20,6 +21,7 @@ Purpose: win-focused backlog for improving Election Yatra beyond the current dep
 **Issue**: Current XP and badges work, but the game loop can be more memorable.
 
 **Plan**:
+
 - Add daily civic quests: verify a forward, complete a yatra step, help a first-time voter, learn one right.
 - Add streaks, badge collections, district leaderboard, and classroom/team mode.
 - Add a Democracy Passport with stamp art for each completed station.
@@ -32,6 +34,7 @@ Purpose: win-focused backlog for improving Election Yatra beyond the current dep
 **Issue**: Research identified migrants as a high-friction audience, but the current flow is still mostly educational.
 
 **Plan**:
+
 - Ask current city, home constituency, age, and registration status.
 - Explain registration/transfer options in simple language.
 - Use Geocoding and Places to locate nearby election offices and document help centers.
@@ -44,6 +47,7 @@ Purpose: win-focused backlog for improving Election Yatra beyond the current dep
 **Issue**: Chunav Saathi answers questions, but it can become more interactive and evaluator-friendly.
 
 **Plan**:
+
 - Add structured answer modes: simple, detailed, audio-first, classroom.
 - Add source cards with official ECI/NVSP links after every answer.
 - Add scenario-aware hints inside Play rather than only after answers.
@@ -56,6 +60,7 @@ Purpose: win-focused backlog for improving Election Yatra beyond the current dep
 **Issue**: The current UI has strong identity, but more motion/detail can make it demo-stage memorable.
 
 **Plan**:
+
 - Add a full journey map with animated station progress.
 - Add badge cabinet, XP meter, and Democracy Passport visual surface.
 - Improve map page density with split map/list panels and quick filters.
@@ -68,8 +73,21 @@ Purpose: win-focused backlog for improving Election Yatra beyond the current dep
 **Issue**: Manual browser smoke exists, but automated UI/accessibility proof is still pending.
 
 **Plan**:
+
 - Add Playwright smoke tests for `/`, `/chat`, `/clinic`, `/map`, `/easy-mode`, and Play scenarios.
 - Add axe checks for primary flows.
 - Add a deployment smoke script that validates stable Cloud Run URLs after every deploy.
 
 **Why it helps win**: It strengthens code quality, accessibility, and reliability rubric scores.
+
+## Priority 7 - Native TTS Verification Matrix
+
+**Issue**: Easy Mode now has 22 scheduled-language presets, but actual voice quality varies by browser and Google Cloud Text-to-Speech language availability.
+
+**Plan**:
+
+- Build a small internal matrix that tests each scheduled language in browser speech, Google TTS, Android TalkBack, and iOS VoiceOver.
+- Mark each language as native, browser-only, or fallback with evidence from a real device/browser run.
+- Cache confirmed server-generated MP3 audio by transcript hash so classroom sessions do not depend on repeated synthesis.
+
+**Why it helps win**: It turns the new language architecture into verified, demo-safe audio coverage instead of a best-effort preset list.

@@ -7,7 +7,7 @@
 import express, { type Express } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import { APP_VERSION } from '@yatra/core';
+import { APP_VERSION, getSupportedLocaleCodes } from '@yatra/core';
 import { loadConfig } from './config.js';
 import { logger } from './middleware/logger.js';
 import { createRateLimiter } from './middleware/rateLimit.js';
@@ -67,7 +67,7 @@ export const buildApp = (config = loadConfig()): Express => {
         mapsApiKey: config.maps.apiKey || '',
         mapsMapId: config.maps.mapId,
         recaptchaSiteKey: config.recaptcha.siteKey || '',
-        supportedLocales: ['en', 'hi', 'bn', 'ta', 'te', 'mr', 'gu', 'kn', 'ml', 'pa', 'ur'],
+        supportedLocales: ['en', ...getSupportedLocaleCodes()],
         featureFlags: {
           calendar: true,
           youtubeSveep: true,
