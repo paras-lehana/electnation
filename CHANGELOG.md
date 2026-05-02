@@ -6,7 +6,7 @@ All notable changes to Election Yatra.
 
 ### Added
 
-- Added 10 typed accessibility feature blueprints covering screen-reader/live-region support, keyboard/switch navigation, high-contrast and large text, scheduled-language read-aloud, captions/transcripts, voice input correction, cognitive Easy Mode, dyslexia-friendly layout, reduced motion, offline packets, and classroom facilitator mode.
+- Added 11 typed accessibility feature blueprints covering screen-reader/live-region support, keyboard/switch navigation, high-contrast and large text, scheduled-language read-aloud, captions/transcripts, voice input correction, cognitive Easy Mode, dyslexia-friendly layout, reduced motion, offline packets, and classroom facilitator mode.
 - Added 4 assistive user profiles with default preferences and recommended feature sets for senior voters, screen-reader/keyboard users, multilingual community classes, and low-distraction neurodivergent use.
 - Added helper functions for preference-profile building, implementation planning, transcript cues, voice-input drafts, offline accessibility packets, facilitator prompt decks, and architecture scorecards.
 - Surfaced the accessibility architecture scorecard and blueprint samples on `/easy-mode` and exposed safe summary counts through `/api/config/public`.

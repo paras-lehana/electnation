@@ -58,7 +58,7 @@ product honest about runtime voice support differences.
 
 ## Blueprint coverage in 0.4.6
 
-The new architecture layer covers 10 accessibility feature families, 4 user
+The new architecture layer covers 11 accessibility feature families, 4 user
 profiles, 8 input modes, all app surfaces, and 20+ WCAG references. Status tags
 remain explicit:
 
