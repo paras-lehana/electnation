@@ -1,6 +1,6 @@
 # Election Yatra — Janta ka Election Saathi
 
-> **Version 0.5.0** — Google Civic Stack release with a typed service catalog, evaluator API, proof page, and browser-tested evidence.
+> **Version 0.5.1** — Google Civic Stack release with a typed service catalog, evaluator API, proof page, browser-tested evidence, and polished mobile navigation.
 
 > **An AI companion for Indian voters.** Walk the 6-station yatra from
 > registration to polling booth, spot WhatsApp misinformation, find your
@@ -92,7 +92,7 @@ Turn bypass off after wiring a production reCAPTCHA site key.
 
 ```bash
 curl http://localhost:8080/api/health
-# → 200 {"status":"degraded","version":"0.5.0",...}
+# → 200 {"status":"degraded","version":"0.5.1",...}
 
 curl -N -X POST http://localhost:8080/api/chat \
   -H "content-type: application/json" \

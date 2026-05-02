@@ -202,3 +202,4 @@ reCAPTCHA route code; turn the bypass off when a live reCAPTCHA site key is wire
 - The web Dockerfile must set `NEXT_STANDALONE=true`; local Windows builds should not require standalone output.
 - Avoid old pnpm filters like `web` or `functions`; use `@yatra/web` and `@yatra/functions`.
 - When PowerShell cwd drifts to `C:\Users\paras`, use `pnpm -C c:\Users\paras\code\hackathons\electnation ...` or absolute paths.
+- If a local Next.js build is interrupted and later fails with `PageNotFoundError: Cannot find module for page: /_document`, remove only the generated `apps\web\.next` folder and rerun the focused web type-check/build.

@@ -2,6 +2,17 @@
 
 All notable changes to Election Yatra.
 
+## [0.5.1] - 2026-05-03
+
+### Fixed
+
+- Hid the mobile horizontal primary-navigation scrollbar with a real cross-browser `scrollbar-hide` utility so the Google Civic Stack link remains reachable without a heavy visible scroll track.
+
+### Verified
+
+- `pnpm --filter @yatra/web type-check` passed.
+- `pnpm --filter @yatra/web build` passed.
+
 ## [0.5.0] - 2026-05-03
 
 ### Added

@@ -8,6 +8,15 @@
 
 ---
 
+## Google Civic Stack Mobile Polish _(2026-05-03)_
+
+- [x] ✅ Critic review: live mobile `/google-services` showed the new horizontal nav working, but with a heavy visible scrollbar that distracted from the judged Google Services proof page.
+- [x] ✅ Added a real cross-browser `scrollbar-hide` utility in `apps/web/app/globals.css` for the mobile primary-nav strip.
+- [x] ✅ Bumped patch release metadata to `0.5.1` so the shipped polish is visible in versioned code and API health.
+- [x] ✅ Validated `@yatra/web` type-check and production build before redeploy.
+
+---
+
 ## Accessibility Blueprint Architecture Slice _(2026-05-03)_
 
 ### Critic review before implementation
