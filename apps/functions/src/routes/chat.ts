@@ -14,6 +14,8 @@ import { ChatRequestSchema, buildChunavSaathiPrompt } from '@yatra/core';
 import type { AppConfig } from '../config.js';
 import { logger } from '../middleware/logger.js';
 import { LlmServiceClient } from '../services/llmServiceClient.js';
+import { wrapUntrustedUserInput } from '../services/promptBoundary.js';
+import { redactSensitiveVoterData } from '../services/privacyRedaction.js';
 
 const DEMO_REPLY =
   'Namaste! Main Chunav Saathi hoon. Aapke liye Election Yatra start karne ke liye tayar hoon. ' +
@@ -83,18 +85,24 @@ export const chatRouter = (config: AppConfig): Router => {
       literacyComfort: parsed.data.literacyComfort,
       stepSlug: parsed.data.stepSlug,
     });
+    const redaction = redactSensitiveVoterData(parsed.data.message);
 
     try {
       const result = await client.generate({
         systemPrompt: systemInstruction,
-        messages: [{ role: 'user', content: parsed.data.message }],
+        messages: [{ role: 'user', content: wrapUntrustedUserInput('CHAT_MESSAGE', redaction.text) }],
         temperature: 0.4,
         maxTokens: 1024,
       });
-      logger.info('chat.llm_complete', { mode: result.mode, model: result.model });
+      logger.info('chat.llm_complete', {
+        mode: result.mode,
+        model: result.model,
+        redactionCount: redaction.totalReplacements,
+        redactionKinds: redaction.findings.map((finding) => finding.kind),
+      });
       await streamText(res, result.content);
     } catch (cause) {
-      logger.error('chat.llm_failed', { cause: String(cause) });
+      logger.error('chat.llm_failed', { cause: 'llm-service request failed' });
       res.write(
         `data: ${JSON.stringify({ error: 'UPSTREAM_FAILURE', message: 'AI service is unavailable right now.' })}\n\n`,
       );

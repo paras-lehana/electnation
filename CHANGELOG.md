@@ -2,6 +2,28 @@
 
 All notable changes to Election Yatra.
 
+## [0.4.3] - 2026-05-02
+
+### Security
+- Added server-side redaction for Aadhaar, EPIC, phone, email, PAN, and UPI-like values before chat or Forward Clinic text is sent to llm-service.
+- Wrapped chat and Forward Clinic text in explicit `### USER_INPUT` prompt-injection boundaries and updated the Chunav Saathi prompt to treat bounded user text as untrusted.
+- Filtered model-provided Forward Clinic source URLs to official Election Commission hostnames only.
+- Sanitized llm-service HTTP errors so upstream response bodies and auth material are not echoed into logs or fallback metadata.
+- Scoped production reCAPTCHA bypass to configured web origins and tightened no-Origin CORS behavior behind `ALLOW_NO_ORIGIN_REQUESTS`.
+
+### Tested
+- Added focused tests for privacy redaction, prompt boundaries, request-origin security helpers, public-config secret absence, production reCAPTCHA-bypass origin checks, and sanitized llm-service errors.
+
+### Verified
+- `pnpm type-check` passed across core, functions, and web.
+- `pnpm test` passed (19 core tests, 24 backend tests).
+- `pnpm build` passed across core, functions, and web.
+- Cloud Build completed for API (`sha256:c6b6a5bf04c2070cd0e624477c3d806491872f5c378c141b4256857d7cf8ea84`) and web (`sha256:c4a8dfbb7aa737f788b7a4db95fada77dd55123dc1a29c1054d18187272f181b`).
+- Deployed `electnation-api-00043-dlt` and `electnation-web-00023-v6m` to 100% traffic.
+- Live API health returned `version: 0.4.3`; live Forward Clinic returned `mode: llm-service`, official ECI links, and redacted `[REDACTED_EPIC]` in `inputText`.
+- Live no-Origin Forward Clinic request returned `RECAPTCHA_REQUIRED`, proving the production bypass guard is active.
+- Browser smoke passed for `/clinic`, `/map`, homepage Chunav Saathi chat, and required web routes; mobile-sized Clinic and Map checks reported no horizontal overflow.
+
 ## [0.4.2] - 2026-05-02
 
 ### Changed

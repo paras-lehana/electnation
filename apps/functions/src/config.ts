@@ -11,6 +11,7 @@ export interface AppConfig {
   apiBaseUrl: string;
   webBaseUrl: string;
   allowedOrigins: string[];
+  allowNoOriginRequests: boolean;
   demoMode: boolean;
 
   google: {
@@ -49,6 +50,7 @@ export interface AppConfig {
     apiKey: string;
     minScore: number;
     bypass: boolean;
+    bypassAllowedOrigins: string[];
   };
 
   youtube: {
@@ -82,14 +84,21 @@ const require_ = (key: string, fallback?: string): string => {
   return v;
 };
 
+const csvList = (value: string | undefined, fallback: string): string[] =>
+  (value ?? fallback)
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+
 export const loadConfig = (): AppConfig => ({
   nodeEnv: (process.env.NODE_ENV as AppConfig['nodeEnv']) ?? 'development',
   port: Number(process.env.PORT ?? 8080),
   apiBaseUrl: process.env.API_BASE_URL ?? 'http://localhost:8080',
   webBaseUrl: process.env.WEB_BASE_URL ?? 'http://localhost:3000',
-  allowedOrigins: (process.env.ALLOWED_ORIGINS ?? 'http://localhost:3000')
-    .split(',')
-    .map((s) => s.trim()),
+  allowedOrigins: csvList(process.env.ALLOWED_ORIGINS, 'http://localhost:3000'),
+  allowNoOriginRequests:
+    process.env.ALLOW_NO_ORIGIN_REQUESTS === 'true' ||
+    (process.env.ALLOW_NO_ORIGIN_REQUESTS !== 'false' && process.env.NODE_ENV !== 'production'),
   demoMode: process.env.DEMO_MODE === 'true',
 
   google: {
@@ -130,6 +139,10 @@ export const loadConfig = (): AppConfig => ({
     bypass:
       process.env.RECAPTCHA_BYPASS === 'true' ||
       (process.env.RECAPTCHA_BYPASS !== 'false' && process.env.NODE_ENV !== 'production'),
+    bypassAllowedOrigins: csvList(
+      process.env.RECAPTCHA_BYPASS_ALLOWED_ORIGINS,
+      process.env.ALLOWED_ORIGINS ?? 'http://localhost:3000',
+    ),
   },
 
   youtube: {

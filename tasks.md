@@ -8,6 +8,20 @@
 
 ---
 
+## Security Hardening Slice *(2026-05-02)*
+
+- [x] ✅ Add server-side voter identifier redaction before chat and Forward Clinic text reaches llm-service.
+- [x] ✅ Wrap chat and Forward Clinic text in explicit `### USER_INPUT` prompt-injection boundaries.
+- [x] ✅ Filter Forward Clinic model source URLs to official Election Commission hostnames.
+- [x] ✅ Sanitize llm-service HTTP errors so upstream response bodies and auth material are not logged or returned.
+- [x] ✅ Scope production reCAPTCHA bypass to configured web origins and tighten no-Origin CORS behavior.
+- [x] ✅ Add focused tests for redaction, prompt boundaries, request-origin rules, public-config secret absence, and bypass enforcement.
+- [x] ✅ Bump release metadata to `0.4.3` and update security/rubric docs.
+- [x] ✅ Run full root validation, Cloud Build deploy, and live browser smoke.
+- [ ] ⏳ Commit and push the security release.
+
+---
+
 ## Production Hardening Final Push *(2026-05-02)*
 
 - [x] ✅ Make `DEMO_MODE` opt-in in backend config and add a regression test for the default-off behavior.

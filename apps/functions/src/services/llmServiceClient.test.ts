@@ -66,4 +66,23 @@ describe('LlmServiceClient', () => {
     expect(paths).toEqual(['https://llm.lehana.in/byok', 'https://llm.lehana.in/smk/antigravity-manager']);
     expect(result.mode).toBe('smk');
   });
+
+  it('does not leak upstream response bodies or auth material in thrown errors', async () => {
+    const fakeFetch: typeof fetch = async () =>
+      new Response('secret-provider-key x-internal-key=secret-internal-key', { status: 500 });
+
+    const client = new LlmServiceClient(
+      { ...baseConfig, internalKey: 'secret-internal-key', endpointName: 'antigravity-manager' },
+      fakeFetch,
+    );
+
+    await expect(
+      client.generate({
+        systemPrompt: 'system',
+        messages: [{ role: 'user', content: 'hello' }],
+        temperature: 0,
+        maxTokens: 20,
+      }),
+    ).rejects.toThrow('llm-service HTTP 500');
+  });
 });

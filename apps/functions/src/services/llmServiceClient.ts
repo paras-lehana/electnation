@@ -129,8 +129,8 @@ export class LlmServiceClient {
       });
 
       if (!response.ok) {
-        const text = await response.text().catch(() => '');
-        throw new Error(`llm-service HTTP ${response.status}: ${text.slice(0, 180)}`);
+        await response.body?.cancel().catch(() => undefined);
+        throw new Error(`llm-service HTTP ${response.status}`);
       }
 
       return response.json();

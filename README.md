@@ -1,6 +1,6 @@
 # Election Yatra — Janta ka Election Saathi
 
-> **Version 0.4.2** — Production hardening for clinic and map flows with demo mode made opt-in and final-release fallback copy cleaned up.
+> **Version 0.4.3** — Security hardening for privacy redaction, prompt-injection boundaries, CORS, and production-scoped reCAPTCHA bypass.
 
 > **An AI companion for Indian voters.** Walk the 6-station yatra from
 > registration to polling booth, spot WhatsApp misinformation, find your
@@ -21,7 +21,7 @@ _Google Prompt Wars_ hackathon (April 2026).
 | **Novelty** | First civic companion that blends Chunav Saathi (conversational AI) + Misinformation Clinic + gamified yatra + voice-first Easy Mode |
 | **Google services used** | llm-service with Antigravity Gemini (`gemini-3-flash`) · Maps/Places/Directions/Distance Matrix/Street View · Calendar OAuth · YouTube Data v3 · Cloud Text-to-Speech + Speech-to-Text · Cloud Translation · Firebase Auth + Firestore · reCAPTCHA Enterprise · Secret Manager · Cloud Logging · Cloud Run |
 | **Accessibility** | WCAG-AA target · Easy Mode (audio-first) · 4+ languages · Read-aloud on every card |
-| **Security** | Secret Manager · reCAPTCHA Enterprise · Firebase Security Rules · STRIDE-lite threat model · PII minimization |
+| **Security** | Secret Manager · backend-only llm-service keys · reCAPTCHA Enterprise · origin-scoped demo bypass · prompt-injection boundaries · PII redaction · STRIDE-lite threat model |
 | **Made in Bharat** | Ethnic-modern "Democracy ka Tyohar" aesthetic — Ashoka Chakra, rangoli patterns, khadi palette, Playfair × Noto Serif Devanagari |
 
 ---
@@ -54,10 +54,12 @@ election-yatra/
 | `apps/web/` | Next.js voter-facing experience: Yatra, Clinic, Map, Play, Easy Mode | UI flow changes and browser testing |
 | `apps/web/lib/apiClient.ts` | Shared browser API URL, JSON request, Forward Clinic fallback, and chat SSE helpers | Any frontend API or streaming change |
 | `apps/functions/` | Express API for Cloud Run: health, chat, clinic, maps, calendar, YouTube | Backend route and deployment changes |
-| `apps/functions/src/services/forwardAnalysisService.ts` | Forward Clinic domain logic: llm-service prompt, normalization, local fallback, recommended action | Misinformation analysis behavior changes |
+| `apps/functions/src/services/forwardAnalysisService.ts` | Forward Clinic domain logic: llm-service prompt, redaction, normalization, source filtering, local fallback, recommended action | Misinformation analysis behavior changes |
+| `apps/functions/src/services/privacyRedaction.ts` | Server-side redaction of Aadhaar, EPIC, phone, email, PAN, and UPI-like values before AI calls | Security/privacy changes |
+| `apps/functions/src/services/requestSecurity.ts` | CORS origin checks and production-scoped reCAPTCHA bypass rules | API perimeter changes |
 | `packages/core/` | Shared schemas, types, Result/AppError helpers, Google wrappers, version constant | Cross-app contracts and validation |
 | `tasks.md` | Granular roadmap and code-quality hardening tracker | Session planning and rubric progress |
-| `AGENTS.md` | Local commands, Cloud Run deploy commands, stable URLs, env/secret gotchas | Before testing or deploying |
+| `AGENTS.md` | Local commands, mandatory Cloud Run deploy workflow, stable URLs, env/secret gotchas | Read first before any deployment |
 | `EVALUATION_MAPPING.md` | Rubric axis to proof mapping | Before submission review |
 
 ## Local setup
@@ -80,14 +82,15 @@ are never exposed through frontend config. `DEMO_MODE` now defaults to `false`
 when unset, so production revisions do not silently fall back to demo behavior.
 
 For the hackathon Cloud Run demo, `RECAPTCHA_BYPASS=true` is set on the API so
-judges can exercise Forward Clinic without a site-key challenge. Turn that off
-after wiring a production reCAPTCHA site key.
+judges can exercise Forward Clinic without a site-key challenge from the official
+web origin. `RECAPTCHA_BYPASS_ALLOWED_ORIGINS` must match the deployed web URL.
+Turn bypass off after wiring a production reCAPTCHA site key.
 
 ### Smoke tests
 
 ```bash
 curl http://localhost:8080/api/health
-# → 200 {"status":"degraded","version":"0.4.2",...}
+# → 200 {"status":"degraded","version":"0.4.3",...}
 
 curl -N -X POST http://localhost:8080/api/chat \
   -H "content-type: application/json" \

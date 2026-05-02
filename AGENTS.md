@@ -1,5 +1,30 @@
 # Election Yatra Agent Notes
 
+## Read This First Before Deploying
+
+If a task includes deployment, stop and follow the `Mandatory Google Cloud Deployment Workflow`
+section in this file from top to bottom before inventing any commands.
+
+Do not change the Cloud Run service names, GCP project, or region during deployment.
+Do not report deployment complete until the post-deploy verification block in this file has passed.
+
+Deployment is expected to take time on this repo because Cloud Build uploads the monorepo,
+rebuilds two images, pushes them, creates new Cloud Run revisions, and then shifts traffic.
+Typical full-release timing is roughly:
+
+- 3 to 4 minutes for the API image build
+- 3 to 5 minutes for the web image build
+- 1 to 2 minutes per Cloud Run deploy
+- around 10 to 15 minutes total for build, deploy, and verification
+
+Always use this order:
+
+1. Run local validation: `pnpm type-check`, `pnpm test`, `pnpm build`.
+2. Run the exact Cloud Build commands from the deployment workflow below.
+3. Deploy only `electnation-api` and `electnation-web` in `event-manager-promptwars` / `us-central1`.
+4. Run the post-deploy verification commands from the same section.
+5. Only then say the deployment is complete.
+
 ## Project Shape
 
 - Monorepo root: `c:\Users\paras\code\hackathons\electnation`
@@ -46,7 +71,7 @@ pnpm -C c:\Users\paras\code\hackathons\electnation --filter @yatra/web dev
 - API: `http://localhost:8080`
 - Web: `http://localhost:3000`
 
-## Google Cloud Deployment
+## Mandatory Google Cloud Deployment Workflow
 
 Active GCloud project used for this repo: `event-manager-promptwars`.
 Region: `us-central1`.
@@ -76,6 +101,31 @@ Build images with Cloud Build:
 gcloud builds submit c:\Users\paras\code\hackathons\electnation --config c:\Users\paras\code\hackathons\electnation\cloudbuild-api.yaml
 gcloud builds submit c:\Users\paras\code\hackathons\electnation --config c:\Users\paras\code\hackathons\electnation\cloudbuild-web.yaml
 ```
+
+Fastest safe full deployment sequence from any PowerShell terminal:
+
+```powershell
+pnpm -C c:\Users\paras\code\hackathons\electnation type-check
+pnpm -C c:\Users\paras\code\hackathons\electnation test
+pnpm -C c:\Users\paras\code\hackathons\electnation build
+
+gcloud builds submit c:\Users\paras\code\hackathons\electnation --config c:\Users\paras\code\hackathons\electnation\cloudbuild-api.yaml --project event-manager-promptwars
+gcloud builds submit c:\Users\paras\code\hackathons\electnation --config c:\Users\paras\code\hackathons\electnation\cloudbuild-web.yaml --project event-manager-promptwars
+
+gcloud run deploy electnation-api --image gcr.io/event-manager-promptwars/electnation-api --region us-central1 --platform managed --allow-unauthenticated --project event-manager-promptwars
+gcloud run deploy electnation-web --image gcr.io/event-manager-promptwars/electnation-web --region us-central1 --platform managed --allow-unauthenticated --project event-manager-promptwars
+
+Invoke-RestMethod https://electnation-api-767171449038.us-central1.run.app/api/health | ConvertTo-Json -Depth 4
+$origin = 'https://electnation-web-767171449038.us-central1.run.app'
+Invoke-RestMethod https://electnation-api-767171449038.us-central1.run.app/api/forward/analysis -Method Post -Headers @{ Origin = $origin } -ContentType 'application/json' -Body '{"text":"Forwarded many times: EVM bluetooth hack means voting is rigged","locale":"en"}' | ConvertTo-Json -Depth 4
+@('/','/easy-mode','/sanrakshan','/clinic','/play/scenario/vote-sanrakshan') | ForEach-Object {
+	$url = "https://electnation-web-767171449038.us-central1.run.app$_"
+	$response = Invoke-WebRequest $url -UseBasicParsing -TimeoutSec 30
+	"$($_) $($response.StatusCode)"
+}
+```
+
+Let each command finish. Do not interrupt Cloud Build or Cloud Run just because the step has been running for a few minutes.
 
 Deploy images:
 
@@ -114,6 +164,8 @@ and not through direct provider SDK calls in route handlers.
 Production settings:
 
 - `ALLOWED_ORIGINS=https://electnation-web-767171449038.us-central1.run.app`
+- `RECAPTCHA_BYPASS_ALLOWED_ORIGINS=https://electnation-web-767171449038.us-central1.run.app`
+- `ALLOW_NO_ORIGIN_REQUESTS=false` unless a trusted server-to-server client needs no-Origin CORS headers.
 - `LLM_SERVICE_URL=https://llm.lehana.in`
 - `LLM_SERVICE_ENDPOINT=antigravity-manager`
 - `LLM_SERVICE_MODEL=gemini-3-flash`
@@ -132,11 +184,11 @@ Cloud Run secret wiring pattern:
 ```powershell
 gcloud secrets create electnation-llm-service-key --replication-policy=automatic --project event-manager-promptwars
 gcloud secrets versions add electnation-llm-service-key --data-file=- --project event-manager-promptwars
-gcloud run services update electnation-api --region us-central1 --project event-manager-promptwars --set-env-vars="DEMO_MODE=false,RECAPTCHA_BYPASS=true,ALLOWED_ORIGINS=https://electnation-web-767171449038.us-central1.run.app,LLM_SERVICE_ENABLED=true,LLM_SERVICE_URL=https://llm.lehana.in,LLM_SERVICE_ENDPOINT=antigravity-manager,LLM_SERVICE_MODEL=gemini-3-flash,LLM_SERVICE_PROVIDER=custom,LLM_SERVICE_PROVIDER_BASE_URL=https://antigravity.aidhunik.com/v1,LLM_SERVICE_BYOK=false" --set-secrets LLM_SERVICE_INTERNAL_KEY=electnation-llm-service-key:latest
+gcloud run services update electnation-api --region us-central1 --project event-manager-promptwars --set-env-vars="DEMO_MODE=false,RECAPTCHA_BYPASS=true,RECAPTCHA_BYPASS_ALLOWED_ORIGINS=https://electnation-web-767171449038.us-central1.run.app,ALLOWED_ORIGINS=https://electnation-web-767171449038.us-central1.run.app,ALLOW_NO_ORIGIN_REQUESTS=false,LLM_SERVICE_ENABLED=true,LLM_SERVICE_URL=https://llm.lehana.in,LLM_SERVICE_ENDPOINT=antigravity-manager,LLM_SERVICE_MODEL=gemini-3-flash,LLM_SERVICE_PROVIDER=custom,LLM_SERVICE_PROVIDER_BASE_URL=https://antigravity.aidhunik.com/v1,LLM_SERVICE_BYOK=false" --set-secrets LLM_SERVICE_INTERNAL_KEY=electnation-llm-service-key:latest
 ```
 
 For the hackathon demo deployment, `/clinic` uses `RECAPTCHA_BYPASS=true` so judges
-can test the AI analysis without a production site-key challenge. Do not remove the
+can test the AI analysis without a production site-key challenge from the official web origin. Do not remove the
 reCAPTCHA route code; turn the bypass off when a live reCAPTCHA site key is wired.
 `DEMO_MODE` is opt-in and should stay unset or explicitly `false` for production revisions.
 

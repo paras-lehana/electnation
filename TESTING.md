@@ -25,16 +25,23 @@ pnpm build         # production build (set NEXT_STANDALONE=true for Cloud Run st
 - `packages/core/src/schemas.test.ts` — chat, forward-analysis, output, and calendar schemas.
 - `packages/core/src/google/geminiClient.test.ts` — Chunav Saathi prompt neutrality, official-source, Hindi/easy-language, and audio-first rules.
 - `packages/core/src/google/mapsClient.test.ts` — geocoding and distance-matrix wrapper mapping.
-- `apps/functions/src/server.test.ts` — health, Forward Clinic demo classification, validation rejection, Calendar ICS, and YouTube SVEEP demo route.
-- `apps/functions/src/services/forwardAnalysisService.test.ts` — Forward Clinic llm-service success, schema-drift normalization, and deterministic fallback behavior.
-- `apps/functions/src/services/llmServiceClient.test.ts` — llm-service SMK/BYOK routing and auth header behavior.
+- `apps/functions/src/server.test.ts` — health, CORS allow-list behavior, public-config secret absence, Forward Clinic demo classification, production reCAPTCHA-bypass origin checks, validation rejection, Calendar ICS, and YouTube SVEEP demo route.
+- `apps/functions/src/services/forwardAnalysisService.test.ts` — Forward Clinic llm-service success, schema-drift normalization, official-source filtering, prompt boundaries, PII redaction before llm-service, and deterministic fallback behavior.
+- `apps/functions/src/services/privacyRedaction.test.ts` — Aadhaar, EPIC, phone, email, PAN, and UPI-like redaction.
+- `apps/functions/src/services/promptBoundary.test.ts` — untrusted user-input delimiter construction.
+- `apps/functions/src/services/requestSecurity.test.ts` — production CORS/no-origin and reCAPTCHA bypass origin rules.
+- `apps/functions/src/services/llmServiceClient.test.ts` — llm-service SMK/BYOK routing, auth header behavior, and sanitized upstream errors.
 
 Latest local validation:
 
 ```bash
-pnpm --filter @yatra/functions test  # passed, 10 backend tests
+pnpm --filter @yatra/functions test  # passed, 24 backend tests
+pnpm --filter @yatra/core test       # passed, 19 core tests
 pnpm --filter @yatra/functions exec tsc --noEmit --pretty false  # passed
 pnpm --filter @yatra/web exec tsc --noEmit --pretty false        # passed
+pnpm type-check  # passed across all workspaces
+pnpm test        # passed across all configured workspaces
+pnpm build       # passed across all configured workspaces
 ```
 
 Note: `apps/functions/src/server.test.ts` sets env vars before dynamically importing the app, so its `beforeAll` hook uses an explicit 30s timeout to avoid Windows/Vitest ESM transform startup flakes.
@@ -45,6 +52,9 @@ Latest browser smoke:
 - `/sanrakshan` renders vote-protection guidance and links to the practice scenario.
 - `/play/scenario/vote-sanrakshan` advances, validates the correct safety answer, and awards +120 XP with the Vote Sanrakshak badge.
 - `/clinic` and `ChatWidget` now share the typed browser API/SSE client used by the code-quality slice.
+- Live `/clinic` returned `mode: llm-service`, official ECI source links, and redacted `[REDACTED_EPIC]` in the API response.
+- Live no-Origin `/api/forward/analysis` returned `RECAPTCHA_REQUIRED`, while the same call with the deployed web `Origin` header succeeded.
+- Mobile-sized `/clinic` and `/map` browser checks reported no horizontal overflow.
 
 ## Planned Browser/E2E Scripts
 

@@ -19,26 +19,34 @@ import { ttsRouter } from './routes/tts.js';
 import { translateRouter } from './routes/translate.js';
 import { calendarRouter } from './routes/calendar.js';
 import { youtubeRouter } from './routes/youtube.js';
+import { isCorsOriginAllowed } from './services/requestSecurity.js';
 
 export const buildApp = (config = loadConfig()): Express => {
   const app = express();
 
   app.disable('x-powered-by');
-  app.use(helmet({ contentSecurityPolicy: false }));
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        useDefaults: true,
+        directives: {
+          defaultSrc: ["'none'"],
+          baseUri: ["'none'"],
+          frameAncestors: ["'none'"],
+          formAction: ["'none'"],
+        },
+      },
+    }),
+  );
   app.use(
     cors({
       origin: (origin, callback) => {
-        // If wildcard is present, allow all
-        if (config.allowedOrigins.includes('*')) {
-          callback(null, true);
-        } else {
-          callback(null, config.allowedOrigins.includes(origin || '') || !origin);
-        }
+        callback(null, isCorsOriginAllowed(config, origin) ? true : false);
       },
       credentials: true,
     }),
   );
-  app.use(express.json({ limit: '256kb' }));
+  app.use(express.json({ limit: '32kb' }));
 
   const limiter = createRateLimiter(config.rateLimit);
   app.use('/api/', limiter);
