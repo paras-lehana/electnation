@@ -3,21 +3,13 @@
 import { useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { analyzeForwardMessage, createForwardAnalysisFallback, type ForwardClinicResult } from '@/lib/apiClient';
 import { motion } from 'framer-motion';
 
 export default function ClinicPage() {
   const [inputText, setInputText] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [result, setResult] = useState<null | {
-    category: string;
-    riskLevel: number;
-    explanation: { en: string; hi?: string };
-    verificationSteps: Array<{ en: string; hi?: string }>;
-    eciSources: string[];
-    recommendedAction: string;
-    mode: 'llm-service' | 'demo' | 'fallback';
-    recaptcha?: { bypassed: boolean };
-  }>(null);
+  const [result, setResult] = useState<ForwardClinicResult | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleAnalyze = async (e: React.FormEvent) => {
@@ -28,33 +20,12 @@ export default function ClinicPage() {
     setErrorMessage('');
     
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://electnation-api-767171449038.us-central1.run.app';
-      const response = await fetch(`${apiUrl}/api/forward/analysis`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: inputText, locale: 'en', recaptchaToken: 'demo-bypass-token' }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch analysis');
-      }
-
-      const resultData = await response.json();
+      const resultData = await analyzeForwardMessage({ text: inputText, locale: 'en' });
       setResult(resultData);
-    } catch (err) {
-      console.error(err);
+    } catch (cause) {
+      console.error(cause);
       setErrorMessage('Analysis service is in fallback mode. Showing a safe local guidance card.');
-      // Fallback in case of error
-      setResult({
-        category: 'unverified-rumor',
-        riskLevel: 3,
-        explanation: { en: 'We encountered an error while analyzing this message. Please try again later or consult official ECI channels.' },
-        verificationSteps: [{ en: 'Visit eci.gov.in or voters.eci.gov.in for official information.' }],
-        eciSources: ['https://eci.gov.in', 'https://voters.eci.gov.in'],
-        recommendedAction: 'Visit eci.gov.in for official information.',
-        mode: 'fallback',
-        recaptcha: { bypassed: true },
-      });
+      setResult(createForwardAnalysisFallback(inputText, 'en'));
     } finally {
       setIsAnalyzing(false);
     }

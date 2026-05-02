@@ -22,6 +22,18 @@ Expected current baseline:
 - `pnpm test` passes core and functions tests.
 - `pnpm build` builds core, functions, and Next.js web.
 
+Focused Code Quality checks when iterating on the Clinic/chat slice:
+
+```powershell
+pnpm -C c:\Users\paras\code\hackathons\electnation --filter @yatra/functions test
+pnpm -C c:\Users\paras\code\hackathons\electnation --filter @yatra/functions exec tsc --noEmit --pretty false
+pnpm -C c:\Users\paras\code\hackathons\electnation --filter @yatra/web exec tsc --noEmit --pretty false
+```
+
+`apps/functions/src/server.test.ts` sets env vars before dynamic imports, so its
+`beforeAll` hook intentionally has a 30s timeout. If the suite reports a 10s
+hook timeout, check that this timeout was not removed before investigating app code.
+
 ## Local Dev Servers
 
 Use explicit package names or `pnpm -C` to avoid PowerShell running from the Windows user profile:

@@ -8,6 +8,21 @@
 
 ---
 
+## Code Quality Hardening Slice *(2026-05-02)*
+
+- [x] ✅ Extract Forward Clinic domain logic from `routes/forward.ts` into `services/forwardAnalysisService.ts`.
+- [x] ✅ Add service-level tests for llm-service success, schema-drift normalization, and deterministic fallback.
+- [x] ✅ Centralize browser API URL construction, Forward Clinic fallback payloads, and chat SSE parsing in `apps/web/lib/apiClient.ts`.
+- [x] ✅ Refactor `/clinic` and `ChatWidget` to use shared API helpers while preserving live API behavior.
+- [x] ✅ Fix Vitest server setup timeout by making the ESM import hook budget explicit.
+- [x] ✅ Bump version metadata to `0.4.1` and update rubric evidence docs.
+- [x] ✅ Run full root validation (`@yatra/core` build, functions tests, direct web/functions type-checks, root build).
+- [x] ✅ Browser-test desktop and mobile Clinic + Chat flows before deploy.
+- [ ] ⏳ Add full ESLint flat config with React/a11y/import rules.
+- [ ] ⏳ Add Playwright/axe CI scripts for `/clinic`, `/easy-mode`, `/sanrakshan`, and scenario flows.
+
+---
+
 ## Phase 0 — Repo scaffolding & infra *(Day 1)*
 
 - [x] ✅ pnpm workspace (`apps/*`, `packages/*`)

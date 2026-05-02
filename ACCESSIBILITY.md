@@ -33,6 +33,7 @@ languages (Telugu, Marathi, Gujarati, Kannada, Malayalam, Punjabi, Urdu).
 
 ## Testing
 
+- Chunav Saathi chat open/close controls expose explicit accessible labels for keyboard and screen-reader users.
 - `pnpm test:a11y` runs axe-core against every route (target 0 violations).
 - Lighthouse CI budget: Accessibility ≥ 100.
 - Manual: TalkBack + VoiceOver smoke on every release.

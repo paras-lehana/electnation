@@ -14,7 +14,7 @@ let app: Express;
 beforeAll(async () => {
   const [{ buildApp }, { loadConfig }] = await Promise.all([import('./server.js'), import('./config.js')]);
   app = buildApp(loadConfig());
-});
+}, 30_000);
 
 describe('Election Yatra API', () => {
   it('reports health with dependency readiness', async () => {

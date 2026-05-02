@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
 import { AshokaChakra } from '@/components/motifs/AshokaChakra';
+import { streamChatResponse } from '@/lib/apiClient';
 
 export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,6 +20,16 @@ export function ChatWidget() {
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const appendModelDelta = (delta: string) => {
+    setMessages((prev) =>
+      prev.map((message, index) =>
+        index === prev.length - 1 && message.role === 'model'
+          ? { ...message, text: `${message.text}${delta}` }
+          : message,
+      ),
+    );
   };
 
   useEffect(() => {
@@ -38,72 +49,23 @@ export function ChatWidget() {
     setMessages((prev) => [...prev, { role: 'model', text: '' }]);
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://electnation-api-767171449038.us-central1.run.app';
-      const response = await fetch(`${apiUrl}/api/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      await streamChatResponse(
+        {
           locale: 'en',
           literacyComfort: 'standard',
           message: userMsg,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to chat');
-      }
-
-      const reader = response.body?.getReader();
-      const decoder = new TextDecoder();
-
-      if (reader) {
-        let buffer = '';
-        while (true) {
-          const { value, done } = await reader.read();
-          if (done) break;
-          buffer += decoder.decode(value, { stream: true });
-          
-          const lines = buffer.split('\n');
-          buffer = lines.pop() || '';
-          
-          for (const line of lines) {
-            const trimmedLine = line.trim();
-            if (!trimmedLine || !trimmedLine.startsWith('data: ')) continue;
-            
-            const dataStr = trimmedLine.slice(6);
-            if (dataStr === '[DONE]') continue;
-            
-            try {
-              const data = JSON.parse(dataStr);
-              if (data.delta) {
-                setMessages((prev) => {
-                  const newMessages = [...prev];
-                  const lastMsg = newMessages[newMessages.length - 1];
-                  if (lastMsg && lastMsg.role === 'model') {
-                    lastMsg.text += data.delta;
-                  }
-                  return newMessages;
-                });
-              }
-              if (data.error) {
-                throw new Error(data.message || 'AI Error');
-              }
-            } catch (err) {
-              console.error('Error parsing SSE data', err);
-            }
-          }
-        }
-      }
+        },
+        appendModelDelta,
+      );
     } catch (error) {
       console.error(error);
-      setMessages((prev) => {
-        const newMessages = [...prev];
-        const lastMsg = newMessages[newMessages.length - 1];
-        if (lastMsg && lastMsg.role === 'model') {
-          lastMsg.text = 'Maaf karna, abhi main thoda busy hoon. Kripya baad mein try karein.';
-        }
-        return newMessages;
-      });
+      setMessages((prev) =>
+        prev.map((message, index) =>
+          index === prev.length - 1 && message.role === 'model'
+            ? { ...message, text: 'Maaf karna, abhi main thoda busy hoon. Kripya baad mein try karein.' }
+            : message,
+        ),
+      );
     } finally {
       setIsTyping(false);
     }
@@ -134,6 +96,7 @@ export function ChatWidget() {
                 </div>
                 <button
                   onClick={() => setIsOpen(false)}
+                  aria-label="Close Chunav Saathi chat"
                   className="rounded-full p-2 hover:bg-white/20 transition-colors"
                 >
                   ✕
@@ -196,6 +159,7 @@ export function ChatWidget() {
 
         <Button
           onClick={() => setIsOpen(!isOpen)}
+          aria-label={isOpen ? 'Close Chunav Saathi chat' : 'Open Chunav Saathi chat'}
           className="h-16 w-16 rounded-full bg-saffron-500 shadow-xl shadow-saffron-500/40 hover:bg-saffron-600 transition-transform hover:scale-105 p-0 flex items-center justify-center"
         >
           {isOpen ? (

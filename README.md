@@ -1,6 +1,6 @@
 # Election Yatra — Janta ka Election Saathi
 
-> **Version 0.4.0** — backend-only llm-service AI, stable Cloud Run deployment notes, and win-focused roadmap.
+> **Version 0.4.1** — Code Quality hardening with Forward Clinic service extraction and centralized browser API/SSE client.
 
 > **An AI companion for Indian voters.** Walk the 6-station yatra from
 > registration to polling booth, spot WhatsApp misinformation, find your
@@ -26,7 +26,7 @@ _Google Prompt Wars_ hackathon (April 2026).
 
 ---
 
-## Monorepo layout
+## File Index / Monorepo Layout
 
 ```
 election-yatra/
@@ -48,6 +48,17 @@ election-yatra/
 ├── SUGGESTIONS.md     # Win-focused roadmap for maps, gamification, UI, tests
 └── CHANGELOG.md
 ```
+
+| Path | Purpose | When to read |
+| --- | --- | --- |
+| `apps/web/` | Next.js voter-facing experience: Yatra, Clinic, Map, Play, Easy Mode | UI flow changes and browser testing |
+| `apps/web/lib/apiClient.ts` | Shared browser API URL, JSON request, Forward Clinic fallback, and chat SSE helpers | Any frontend API or streaming change |
+| `apps/functions/` | Express API for Cloud Run: health, chat, clinic, maps, calendar, YouTube | Backend route and deployment changes |
+| `apps/functions/src/services/forwardAnalysisService.ts` | Forward Clinic domain logic: llm-service prompt, normalization, local fallback, recommended action | Misinformation analysis behavior changes |
+| `packages/core/` | Shared schemas, types, Result/AppError helpers, Google wrappers, version constant | Cross-app contracts and validation |
+| `tasks.md` | Granular roadmap and code-quality hardening tracker | Session planning and rubric progress |
+| `AGENTS.md` | Local commands, Cloud Run deploy commands, stable URLs, env/secret gotchas | Before testing or deploying |
+| `EVALUATION_MAPPING.md` | Rubric axis to proof mapping | Before submission review |
 
 ## Local setup
 
@@ -75,7 +86,7 @@ after wiring a production reCAPTCHA site key.
 
 ```bash
 curl http://localhost:8080/api/health
-# → 200 {"status":"degraded","version":"0.4.0",...}
+# → 200 {"status":"degraded","version":"0.4.1",...}
 
 curl -N -X POST http://localhost:8080/api/chat \
   -H "content-type: application/json" \
@@ -99,8 +110,8 @@ yatra, ek vote."*
 - **Backend**: Express 4 on Cloud Run, TypeScript, Zod validation
 - **Shared**: pnpm workspaces, `@yatra/core` package
 - **Google**: llm-service with Antigravity Gemini · Maps · Calendar · YouTube · TTS · STT · Translation · Firebase · reCAPTCHA Enterprise · Secret Manager · Cloud Run · Cloud Logging
-- **Testing**: Vitest · Supertest · React Testing Library · Playwright · axe-core · Lighthouse CI
-- **DX**: ESLint flat · Prettier · Husky · GitHub Actions · Antigravity workspace
+- **Testing**: Vitest · Supertest · direct TypeScript checks · planned Playwright/axe/Lighthouse CI
+- **DX**: TypeScript strict · Prettier · Cloud Build docs · planned ESLint/GitHub Actions · Antigravity workspace
 
 ## Non-partisan pledge
 

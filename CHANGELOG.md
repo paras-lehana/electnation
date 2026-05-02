@@ -2,6 +2,21 @@
 
 All notable changes to Election Yatra.
 
+## [0.4.1] - 2026-05-02
+
+### Changed
+- Extracted Forward Clinic analysis from the Express route into `forwardAnalysisService`, keeping the route focused on HTTP validation, reCAPTCHA, logging, and response shape.
+- Centralized browser API calls in `apps/web/lib/apiClient.ts`, including Forward Clinic fallback payloads and robust Server-Sent Event parsing for Chunav Saathi chat.
+- Refactored `/clinic` and `ChatWidget` to use shared API helpers instead of duplicating Cloud Run URL construction and streaming parsing.
+
+### Fixed
+- Increased the server test setup hook timeout to avoid Windows/Vitest ESM transform startup timeouts when the suite runs in parallel.
+- Added accessible labels for the Chunav Saathi chat open/close controls.
+
+### Verified
+- `pnpm --filter @yatra/functions test` passed (10 tests).
+- Direct TypeScript checks passed for `@yatra/functions` and `@yatra/web`.
+
 ## [0.4.0] - 2026-05-02
 
 ### Added

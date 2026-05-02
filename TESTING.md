@@ -26,20 +26,25 @@ pnpm build         # production build (set NEXT_STANDALONE=true for Cloud Run st
 - `packages/core/src/google/geminiClient.test.ts` — Chunav Saathi prompt neutrality, official-source, Hindi/easy-language, and audio-first rules.
 - `packages/core/src/google/mapsClient.test.ts` — geocoding and distance-matrix wrapper mapping.
 - `apps/functions/src/server.test.ts` — health, Forward Clinic demo classification, validation rejection, Calendar ICS, and YouTube SVEEP demo route.
+- `apps/functions/src/services/forwardAnalysisService.test.ts` — Forward Clinic llm-service success, schema-drift normalization, and deterministic fallback behavior.
+- `apps/functions/src/services/llmServiceClient.test.ts` — llm-service SMK/BYOK routing and auth header behavior.
 
 Latest local validation:
 
 ```bash
-pnpm type-check  # passed
-pnpm test        # 24 tests passed
-pnpm build       # passed; standalone output is opt-in on Windows
+pnpm --filter @yatra/functions test  # passed, 10 backend tests
+pnpm --filter @yatra/functions exec tsc --noEmit --pretty false  # passed
+pnpm --filter @yatra/web exec tsc --noEmit --pretty false        # passed
 ```
+
+Note: `apps/functions/src/server.test.ts` sets env vars before dynamically importing the app, so its `beforeAll` hook uses an explicit 30s timeout to avoid Windows/Vitest ESM transform startup flakes.
 
 Latest browser smoke:
 
 - `/easy-mode` renders large action tiles and read-aloud control.
 - `/sanrakshan` renders vote-protection guidance and links to the practice scenario.
 - `/play/scenario/vote-sanrakshan` advances, validates the correct safety answer, and awards +120 XP with the Vote Sanrakshak badge.
+- `/clinic` and `ChatWidget` now share the typed browser API/SSE client used by the code-quality slice.
 
 ## Planned Browser/E2E Scripts
 
