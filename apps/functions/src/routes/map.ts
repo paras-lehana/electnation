@@ -22,14 +22,23 @@ export const mapRouter = (config: AppConfig): Router => {
 
       const client = getMapsClient(config);
       if (!config.maps.apiKey) {
-         // Fallback dummy data if no key is present
-         res.json({
-        mode: 'demo',
+        if (config.demoMode) {
+          res.json({
+            mode: 'demo',
             status: 'ok',
-            booth: { lat: 28.612, lng: 77.21, name: 'Dummy Polling Booth', distanceMeters: 1200 },
-            ero: { lat: 28.615, lng: 77.215, name: 'Dummy ERO Office', distanceMeters: 2500 }
-         });
-         return;
+            booth: { lat: 28.612, lng: 77.21, name: 'Sample Polling Booth', distanceMeters: 1200 },
+            ero: { lat: 28.615, lng: 77.215, name: 'Sample ERO Office', distanceMeters: 2500 },
+          });
+          return;
+        }
+
+        res.status(503).json({
+          error: {
+            code: 'MAPS_CONFIG_MISSING',
+            message: 'Map services are not configured right now.',
+          },
+        });
+        return;
       }
 
       const origins = [`${lat},${lng}`];

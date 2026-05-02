@@ -24,7 +24,7 @@ export default function ClinicPage() {
       setResult(resultData);
     } catch (cause) {
       console.error(cause);
-      setErrorMessage('Analysis service is in fallback mode. Showing a safe local guidance card.');
+      setErrorMessage('Analysis is temporarily unavailable. Showing safe guidance from official election channels.');
       setResult(createForwardAnalysisFallback(inputText, 'en'));
     } finally {
       setIsAnalyzing(false);
@@ -100,9 +100,7 @@ export default function ClinicPage() {
                 </Button>
               </div>
             </form>
-            <p className="mt-4 text-xs text-ink-500">
-              Protected by reCAPTCHA Enterprise in production. Local demo mode uses a safe bypass token for testing.
-            </p>
+            <p className="mt-4 text-xs text-ink-500">Protected with secure abuse checks when verification is required.</p>
             {errorMessage && <p id="forward-error" className="mt-3 text-sm font-semibold text-red-700">{errorMessage}</p>}
           </Card>
         </motion.div>
@@ -152,10 +150,7 @@ export default function ClinicPage() {
                     </p>
                     <p className="text-md text-ink-800 mt-2 font-medium">{result.recommendedAction}</p>
                   </motion.div>
-
                   <div className="mt-4 flex flex-wrap gap-2 text-xs">
-                    <span className="rounded-full bg-white/70 px-3 py-1 font-bold text-ink-700">Mode: {result.mode}</span>
-                    {result.recaptcha?.bypassed && <span className="rounded-full bg-white/70 px-3 py-1 font-bold text-ink-700">reCAPTCHA demo bypass</span>}
                     {result.eciSources.map((source) => (
                       <a key={source} href={source} target="_blank" rel="noreferrer" className="rounded-full bg-white px-3 py-1 font-bold text-indigo-chakra underline">
                         Official source

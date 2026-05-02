@@ -1,6 +1,6 @@
 # Election Yatra — Janta ka Election Saathi
 
-> **Version 0.4.1** — Code Quality hardening with Forward Clinic service extraction and centralized browser API/SSE client.
+> **Version 0.4.2** — Production hardening for clinic and map flows with demo mode made opt-in and final-release fallback copy cleaned up.
 
 > **An AI companion for Indian voters.** Walk the 6-station yatra from
 > registration to polling booth, spot WhatsApp misinformation, find your
@@ -65,7 +65,7 @@ election-yatra/
 Prerequisites: **Node ≥ 20**, **pnpm ≥ 9**.
 
 ```bash
-cp .env.example .env.local        # fill what you need (runs demo-mode without keys)
+cp .env.example .env.local        # fill what you need; set DEMO_MODE=true only for scripted local demo flows
 pnpm install
 pnpm dev                           # runs web (:3000) + functions (:8080) in parallel
 ```
@@ -76,7 +76,8 @@ If `DEMO_MODE=true`, `/api/chat` streams a scripted Hinglish demo reply and
 `/api/forward/analysis` uses deterministic local analysis so the UI and tests can
 run without credentials. Production uses backend-only `llm-service` with
 Antigravity `gemini-3-flash`; secrets stay in Cloud Run env/Secret Manager and
-are never exposed through frontend config.
+are never exposed through frontend config. `DEMO_MODE` now defaults to `false`
+when unset, so production revisions do not silently fall back to demo behavior.
 
 For the hackathon Cloud Run demo, `RECAPTCHA_BYPASS=true` is set on the API so
 judges can exercise Forward Clinic without a site-key challenge. Turn that off
@@ -86,7 +87,7 @@ after wiring a production reCAPTCHA site key.
 
 ```bash
 curl http://localhost:8080/api/health
-# → 200 {"status":"degraded","version":"0.4.1",...}
+# → 200 {"status":"degraded","version":"0.4.2",...}
 
 curl -N -X POST http://localhost:8080/api/chat \
   -H "content-type: application/json" \

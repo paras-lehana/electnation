@@ -90,7 +90,7 @@ export const loadConfig = (): AppConfig => ({
   allowedOrigins: (process.env.ALLOWED_ORIGINS ?? 'http://localhost:3000')
     .split(',')
     .map((s) => s.trim()),
-  demoMode: process.env.DEMO_MODE !== 'false',
+  demoMode: process.env.DEMO_MODE === 'true',
 
   google: {
     apiKey: require_('GOOGLE_API_KEY', process.env.GOOGLE_MAPS_API_KEY),

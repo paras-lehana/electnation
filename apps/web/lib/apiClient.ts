@@ -83,9 +83,13 @@ const postJson = async <ResponseBody>(path: string, body: unknown): Promise<Resp
 export const analyzeForwardMessage = async ({
   text,
   locale = 'en',
-  recaptchaToken = 'demo-bypass-token',
+  recaptchaToken,
 }: AnalyzeForwardMessageRequest): Promise<ForwardClinicResult> =>
-  postJson<ForwardClinicResult>('/api/forward/analysis', { text, locale, recaptchaToken });
+  postJson<ForwardClinicResult>('/api/forward/analysis', {
+    text,
+    locale,
+    ...(recaptchaToken ? { recaptchaToken } : {}),
+  });
 
 export const createForwardAnalysisFallback = (text: string, locale: Locale = 'en'): ForwardClinicResult => ({
   id: 'browser-fallback-forward-analysis',

@@ -60,14 +60,12 @@ export const buildApp = (config = loadConfig()): Express => {
         mapsMapId: config.maps.mapId,
         recaptchaSiteKey: config.recaptcha.siteKey || '',
         supportedLocales: ['en', 'hi', 'bn', 'ta', 'te', 'mr', 'gu', 'kn', 'ml', 'pa', 'ur'],
-        demoMode: config.demoMode,
         featureFlags: {
           calendar: true,
           youtubeSveep: true,
-          mapsDirections: true,
+          mapsDirections: Boolean(config.maps.apiKey),
           tts: true,
           translation: true,
-          recaptchaBypass: config.recaptcha.bypass,
         },
       });
     } catch (err) {

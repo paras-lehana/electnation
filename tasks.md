@@ -8,6 +8,16 @@
 
 ---
 
+## Production Hardening Final Push *(2026-05-02)*
+
+- [x] ✅ Make `DEMO_MODE` opt-in in backend config and add a regression test for the default-off behavior.
+- [x] ✅ Remove production-facing demo and bypass badges/copy from Clinic and Map, replacing fake booth data with official Election Commission guidance.
+- [x] ✅ Stop exposing `demoMode` and `recaptchaBypass` through `/api/config/public` and remove the browser-side default demo bypass token.
+- [x] ✅ Restore the documented root validation baseline by removing the unfinished web Vitest harness from `pnpm test`.
+- [x] ✅ Bump release metadata to `0.4.2`, rebuild, deploy both Cloud Run services, and verify live health/UI behavior.
+
+---
+
 ## Code Quality Hardening Slice *(2026-05-02)*
 
 - [x] ✅ Extract Forward Clinic domain logic from `routes/forward.ts` into `services/forwardAnalysisService.ts`.

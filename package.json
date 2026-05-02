@@ -1,6 +1,6 @@
 {
   "name": "election-yatra",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "private": true,
   "description": "Election Yatra — Janta ka Election Saathi. An India-first civic education assistant powered by Gemini and Google Cloud.",
   "packageManager": "pnpm@9.0.0",
@@ -19,7 +19,11 @@
   },
   "devDependencies": {
     "@types/node": "^20.12.7",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "eslint": "^8.57.0",
     "prettier": "^3.2.5",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0"
   }
 }

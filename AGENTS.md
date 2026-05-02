@@ -138,6 +138,7 @@ gcloud run services update electnation-api --region us-central1 --project event-
 For the hackathon demo deployment, `/clinic` uses `RECAPTCHA_BYPASS=true` so judges
 can test the AI analysis without a production site-key challenge. Do not remove the
 reCAPTCHA route code; turn the bypass off when a live reCAPTCHA site key is wired.
+`DEMO_MODE` is opt-in and should stay unset or explicitly `false` for production revisions.
 
 ## Gotchas
 

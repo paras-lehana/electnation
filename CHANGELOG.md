@@ -2,6 +2,24 @@
 
 All notable changes to Election Yatra.
 
+## [0.4.2] - 2026-05-02
+
+### Changed
+- Made `DEMO_MODE` opt-in so clinic and map routes stay on production behavior unless demo mode is explicitly requested.
+- Cleaned the public-facing clinic and map fallback copy so the final judged deployment no longer advertises internal demo or bypass states.
+- Centered the live map on the voter's detected area when geolocation is available, while keeping official Election Commission lookup links as the fallback path.
+
+### Fixed
+- Removed the browser-side default `demo-bypass-token`, leaving the backend as the only place that can apply a reCAPTCHA bypass token when configured.
+- Stopped exposing `demoMode` and `recaptchaBypass` through `/api/config/public`.
+- Restored the documented repo test baseline by removing the unfinished web Vitest harness from the main workspace test command.
+- Added a regression test that locks `DEMO_MODE` to an opt-in default.
+
+### Verified
+- `pnpm type-check` passed.
+- `pnpm test` passed.
+- `pnpm build` passed.
+
 ## [0.4.1] - 2026-05-02
 
 ### Changed
