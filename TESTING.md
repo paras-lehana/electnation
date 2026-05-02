@@ -7,7 +7,7 @@ accessibility, and browser flows can be checked independently before deployment.
 
 | Layer         | Tool                           | Location                                                                     | Current status                                                               |
 | ------------- | ------------------------------ | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| Unit          | Vitest                         | `packages/core/src/**/*.test.ts`, `apps/functions/src/services/**/*.test.ts` | 56 core/API tests passing                                                    |
+| Unit          | Vitest                         | `packages/core/src/**/*.test.ts`, `apps/functions/src/services/**/*.test.ts` | 59 core/API tests passing                                                    |
 | Component     | React Testing Library + Vitest | `apps/web/components/**/*.test.tsx`, `apps/web/lib/**/*.test.ts`             | 7 web tests passing                                                          |
 | Integration   | Supertest + Vitest             | `apps/functions/src/server.test.ts`                                          | API route, CORS, config, calendar, map, chat, TTS, translation tests passing |
 | E2E           | Playwright                     | `e2e/*.spec.ts`                                                              | 15 Chromium tests passing                                                    |
@@ -38,7 +38,7 @@ pnpm e2e:headed
 
 - `packages/core/src/result.test.ts` — Result helpers.
 - `packages/core/src/schemas.test.ts` — scheduled-language locales, chat, forward-analysis, output, and calendar schemas.
-- `packages/core/src/accessibility.test.ts` — 22 scheduled-language Easy Mode presets, browser/Google TTS request helpers, fallback behavior, and evidence catalog honesty.
+- `packages/core/src/accessibility.test.ts` — 22 scheduled-language Easy Mode presets, browser/Google TTS request helpers, fallback behavior, evidence catalog honesty, feature blueprint parameter coverage, preference-profile planning, transcript cues, voice-input drafts, offline packets, and classroom prompt decks.
 - `packages/core/src/google/geminiClient.test.ts` — Chunav Saathi prompt neutrality, official-source guidance, Hindi/easy-language adaptation, and audio-first behavior.
 - `packages/core/src/google/mapsClient.test.ts` — geocoding and distance-matrix wrapper mapping.
 - `apps/functions/src/services/forwardAnalysisService.test.ts` — llm-service success, schema-drift normalization, official-source filtering, prompt boundaries, PII redaction, and deterministic fallback behavior.
@@ -57,7 +57,7 @@ pnpm e2e:headed
 
 ```bash
 pnpm type-check  # passed across core, functions, and web
-pnpm test        # passed: 26 core + 30 functions + 7 web tests
+pnpm test        # passed: 29 core + 30 functions + 7 web tests
 pnpm build       # passed across core, functions, and web
 pnpm e2e:ci      # passed: 15 Chromium tests
 pnpm a11y        # passed: 9 routes, color contrast enabled

@@ -93,6 +93,12 @@ describe('Election Yatra API', () => {
     expect(response.body.supportedLocales).toHaveLength(23);
     expect(response.body.supportedLocales).toContain('sat');
     expect(response.body.supportedLocales).toContain('ur');
+    expect(response.body.accessibility).toMatchObject({
+      scheduledLanguages: 22,
+      featureBlueprints: expect.any(Number),
+      userProfiles: expect.any(Number),
+      inputModesCovered: expect.any(Number),
+    });
     expect(response.body.featureFlags).toMatchObject({
       calendar: true,
       youtubeSveep: true,

@@ -1,10 +1,19 @@
 import { describe, expect, it } from 'vitest';
 import {
+  buildAccessibilityImplementationPlan,
+  buildAccessibilityPreferenceProfile,
+  buildAccessibleTranscriptCue,
   buildBrowserSpeechSettings,
+  buildFacilitatorPromptDeck,
   buildGoogleTtsRequestDraft,
+  buildOfflineAccessibilityPacket,
+  buildVoiceInputDraft,
   createAccessibleStatusMessage,
+  getAccessibilityArchitectureScorecard,
   getAccessibilityCoverageSummary,
   getAccessibilityEvidenceCatalog,
+  getAccessibilityFeatureBlueprints,
+  getAccessibilityUserProfiles,
   getAssistiveTechTestMatrix,
   getEasyModeGuideText,
   getScheduledLanguageTtsPreset,
@@ -62,5 +71,52 @@ describe('accessibility evidence and language presets', () => {
   it('recognizes only configured scheduled language codes', () => {
     expect(isScheduledLanguageCode('hi')).toBe(true);
     expect(isScheduledLanguageCode('fr')).toBe(false);
+  });
+
+  it('exposes broad accessibility blueprints with parameters and status separation', () => {
+    const blueprints = getAccessibilityFeatureBlueprints();
+    const scorecard = getAccessibilityArchitectureScorecard();
+
+    expect(blueprints.length).toBeGreaterThanOrEqual(10);
+    expect(blueprints.every((feature) => feature.parameters.length > 0)).toBe(true);
+    expect(getAccessibilityFeatureBlueprints('planned').length).toBeGreaterThanOrEqual(1);
+    expect(getAccessibilityFeatureBlueprints('scaffolded').length).toBeGreaterThanOrEqual(3);
+    expect(scorecard.inputModesCovered).toBeGreaterThanOrEqual(7);
+    expect(scorecard.wcagCriteriaReferenced).toBeGreaterThan(10);
+  });
+
+  it('builds accessibility preference profiles and implementation plans', () => {
+    const profiles = getAccessibilityUserProfiles();
+    const profile = buildAccessibilityPreferenceProfile('audio-first-senior-voter', {
+      languageCode: 'ta',
+      textScale: 1.3,
+    });
+    const plan = buildAccessibilityImplementationPlan('audio-first-senior-voter');
+
+    expect(profiles.length).toBeGreaterThanOrEqual(4);
+    expect(profile.preferences.languageCode).toBe('ta');
+    expect(profile.preferences.textScale).toBe(1.3);
+    expect(profile.featureBlueprints.map((feature) => feature.id)).toContain(
+      'scheduled-language-read-aloud',
+    );
+    expect(plan.implemented.length + plan.scaffolded.length + plan.planned.length).toBe(
+      profile.featureBlueprints.length,
+    );
+    expect(plan.nextTestTasks.length).toBeGreaterThan(0);
+  });
+
+  it('creates structured helper drafts for transcripts, voice input, offline packets, and classrooms', () => {
+    const cue = buildAccessibleTranscriptCue('Read this aloud', 'ur', 2);
+    const voiceDraft = buildVoiceInputDraft('Mera naam list mein hai kya?', 'hi');
+    const packet = buildOfflineAccessibilityPacket('bn');
+    const deck = buildFacilitatorPromptDeck('mr', 20);
+
+    expect(cue.lang).toBe('ur-IN');
+    expect(cue.ariaLabel).toContain('Urdu');
+    expect(voiceDraft.confirmationRequired).toBe(true);
+    expect(voiceDraft.canSubmit).toBe(false);
+    expect(packet.officialLinks).toContain('https://voters.eci.gov.in');
+    expect(deck.groupSize).toBe(20);
+    expect(deck.prompts.length).toBeGreaterThanOrEqual(4);
   });
 });

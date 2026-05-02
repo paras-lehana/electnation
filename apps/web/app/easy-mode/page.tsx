@@ -3,9 +3,12 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import {
+  getAccessibilityArchitectureScorecard,
   buildBrowserSpeechSettings,
   createAccessibleStatusMessage,
   getAccessibilityCoverageSummary,
+  getAccessibilityFeatureBlueprints,
+  getAccessibilityUserProfiles,
   getScheduledLanguageTtsPreset,
   getScheduledLanguageTtsPresets,
   type ScheduledLanguageCode,
@@ -49,6 +52,9 @@ const EASY_ACTIONS = [
 
 const LANGUAGE_PRESETS = getScheduledLanguageTtsPresets();
 const COVERAGE_SUMMARY = getAccessibilityCoverageSummary();
+const ARCHITECTURE_SCORECARD = getAccessibilityArchitectureScorecard();
+const FEATURE_BLUEPRINTS = getAccessibilityFeatureBlueprints().slice(0, 4);
+const USER_PROFILES = getAccessibilityUserProfiles();
 
 const getVoiceSupportLabel = (voiceReadiness: string) => {
   if (voiceReadiness === 'native-google-tts') return 'Native read-aloud ready';
@@ -238,6 +244,58 @@ export default function EasyModePage() {
               <p className="mt-1 text-sm font-bold text-ink-700">native TTS-ready groups</p>
             </div>
           </div>
+          <div className="mt-5 grid gap-3 sm:grid-cols-4">
+            <div className="rounded-xl bg-white p-4 ring-1 ring-ink-100">
+              <p className="text-2xl font-black text-ink-900">
+                {ARCHITECTURE_SCORECARD.featureBlueprints}
+              </p>
+              <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-ink-600">
+                feature blueprints
+              </p>
+            </div>
+            <div className="rounded-xl bg-white p-4 ring-1 ring-ink-100">
+              <p className="text-2xl font-black text-ink-900">
+                {ARCHITECTURE_SCORECARD.userProfiles}
+              </p>
+              <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-ink-600">
+                user profiles
+              </p>
+            </div>
+            <div className="rounded-xl bg-white p-4 ring-1 ring-ink-100">
+              <p className="text-2xl font-black text-ink-900">
+                {ARCHITECTURE_SCORECARD.inputModesCovered}
+              </p>
+              <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-ink-600">
+                input modes
+              </p>
+            </div>
+            <div className="rounded-xl bg-white p-4 ring-1 ring-ink-100">
+              <p className="text-2xl font-black text-ink-900">
+                {ARCHITECTURE_SCORECARD.wcagCriteriaReferenced}
+              </p>
+              <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-ink-600">
+                WCAG refs
+              </p>
+            </div>
+          </div>
+          <div className="mt-5 grid gap-3 md:grid-cols-2" data-testid="accessibility-blueprints">
+            {FEATURE_BLUEPRINTS.map((feature) => (
+              <div key={feature.id} className="rounded-xl border border-leaf-100 bg-leaf-50 p-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h3 className="font-bold text-ink-900">{feature.title}</h3>
+                  <span className="rounded-full bg-white px-2 py-1 text-xs font-black uppercase tracking-[0.12em] text-leaf-800 ring-1 ring-leaf-100">
+                    {feature.status}
+                  </span>
+                </div>
+                <p className="mt-2 text-sm font-semibold text-ink-700">
+                  {feature.parameters.length} parameters · {feature.inputModes.join(', ')}
+                </p>
+              </div>
+            ))}
+          </div>
+          <p className="mt-4 text-sm font-semibold text-ink-700">
+            Profile presets: {USER_PROFILES.map((profile) => profile.title).join(' · ')}.
+          </p>
         </Card>
       </section>
     </main>

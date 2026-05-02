@@ -8,6 +8,36 @@
 
 ---
 
+## Accessibility Blueprint Architecture Slice _(2026-05-03)_
+
+### Critic review before implementation
+
+- [x] ✅ Current strength: 0.4.5 already proved 22-language Easy Mode and honest evidence status tags.
+- [x] ✅ Current gap: code reviewers could see evidence items, but not a full typed roadmap for every assistive mode, user profile, parameter, hook, and test signal.
+- [x] ✅ User clarification: placeholders are acceptable when they are integrated, parameterized, status-tagged, and honest about what is scaffolded versus shipped.
+
+### Implemented tasks
+
+- [x] ✅ Add `AccessibilitySurface`, `AccessibilityAudience`, and `AccessibilityInputMode` unions so every assistive feature has explicit scope.
+- [x] ✅ Add `AccessibilityFeatureBlueprint` and `AccessibilityFeatureParameter` models for screen-reader, keyboard/switch, high contrast, captions, STT, dyslexia, offline, and classroom features.
+- [x] ✅ Add `AccessibilityUserProfile`, `AccessibilityPreferenceSettings`, and `AccessibilityPreferenceProfile` models for senior, screen-reader, community classroom, and neurodivergent users.
+- [x] ✅ Implement `getAccessibilityFeatureBlueprints()`, `getAccessibilityUserProfiles()`, and `getAccessibilityArchitectureScorecard()` for judge-visible coverage counts.
+- [x] ✅ Implement `buildAccessibilityPreferenceProfile()` and `buildAccessibilityImplementationPlan()` to convert a user profile into implemented/scaffolded/planned task groups.
+- [x] ✅ Implement structured scaffold helpers for transcript cues, voice-input correction, offline printable packets, and classroom facilitator prompt decks.
+- [x] ✅ Expose the safe accessibility score summary through `/api/config/public` without leaking server-only config.
+- [x] ✅ Surface blueprint counts, user profiles, input-mode coverage, WCAG references, and sample blueprints on `/easy-mode`.
+- [x] ✅ Add tests for blueprint parameter coverage, status separation, profile plans, and helper drafts.
+
+### Planned follow-up tasks
+
+- [ ] ⏳ Wire high-contrast, large-text, dyslexia-friendly, and reduced-distraction toggles into the app shell.
+- [ ] ⏳ Convert the voice-input draft contract into Chat and Forward Clinic STT controls with visible transcript correction.
+- [ ] ⏳ Build the offline accessibility packet download/print UI from `buildOfflineAccessibilityPacket()`.
+- [ ] ⏳ Build facilitator/classroom mode from `buildFacilitatorPromptDeck()` and Easy Mode language presets.
+- [ ] ⏳ Add Playwright coverage for the new Easy Mode blueprint proof panel after frontend polish.
+
+---
+
 ## Accessibility Evidence and 22-Language Slice _(2026-05-02)_
 
 ### Critic review before implementation

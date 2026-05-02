@@ -91,3 +91,17 @@ Purpose: win-focused backlog for improving Election Yatra beyond the current dep
 - Cache confirmed server-generated MP3 audio by transcript hash so classroom sessions do not depend on repeated synthesis.
 
 **Why it helps win**: It turns the new language architecture into verified, demo-safe audio coverage instead of a best-effort preset list.
+
+## Priority 8 - Accessibility Blueprint UI Wiring
+
+**Issue**: Version 0.4.6 now has strong typed scaffolding for high contrast, large text, dyslexia-friendly layout, switch access, STT correction, offline packets, and classroom mode, but several of those controls are not yet user-toggleable in the frontend.
+
+**Plan**:
+
+- Add an accessibility preferences drawer using `buildAccessibilityPreferenceProfile()` as the single source of truth.
+- Wire high-contrast, text scale, reduced-motion, dyslexia-friendly spacing, captions, and switch-access flags into CSS variables and app-shell state.
+- Convert `buildVoiceInputDraft()` into Chat and Forward Clinic voice-input UI with visible transcript correction before submit.
+- Convert `buildOfflineAccessibilityPacket()` and `buildFacilitatorPromptDeck()` into printable/downloadable classroom resources.
+- Add Playwright and axe coverage for the preference drawer, Easy Mode blueprint panel, STT correction surface, and print packet route.
+
+**Why it helps win**: The code already shows a broad accessibility architecture; wiring these controls will turn scaffolded proof into demo-visible assistive workflows.

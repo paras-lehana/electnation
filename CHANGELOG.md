@@ -2,6 +2,26 @@
 
 All notable changes to Election Yatra.
 
+## [0.4.6] - 2026-05-03
+
+### Added
+
+- Added 10 typed accessibility feature blueprints covering screen-reader/live-region support, keyboard/switch navigation, high-contrast and large text, scheduled-language read-aloud, captions/transcripts, voice input correction, cognitive Easy Mode, dyslexia-friendly layout, reduced motion, offline packets, and classroom facilitator mode.
+- Added 4 assistive user profiles with default preferences and recommended feature sets for senior voters, screen-reader/keyboard users, multilingual community classes, and low-distraction neurodivergent use.
+- Added helper functions for preference-profile building, implementation planning, transcript cues, voice-input drafts, offline accessibility packets, facilitator prompt decks, and architecture scorecards.
+- Surfaced the accessibility architecture scorecard and blueprint samples on `/easy-mode` and exposed safe summary counts through `/api/config/public`.
+
+### Changed
+
+- Expanded the shared accessibility coverage summary from language/evidence counts to include feature blueprints, user profiles, input modes, and WCAG criteria references.
+- Bumped release metadata to `0.4.6` across the root, core, web, functions, and API health version source.
+
+### Tested
+
+- Added core tests for accessibility blueprint parameter coverage, status separation, profile planning, transcript cues, voice-input drafts, offline packets, and classroom prompt decks.
+- Added API config assertions for the public accessibility summary while preserving server-only secret redaction.
+- Full validation passed for `pnpm type-check`, `pnpm test` (29 core + 30 functions + 7 web tests), `pnpm build`, `pnpm a11y` (9 routes), and `pnpm e2e:ci` (15 Chromium tests).
+
 ## [0.4.5] - 2026-05-03
 
 ### Added
